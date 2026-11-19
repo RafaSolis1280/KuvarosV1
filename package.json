@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "postinstall": "node scripts/copy-decoders.mjs"
+    "postinstall": "node scripts/copy-decoders.mjs",
+    "frames": "node scripts/video-to-frames.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

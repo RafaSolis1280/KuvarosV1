@@ -26,8 +26,9 @@
 | DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | DEV | `feat/dev-10-fluid-shader` | PR → `feat/dev-09-image-sequence` | Falta probar en Android de gama media (artefactos de precisión) |
 | DEV-11 · HeroArtifactMesh (packaging) + rig de iluminación | 🔍 Revisión Interna / QA | DEV | `feat/dev-11-packaging-mesh` | PR → `feat/dev-10-fluid-shader` | El artefacto 3D de este proyecto es el **packaging**. Fallback procedural (caja clamshell) hasta que llegue `hero_artifact.glb` (ART-13). Falta verificar dispose con el `.glb` real |
 | DEV-19 · Sección narrativa 1: ingredientes + packaging | 🔍 Revisión Interna / QA | DEV | `feat/dev-19-ingredientes-packaging` | PR → `feat/dev-11-packaging-mesh` | Copy y specs **provisionales** en `src/content/producto.ts` (⏳ esperando branding y ficha técnica del cliente). Pendiente: en móvil el packaging 3D queda detrás del final de la ficha; ajustar con el diseño final (ART-05) |
+| DOCS · README con lista de archivos + script de frames | 🔍 Revisión Interna / QA | DEV | `docs/readme-assets-hamburguesa` | PR → `feat/dev-19-ingredientes-packaging` | Lista de lo que debe entregar el cliente y arte; `npm run frames` (ffmpeg) para ART-10 |
 
-**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11 → DEV-19.
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11 → DEV-19 → DOCS (README).
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -45,6 +46,7 @@
 | 19-11-2026 | DEV-11 | `HeroArtifactMesh` = packaging 3D: GLTF + Draco/Meshopt/KTX2, caja procedural sin `.glb`, dispose al desmontar, revelado por `packagingReveal` (store transiente) con `damp()`, pose fija con reduced motion. `LightingRig`: luces PBR + HDRI opcional (sin HDRI → solo luces) | `feat/dev-11-packaging-mesh` | 🔍 PR abierto |
 | 19-11-2026 | DEV-10/11 | Fix: el import del material se eliminaba (solo se usaba como tipo) y R3F no encontraba `<fluidBackgroundMaterial>` → import con efecto. Ajuste de escala y tono del packaging procedural | `feat/dev-10-fluid-shader`, `feat/dev-11-packaging-mesh` | 🔍 PR abierto |
 | 19-11-2026 | DEV-19 | Página de la hamburguesa: hero → secuencia pinneada con 6 callouts de ingredientes sincronizados por `sequenceProgress` (sin setState) → sección packaging con ficha técnica (`<dl>`) y revelado del modelo 3D por ScrollTrigger → CTA. Todo el texto en `src/content/producto.ts`. Probado en Chrome headless 1440×900 y 390×844: 2 canvas (WebGL + 2D), sin errores, solo 404 esperados de assets faltantes | `feat/dev-19-ingredientes-packaging` | 🔍 PR abierto |
+| 19-11-2026 | DOCS | `README.md`: experiencia por secciones, **lista de archivos necesarios** (branding, contenido, video, frames, `.glb`, pósters, audio) con especificación del video de la hamburguesa y del modelo del packaging; `scripts/video-to-frames.mjs` (`npm run frames`) genera desktop 1600 px / mobile 800 px con el mismo conteo | `docs/readme-assets-hamburguesa` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
