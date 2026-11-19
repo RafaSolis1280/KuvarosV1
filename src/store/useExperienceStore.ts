@@ -16,6 +16,8 @@ interface ExperienceState {
   scrollY: number;
   scrollVelocity: number;
   scrollProgress: number;
+  /** Progreso 0-1 del playhead de la secuencia pinneada (DEV-09). Lo leen los overlays por suscripción. */
+  sequenceProgress: number;
   /** Objeto MUTABLE: se modifica in situ para no generar basura en cada pointermove */
   pointerNDC: { x: number; y: number };
 
@@ -38,6 +40,7 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   scrollY: 0,
   scrollVelocity: 0,
   scrollProgress: 0,
+  sequenceProgress: 0,
   pointerNDC: { x: 0, y: 0 },
 
   setGPUTier: (tier) => set({ gpuPolicy: GPU_STRICT_POLICIES[tier] }),

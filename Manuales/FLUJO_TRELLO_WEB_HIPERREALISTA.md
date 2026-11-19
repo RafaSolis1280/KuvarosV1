@@ -22,9 +22,9 @@
 | DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | DEV | `feat/dev-06-smooth-scroll` | PR → `feat/dev-05-gpu-policy-store` | Falta probar en navegador: tier en consola y scroll sin doble RAF |
 | DOCS · Registro de avance en Trello y gobernanza | 🔍 Revisión Interna / QA | DEV | `docs/trello-registro-avance` | PR → `feat/dev-06-smooth-scroll` | Esta sección + regla en la guía de GitHub |
 | DEV-07 · GlobalCanvas + PerformanceMonitor | 🔍 Revisión Interna / QA | DEV | `feat/dev-07-global-canvas` | PR → `docs/trello-registro-avance` | Probado en Chrome headless: 1 solo `<canvas>`; sin WebGL → 0 canvas y la página sigue funcionando |
-| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🗓️ Sprint Actual (siguiente) | DEV | `feat/dev-09-image-sequence` (por crear) | — | Depende de DEV-06. Se prueba con el fallback hasta que lleguen los frames de ART-10 |
+| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | DEV | `feat/dev-09-image-sequence` | PR → `feat/dev-07-global-canvas` | Probado con `/public/sequences` vacío → fallback procedural. Falta probar con los frames reales de ART-10 (video de la hamburguesa) |
 
-**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07.
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09.
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -37,6 +37,7 @@
 | 19-11-2026 | DEV-06 | `SmoothScrollProvider`: Lenis (`autoRaf:false`) con `gsap.ticker`, sin Lenis con reduced motion, detect-gpu con benchmarks propios, puntero mutable, pausa con `visibilitychange`; montado en el layout | `07737d6` · `feat/dev-06-smooth-scroll` | 🔍 PR abierto |
 | 19-11-2026 | DOCS | §0 de este archivo, regla de actualización obligatoria en la guía de GitHub y en `CLAUDE.md`, plantilla de PR | `9f7d539` · `docs/trello-registro-avance` | 🔍 PR abierto |
 | 19-11-2026 | DEV-07 | `GlobalCanvas`: un solo `<Canvas>` fijo con `dpr` y `antialias` según la política, `frameloop` en pausa con la pestaña oculta, `PerformanceMonitor` (`flipflops={3}`, `onDecline` baja un tier, `onFallback` → Tier 1), no se monta sin WebGL, barrera de errores que retira el canvas si WebGL falla; carga diferida con `next/dynamic` (`ssr:false`) para proteger el LCP | `feat/dev-07-global-canvas` | 🔍 PR abierto |
+| 19-11-2026 | DEV-09 | `ImageSequenceCanvas`: ventana deslizante de `ImageBitmap` (radio por tier), `close()` fuera de ventana, frame más cercano mientras decodifica, flush al cambiar de tier, fallback solo si falta el frame 1, `aria-label`, capa DOM pinneada para overlays y `sequenceProgress` transiente en el store; montada en la página | `feat/dev-09-image-sequence` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -504,7 +505,7 @@ Ref. M Parte II §8. `flipflops={3}`, `onFallback`, no se monta si `webglAvailab
 ### FASE 5 · EXPERIENCIA INMERSIVA — Semanas 4-6 → **G5**
 
 **DEV-09 · ImageSequenceCanvas (ventana deslizante)** — DEV · `Dev-WebGL` `⚠` `P0` · 8 h · G5 · ← DEV-06
-> 📍 **Estado:** 🗓️ Sprint Actual (siguiente) · rama `feat/dev-09-image-sequence` (por crear)
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-09-image-sequence`
 *PLANTILLA Componente WebGL.* Ref. M Parte II §7. Prompt P3.
 - [ ] Fallback solo si falta el frame 1
 - [ ] Dibuja el frame más cercano
