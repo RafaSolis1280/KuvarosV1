@@ -39,3 +39,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- Proyecto (Guía de gobernanza §2.A.3) ---
+# Archivos crudos de edición / IA: viven en Drive, nunca en Git (solo los optimizados en /public)
+raw-assets/
+*.blend
+*.blend1
+*.mp4
+*.mov
+*.psd
+
+# Generados por `postinstall` (scripts/copy-decoders.mjs)
+/public/draco/
+/public/basis/
+/public/benchmarks/

@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Binarios/decodificadores generados por scripts/copy-decoders.mjs
+    "public/draco/**",
+    "public/basis/**",
+    "public/benchmarks/**",
   ]),
 ]);
 
