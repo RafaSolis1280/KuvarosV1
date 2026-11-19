@@ -23,8 +23,14 @@
 | DOCS · Registro de avance en Trello y gobernanza | 🔍 Revisión Interna / QA | DEV | `docs/trello-registro-avance` | PR → `feat/dev-06-smooth-scroll` | Esta sección + regla en la guía de GitHub |
 | DEV-07 · GlobalCanvas + PerformanceMonitor | 🔍 Revisión Interna / QA | DEV | `feat/dev-07-global-canvas` | PR → `docs/trello-registro-avance` | Probado en Chrome headless: 1 solo `<canvas>`; sin WebGL → 0 canvas y la página sigue funcionando |
 | DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | DEV | `feat/dev-09-image-sequence` | PR → `feat/dev-07-global-canvas` | Probado con `/public/sequences` vacío → fallback procedural. Falta probar con los frames reales de ART-10 (video de la hamburguesa) |
+| DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | DEV | `feat/dev-10-fluid-shader` | PR → `feat/dev-09-image-sequence` | Falta probar en Android de gama media (artefactos de precisión) |
+| DEV-11 · HeroArtifactMesh (packaging) + rig de iluminación | ❌ Descartada (decisión del cliente, 19-11-2026) | DEV | `feat/dev-11-packaging-mesh` | Se fusiona igual por el stack; DEV-37 retira el código | **El proyecto no usa modelos 3D.** Reemplazada por DEV-37 |
+| DEV-19 · Sección narrativa 1: ingredientes + packaging | 🔍 Revisión Interna / QA | DEV | `feat/dev-19-ingredientes-packaging` | PR → `feat/dev-11-packaging-mesh` | Copy y specs **provisionales** en `src/content/producto.ts` (⏳ esperando branding y ficha técnica del cliente). Pendiente: en móvil el packaging 3D queda detrás del final de la ficha; ajustar con el diseño final (ART-05) |
+| DOCS · README con lista de archivos + script de frames | 🔍 Revisión Interna / QA | DEV | `docs/readme-assets-hamburguesa` | PR → `feat/dev-19-ingredientes-packaging` | Lista de lo que debe entregar el cliente y arte; `npm run frames` (ffmpeg) para ART-10 |
+| DEV-37 · Packaging como video (proyecto 100 % video, sin `.glb`) | 🔍 Revisión Interna / QA | DEV | `feat/dev-37-packaging-video` | PR → `docs/readme-assets-hamburguesa` | Segunda secuencia `packaging_reveal` con la ficha técnica sincronizada. Probado con fallback; falta el video real del packaging |
+| DOCS · Manuales actualizados (solo video + correcciones v2.1) | 🔍 Revisión Interna / QA | DEV | `docs/manuales-solo-video` | PR → `feat/dev-37-packaging-video` | Manual v2.1, `CLAUDE.md`, guía de gobernanza y este tablero |
 
-**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09.
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11 → DEV-19 → DOCS (README) → DEV-37 → DOCS (manuales).
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -38,12 +44,23 @@
 | 19-11-2026 | DOCS | §0 de este archivo, regla de actualización obligatoria en la guía de GitHub y en `CLAUDE.md`, plantilla de PR | `9f7d539` · `docs/trello-registro-avance` | 🔍 PR abierto |
 | 19-11-2026 | DEV-07 | `GlobalCanvas`: un solo `<Canvas>` fijo con `dpr` y `antialias` según la política, `frameloop` en pausa con la pestaña oculta, `PerformanceMonitor` (`flipflops={3}`, `onDecline` baja un tier, `onFallback` → Tier 1), no se monta sin WebGL, barrera de errores que retira el canvas si WebGL falla; carga diferida con `next/dynamic` (`ssr:false`) para proteger el LCP | `feat/dev-07-global-canvas` | 🔍 PR abierto |
 | 19-11-2026 | DEV-09 | `ImageSequenceCanvas`: ventana deslizante de `ImageBitmap` (radio por tier), `close()` fuera de ventana, frame más cercano mientras decodifica, flush al cambiar de tier, fallback solo si falta el frame 1, `aria-label`, capa DOM pinneada para overlays y `sequenceProgress` transiente en el store; montada en la página | `feat/dev-09-image-sequence` | 🔍 PR abierto |
+| 19-11-2026 | DEV-10 | `FluidBackgroundMaterial` (GLSL de three, hash sin `sin()`) + `BackgroundShaderQuad` con uniforms por `damp()`, lectura transiente del store y tiempo congelado con reduced motion; montado en `GlobalCanvas` | `feat/dev-10-fluid-shader` | 🔍 PR abierto |
+| 19-11-2026 | DEV-11 | `HeroArtifactMesh` = packaging 3D: GLTF + Draco/Meshopt/KTX2, caja procedural sin `.glb`, dispose al desmontar, revelado por `packagingReveal` (store transiente) con `damp()`, pose fija con reduced motion. `LightingRig`: luces PBR + HDRI opcional (sin HDRI → solo luces) | `feat/dev-11-packaging-mesh` | 🔍 PR abierto |
+| 19-11-2026 | DEV-10/11 | Fix: el import del material se eliminaba (solo se usaba como tipo) y R3F no encontraba `<fluidBackgroundMaterial>` → import con efecto. Ajuste de escala y tono del packaging procedural | `feat/dev-10-fluid-shader`, `feat/dev-11-packaging-mesh` | 🔍 PR abierto |
+| 19-11-2026 | DEV-19 | Página de la hamburguesa: hero → secuencia pinneada con 6 callouts de ingredientes sincronizados por `sequenceProgress` (sin setState) → sección packaging con ficha técnica (`<dl>`) y revelado del modelo 3D por ScrollTrigger → CTA. Todo el texto en `src/content/producto.ts`. Probado en Chrome headless 1440×900 y 390×844: 2 canvas (WebGL + 2D), sin errores, solo 404 esperados de assets faltantes | `feat/dev-19-ingredientes-packaging` | 🔍 PR abierto |
+| 19-11-2026 | DOCS | `README.md`: experiencia por secciones, **lista de archivos necesarios** (branding, contenido, video, frames, `.glb`, pósters, audio) con especificación del video de la hamburguesa y del modelo del packaging; `scripts/video-to-frames.mjs` (`npm run frames`) genera desktop 1600 px / mobile 800 px con el mismo conteo | `docs/readme-assets-hamburguesa` | 🔍 PR abierto |
+| 19-11-2026 | DEV-37 | **Decisión del cliente: solo video hiperrealista, sin modelos 3D.** Se eliminan `HeroArtifactMesh`, `LightingRig` y `PackagingSection`; el packaging pasa a ser la secuencia `packaging_reveal` con `PackagingSpecs` (panel + specs que aparecen por tramos). `sequenceProgress` pasa a ser por id (varias secuencias). Fuera del manifiesto: `.glb`, HDRI, Draco/Basis (ya no se copian en `postinstall`). El GlobalCanvas queda solo con el shader de fondo | `feat/dev-37-packaging-video` | 🔍 PR abierto |
+| 19-11-2026 | DEV-37 (fix) | Bug de DEV-04: el color `--color-base` chocaba con la utilidad `text-base` y pintaba textos del color del fondo (bajada del hero y ficha del packaging invisibles en desktop) → token renombrado a `surface`. `ImageSequenceCanvas` ya no pide frames antes de comprobar el frame 1 (de 20 a 2 peticiones 404 sin assets). Probado en Chrome headless 1440×900 y 390×844 | `feat/dev-37-packaging-video` | 🔍 PR abierto |
+| 19-11-2026 | DOCS | Manual → **v2.1**: Fase 3 y `HeroArtifactMesh` marcados como opcionales, Anexo A #36-40 (import con efecto de `extend()`, sondeo antes de pedir frames, token `base` vs `text-base`, progreso por secuencia, script de frames) y **Anexo B** (decisiones del proyecto: 100 % video). Código de la Parte II corregido también en `CLAUDE.md`. Guía de GitHub: `git lfs track` con `*.webp`, `*.m4a`, `*.mp4`, `*.mov` | `docs/manuales-solo-video` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
 - **G1 / G2 sin aprobar:** DIR-01…05 y ART-01…05 siguen en Backlog. DEV avanzó en paralelo con la base técnica, que no depende del arte (ruta crítica, §6). La paleta y las fuentes reales entran en DEV-08, después de ART-03 y ART-04.
 - **Vercel:** las Preview URLs aún no están conectadas (pendiente de DEV-04).
 - **DIR-03:** `LICENCIAS.md` creado como plantilla; falta completarlo.
+- **⏳ Esperando cliente:** branding (paleta, logo, fuentes → DEV-08) y ficha técnica del packaging + descripción de ingredientes (→ `src/content/producto.ts`).
+- **⏳ Assets (ART-08 / ART-10 / ART-12):** **dos videos hiperrealistas** (hamburguesa separándose y packaging) → frames WebP; pósters de fallback. Sin modelos 3D. Lista completa en el `README.md`.
+- **Alcance reducido (cliente, 19-11-2026):** ART-13, ART-14, DEV-03 y DEV-11 descartadas (sin 3D). ART-08/09/10 cubren ahora los dos videos.
 
 ---
 
@@ -406,6 +423,7 @@ Ref. M Fase 2 Paso 3.
 **GATE-G3 · Key visuals + coherencia lumínica** — Cliente + DIR · ← ART-06, ART-07
 
 **ART-08 · Generación de la secuencia IA Hero** — ART · `IA-Video` `P0` · 10 h · G4 · ← G3
+> 📍 En este proyecto: **dos videos** — hamburguesa separándose (`hero_explode`) y packaging (`packaging_reveal`). Especificación en el `README.md`.
 *Usar la PLANTILLA Asset IA-Video.* Ref. M Fase 2 Paso 4 (verificar el flujo vigente de la herramienta).
 ✔ Clip master sin morphing, aprobado frame a frame.
 
@@ -435,14 +453,17 @@ Ref. M Fase 2 Paso 5 (corrección: **mismo fps**).
 ### FASE 3 · MODELADO 3D Y OPTIMIZACIÓN — Semanas 3-5 → **G4**
 
 **ART-13 · Modelo 3D Hero (Blender)** — ART · `3D` `P0` · 16 h · G4 · ← G2
+> ❌ **Descartada en este proyecto** (decisión del cliente 19-11-2026: solo video hiperrealista, sin 3D). Ver DEV-37.
 *Usar la PLANTILLA Modelo 3D.* Ref. M Fase 3 Pasos 6-7.
 ✔ Polycount dentro del presupuesto; materiales PBR correctos.
 
 **ART-14 · HDRI de estudio** — ART · `3D` `P1` · 2 h · G4
+> ❌ **Descartada en este proyecto** (decisión del cliente 19-11-2026: solo video hiperrealista, sin 3D). Ver DEV-37.
 - [ ] `.hdr` < 1 MB coherente con la luz de ART-03
 ✔ En `/public/hdri/studio_dark_01.hdr`.
 
 **DEV-03 · Pipeline de compresión .glb** — DEV · `3D` `Dev-WebGL` `⚠` `P0` · 4 h · G4 · ← ART-13
+> ❌ **Descartada en este proyecto** (decisión del cliente 19-11-2026: solo video hiperrealista, sin 3D). Ver DEV-37.
 Ref. M Fase 3 Paso 8.
 - [ ] Instalar `@gltf-transform/cli` + KTX-Software ≥ 4.3
 - [ ] Script `scripts/optimize-glb.sh` con `--slots` (UASTC datos / ETC1S color) y Draco **o** Meshopt
@@ -514,14 +535,16 @@ Ref. M Parte II §8. `flipflops={3}`, `onFallback`, no se monta si `webglAvailab
 ✔ Con `/public` vacío muestra el fallback; con los assets reales, scrub fluido sin frames en blanco.
 
 **DEV-10 · Shader de fondo (fluido)** — DEV · `Dev-WebGL` `P1` · 6 h · G5 · ← DEV-07
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-10-fluid-shader`
 Ref. M Parte II §8. Prompt P4. Hash sin `sin()`.
 ✔ Sin artefactos en Android de gama media.
 
 **DEV-11 · HeroArtifactMesh + rig de iluminación** — DEV · `Dev-WebGL` `3D` `P0` · 8 h · G5 · ← DEV-07 (y DEV-03 para el asset real)
+> ❌ **Descartada en este proyecto** (decisión del cliente 19-11-2026: solo video hiperrealista, sin 3D). Ver DEV-37.
 Ref. M Parte II §8. Prompt P5.
 ✔ Fallback procedural sin `.glb`; con el `.glb`, dispose verificado al desmontar.
 
-**DEV-12 · Integrar assets reales en la vertical slice** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← G4, DEV-09, DEV-11
+**DEV-12 · Integrar assets reales en la vertical slice** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← G4, DEV-09, DEV-37 (los dos videos)
 ✔ Hero + secuencia + CTA con assets definitivos en la preview.
 
 **DEV-13 · Preloader por prioridades** — DEV · `Dev-UI` `P1` · 6 h · G5 · ← DEV-12
@@ -565,6 +588,7 @@ Ref. M Fase 5 Paso 16.
 
 **DEV-19 a DEV-2X · Secciones narrativas** — DEV · `Dev-UI` `P1` · 6 h c/u · G6 · ← ART-05, DIR-05
 *Una tarjeta por sección del storyboard* (PLANTILLA Sección UI).
+> 📍 **Estado:** DEV-19 (ingredientes + packaging) en 🔍 Revisión Interna / QA · rama `feat/dev-19-ingredientes-packaging`
 
 **DEV-23 · Transiciones entre secciones** — DEV · `Dev-WebGL` `Dev-UI` `P1` · 8 h · G6 · ← DEV-19…
 Ref. M Fase 6 Paso 19 (coreografía de cámara, clip-path, máscara de ruido).

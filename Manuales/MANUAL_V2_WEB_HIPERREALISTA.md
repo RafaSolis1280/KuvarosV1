@@ -1,7 +1,7 @@
 # MANUAL PROFESIONAL DE DESARROLLO WEB HIPERREALISTA — v2.0 (UNIFICADO Y CORREGIDO)
 ## Metodología de Ingeniería Creativa para Experiencias Digitales Inmersivas
 
-**Versión:** 2.0 · **Fecha:** 19-11-2026 · **Estado:** Documento maestro del estudio
+**Versión:** 2.1 · **Fecha:** 19-11-2026 · **Estado:** Documento maestro del estudio (v2.1: correcciones detectadas en el primer proyecto, ver Anexo A #36-40, y Anexo B)
 **Reemplaza a:** `# MANUAL PROFESIONAL DE DESARROLLO.txt` (v0), `manual_profesional_de_desarrollo_web_hiperrealista.md` (v1) y `especificaci_n_t_cnica_de_c_digo_para_agente_de_ia.md` (spec v1).
 **Flujo operativo asociado:** `FLUJO_TRELLO_WEB_HIPERREALISTA.md`
 
@@ -13,7 +13,8 @@
 > - **Parte I:** metodología para todo el equipo (DIR, ART, DEV).
 > - **Parte II:** especificación de código para el agente de IA (Claude Code). Puede copiarse como `CLAUDE.md` del proyecto.
 > - **Parte III:** checklists de lanzamiento.
-> - **Anexo A:** registro de cambios v1 → v2, con cada corrección técnica y su motivo.
+> - **Anexo A:** registro de cambios v1 → v2 (y v2.1), con cada corrección técnica y su motivo.
+> - **Anexo B:** adaptación del proyecto en curso (landing de la hamburguesa, 100 % video).
 > - Los bloques **⚠️ Corrección v2** marcan dónde la versión anterior tenía un error.
 
 ---
@@ -155,6 +156,8 @@ ffmpeg -i animation_master.mp4 \
 ---
 
 ## FASE 3. MODELADO 3D Y OPTIMIZACIÓN GPU REAL-TIME
+
+> **Fase opcional.** Solo aplica si el proyecto incluye objetos 3D en tiempo real. En un proyecto *solo video* (p. ej. el actual, Anexo B) se omite completa: el producto se presenta con secuencias de la Fase 2.
 
 ### Paso 6. Obtener los modelos
 
@@ -831,6 +834,7 @@ export default function ImageSequenceCanvas({
     let loading: boolean[] = new Array(count).fill(false);
     let generation = 0;             // invalida cargas en vuelo al cambiar de variante
     let fallback = false;
+    let probed = false;             // no se piden frames hasta saber si existe el frame 1 (v2.1)
     let drawn = -1;
     const playhead = { progress: 0 };
 
@@ -872,7 +876,7 @@ export default function ImageSequenceCanvas({
     };
 
     const syncWindow = (center: number) => {
-      if (fallback) return;
+      if (fallback || !probed) return;
       const R = getPolicy().sequenceWindowRadius;
       const min = Math.max(0, center - R);
       const max = Math.min(count - 1, center + R);
@@ -922,7 +926,7 @@ export default function ImageSequenceCanvas({
     fetch(frameUrl(0), { method: "HEAD" })
       .then((r) => { if (!r.ok) fallback = true; })
       .catch(() => { fallback = true; })
-      .finally(() => { drawn = -1; render(); });
+      .finally(() => { probed = true; drawn = -1; render(); });
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, getPolicy().dpr[1]);
@@ -1042,6 +1046,8 @@ declare module "@react-three/fiber" {
 
 ### `src/components/canvas/HeroArtifactMesh.tsx`
 
+> **Opcional según el proyecto.** Si el cliente pide solo video (sin modelos 3D), este componente, el HDRI y el pipeline `.glb` (Fase 3) no se usan: el producto se cuenta con secuencias (§7). Ver Anexo B del Manual.
+
 ```tsx
 "use client";
 
@@ -1153,7 +1159,10 @@ import * as THREE from "three";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { damp } from "@/lib/math";
 import HeroArtifactMesh from "./HeroArtifactMesh";
-import { FluidBackgroundMaterial } from "./shaders/FluidBackgroundMaterial";
+// Import con efecto (v2.1): registra el material con extend(). Si solo se usara como tipo,
+// TypeScript eliminaría el import y R3F no encontraría <fluidBackgroundMaterial>.
+import "./shaders/FluidBackgroundMaterial";
+import type { FluidBackgroundMaterial } from "./shaders/FluidBackgroundMaterial";
 
 type FluidMat = InstanceType<typeof FluidBackgroundMaterial> & {
   uTime: number; uScrollVelocity: number; uPointer: THREE.Vector2;
@@ -1393,6 +1402,25 @@ Antes de dar una tarea por terminada:
 | 33 | v0 (.txt) | Etiquetas `<Link>` no estándar | Enlaces Markdown |
 | 34 | Todos | Faltaban Fase 0 (brief/budget), licencias IA, WCAG 2.2, Sentry, cookies, seguridad de formularios, fallback sin WebGL y matriz de dispositivos | Agregados en Fase 0, Pasos 24-26 y Parte III |
 | 35 | Spec §9 | Página demo sin enlace de salto, foco visible ni CTA real | Skip link, `focus-visible`, `aria-label` y CTA funcional |
+| 36 | Spec §8 (v2.1) | `GlobalCanvas` importaba `FluidBackgroundMaterial` solo como tipo → TypeScript elimina el import, `extend()` no corre y R3F lanza *"not part of the THREE namespace"* (el canvas cae al fallback) | Import con efecto `import "./shaders/FluidBackgroundMaterial"` + `import type` |
+| 37 | Spec §7 (v2.1) | Sin assets, la ventana pedía ~2R frames antes de que el HEAD del frame 1 respondiera (ráfaga de 404) | Flag `probed`: no se sincroniza la ventana hasta resolver el sondeo |
+| 38 | DEV-08 / tokens (v2.1) | Un color de `@theme` llamado `base` choca con la utilidad de tamaño `text-base` de Tailwind v4 y pinta el texto del color del fondo | No usar nombres de tamaños (`base`, `sm`, `lg`, `xl`…) como nombres de color; usar `surface`, `ink`, `accent`… |
+| 39 | Spec §5/§7 (v2.1) | Un solo `sequenceProgress` numérico no sirve con dos o más secuencias en la página | `sequenceProgress: Record<id, number>` y prop `sequenceId` en `ImageSequenceCanvas`; los overlays se suscriben por id |
+| 40 | Paso 5 (v2.1) | Conversión video → frames manual y propensa a conteos distintos por variante | Script `scripts/video-to-frames.mjs` (`npm run frames`): fps calculado para un conteo exacto y mismo número de frames en desktop/mobile |
+
+---
+
+# ANEXO B — ADAPTACIÓN DEL PROYECTO EN CURSO (landing de la hamburguesa)
+
+> Registro de decisiones de alcance de este proyecto. No cambia la metodología general; indica qué partes se aplican.
+
+| Tema | Decisión | Fecha / origen | Consecuencia |
+| :--- | :--- | :--- | :--- |
+| Formato visual | **100 % video hiperrealista, sin modelos 3D** | 19-11-2026 · cliente | Fase 3 completa omitida; sin `.glb`, HDRI, Draco ni KTX2; `HeroArtifactMesh` no se implementa. Tarjetas ART-13, ART-14, DEV-03 y DEV-11 descartadas; DEV-37 la reemplaza |
+| Narrativa | Hero → **video 1:** la hamburguesa se separa por capas con fichas de ingredientes por tramos → **video 2:** el packaging con su ficha técnica → CTA | Brief del cliente | Dos secuencias: `/sequences/hero_explode` y `/sequences/packaging_reveal` (120 frames, desktop 1600 px / mobile 800 px) |
+| WebGL | Se conserva el único `<Canvas>` solo para el shader de fondo (DEV-10) | DEV | Puede retirarse si DIR lo pide; las secuencias son Canvas 2D y funcionan sin WebGL |
+| Contenido | Todo el copy en `src/content/producto.ts` (provisional hasta recibir branding y ficha técnica) | DEV | DIR-05 / DEV-08 solo editan ese archivo y `@theme` |
+| Assets requeridos | Lista oficial y especificación de los dos videos en el `README.md` del repo | DEV | ART-08/09/10 cubren ambos videos |
 
 ---
 

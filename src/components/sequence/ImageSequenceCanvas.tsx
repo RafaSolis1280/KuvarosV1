@@ -4,8 +4,8 @@
 // - Solo [f-R, f+R] decodificados (R = gpuPolicy.sequenceWindowRadius); el resto se cierra con close().
 // - Fallback procedural SOLO si falta el frame 1 (Hard Constraint 4).
 // - Flush de caché al cambiar de tier/variante.
-// - El progreso se publica en el store transiente (`sequenceProgress`) para que los overlays
-//   (callouts de ingredientes) se sincronicen sin setState de React (Hard Constraint 1).
+// - El progreso se publica en el store transiente (`sequenceProgress[sequenceId]`) para que los
+//   overlays (ingredientes, specs del packaging) se sincronicen sin setState de React (Hard Constraint 1).
 
 import { useEffect, useRef, type ReactNode } from "react";
 import gsap from "gsap";
@@ -16,6 +16,8 @@ import type { SequenceVariant } from "@/config/gpu-policy";
 gsap.registerPlugin(ScrollTrigger);
 
 interface Props {
+  /** Id de la secuencia: clave de su progreso en el store (`sequenceProgress[sequenceId]`) */
+  sequenceId: string;
   /** p. ej. "/sequences/hero_explode" */
   sequenceFolder: string;
   /** Conteo por variante. Pasar una referencia estable (constante del manifiesto). */
@@ -30,6 +32,7 @@ interface Props {
 }
 
 export default function ImageSequenceCanvas({
+  sequenceId,
   sequenceFolder,
   totalFrames,
   scrollDistance = 2600,
@@ -56,6 +59,7 @@ export default function ImageSequenceCanvas({
     let loading: boolean[] = new Array(count).fill(false);
     let generation = 0; // invalida cargas en vuelo al cambiar de variante o desmontar
     let fallback = false;
+    let probed = false; // no se piden frames hasta saber si existe el frame 1 (evita una ráfaga de 404)
     let drawn = -1;
     const playhead = { progress: 0 };
 
@@ -80,7 +84,7 @@ export default function ImageSequenceCanvas({
       ctx.fillStyle = accentColor;
       ctx.font = `bold ${Math.max(14, Math.floor(w * 0.012))}px monospace`;
       ctx.textAlign = "center";
-      ctx.fillText(`[FALLBACK] FRAME ${i + 1}/${count}`, w / 2, h * 0.88);
+      ctx.fillText(`[FALLBACK] ${sequenceId.toUpperCase()} · FRAME ${i + 1}/${count}`, w / 2, h * 0.88);
     };
 
     const drawCover = (bmp: ImageBitmap) => {
@@ -99,7 +103,7 @@ export default function ImageSequenceCanvas({
     };
 
     const syncWindow = (center: number) => {
-      if (fallback) return;
+      if (fallback || !probed) return;
       const R = getPolicy().sequenceWindowRadius;
       const min = Math.max(0, center - R);
       const max = Math.min(count - 1, center + R);
@@ -143,7 +147,11 @@ export default function ImageSequenceCanvas({
     };
 
     const render = () => {
-      useExperienceStore.setState({ sequenceProgress: playhead.progress }); // escritura transiente
+      // Escritura transiente (sin setState de React): solo cuando cambia el progreso
+      const prog = useExperienceStore.getState().sequenceProgress;
+      if (prog[sequenceId] !== playhead.progress) {
+        useExperienceStore.setState({ sequenceProgress: { ...prog, [sequenceId]: playhead.progress } });
+      }
       const i = currentIndex();
       syncWindow(i);
       if (fallback) {
@@ -180,6 +188,7 @@ export default function ImageSequenceCanvas({
       })
       .finally(() => {
         if (!alive) return;
+        probed = true;
         drawn = -1;
         render();
       });
@@ -225,10 +234,10 @@ export default function ImageSequenceCanvas({
       bitmaps.forEach((b) => b?.close());
       bitmaps = [];
     };
-  }, [sequenceFolder, totalFrames, scrollDistance, accentColor]);
+  }, [sequenceId, sequenceFolder, totalFrames, scrollDistance, accentColor]);
 
   return (
-    <section ref={containerRef} id={id} className="relative h-screen w-full overflow-hidden bg-base">
+    <section ref={containerRef} id={id} className="relative h-screen w-full overflow-hidden bg-surface">
       <canvas ref={canvasRef} className="block h-full w-full" role="img" aria-label={ariaLabel} />
       {children ? <div className="pointer-events-none absolute inset-0">{children}</div> : null}
     </section>

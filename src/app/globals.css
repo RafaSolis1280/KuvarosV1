@@ -5,14 +5,15 @@
  * La paleta oficial y las fuentes llegan con ART-03 / ART-04 y se integran en DEV-08.
  */
 @theme {
-  --color-base: #0a0a0a;
+  /* No llamar "base" a un color: chocaría con la utilidad de tamaño `text-base` (pintaría el texto del color del fondo). */
+  --color-surface: #0a0a0a;
   --color-accent: #ffd645;
   --color-ink: #ffffff;
   --color-muted: #a1a1aa;
 }
 
 html {
-  background-color: var(--color-base);
+  background-color: var(--color-surface);
   color: var(--color-ink);
   color-scheme: dark;
 }
