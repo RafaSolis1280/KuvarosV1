@@ -38,12 +38,12 @@ function ProceduralPackaging() {
   return (
     <group>
       <RoundedBox args={[1.9, 0.8, 1.9]} radius={0.08} smoothness={3} position={[0, -0.4, 0]}>
-        <meshStandardMaterial color="#1a1a1a" metalness={0.2} roughness={0.55} />
+        <meshStandardMaterial color="#3a3530" metalness={0.1} roughness={0.6} />
       </RoundedBox>
       {/* Tapa con bisagra en el borde trasero */}
       <group position={[0, 0, -0.95]} rotation={[-0.35, 0, 0]}>
         <RoundedBox args={[1.9, 0.6, 1.9]} radius={0.08} smoothness={3} position={[0, 0.3, 0.95]}>
-          <meshStandardMaterial color="#202020" metalness={0.2} roughness={0.5} />
+          <meshStandardMaterial color="#46403a" metalness={0.1} roughness={0.55} />
         </RoundedBox>
       </group>
       <mesh position={[0, -0.4, 0.951]}>
@@ -100,7 +100,7 @@ export default function HeroArtifactMesh() {
     const wide = state.viewport.aspect > 1;
 
     // Escala: aparece con el revelado. Con reduced motion no hay animación: salta al valor final.
-    const targetScale = packagingReveal > 0.02 ? (wide ? 0.9 : 0.7) * Math.min(1, packagingReveal * 1.4) : 0.0001;
+    const targetScale = packagingReveal > 0.02 ? (wide ? 0.58 : 0.42) * Math.min(1, packagingReveal * 1.4) : 0.0001;
     const s = motion ? damp(g.scale.x, targetScale, 6, delta) : targetScale;
     g.scale.setScalar(s);
     g.visible = s > 0.01;
