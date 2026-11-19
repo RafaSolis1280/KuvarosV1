@@ -7,7 +7,10 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { damp } from "@/lib/math";
-import { FluidBackgroundMaterial } from "./shaders/FluidBackgroundMaterial";
+// Import con efecto: registra el material con extend(). Si solo se importara el tipo,
+// TypeScript eliminaría el import y R3F no encontraría <fluidBackgroundMaterial>.
+import "./shaders/FluidBackgroundMaterial";
+import type { FluidBackgroundMaterial } from "./shaders/FluidBackgroundMaterial";
 
 type FluidMat = InstanceType<typeof FluidBackgroundMaterial> & {
   uTime: number;
