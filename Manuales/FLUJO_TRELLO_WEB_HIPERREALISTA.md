@@ -8,6 +8,39 @@
 
 ---
 
+## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
+
+> **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
+> **Última actualización:** 19-11-2026 · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code)
+
+### 0.1 Tarjetas activas
+
+| Tarjeta | Estado (lista) | Responsable | Rama | PR / base | Notas |
+| :--- | :--- | :-: | :--- | :--- | :--- |
+| DEV-04 · Repo, Next.js 16 y CLAUDE.md | 🔍 Revisión Interna / QA | DEV | `feat/dev-04-setup-base` | PR → `develop` | Lint/typecheck/build OK. Falta: conectar Vercel (Preview URL) |
+| DEV-05 · Política de GPU, manifiesto y store | 🔍 Revisión Interna / QA | DEV | `feat/dev-05-gpu-policy-store` | PR → `feat/dev-04-setup-base` | `damp` verificado independiente de FPS |
+| DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | DEV | `feat/dev-06-smooth-scroll` | PR → `feat/dev-05-gpu-policy-store` | Falta probar en navegador: tier en consola y scroll sin doble RAF |
+| DOCS · Registro de avance en Trello y gobernanza | 🔍 Revisión Interna / QA | DEV | `docs/trello-registro-avance` | PR → `feat/dev-06-smooth-scroll` | Esta sección + regla en la guía de GitHub |
+| DEV-07 · GlobalCanvas + PerformanceMonitor | 🗓️ Sprint Actual (siguiente) | DEV | `feat/dev-07-global-canvas` (por crear) | — | Sale de DEV-06 |
+
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS.
+
+### 0.2 Hecho (resumen de lo trabajado)
+
+| Fecha | Tarjeta | Qué se hizo | Commit / rama |
+| :--- | :--- | :--- | :--- |
+| 19-11-2026 | DEV-04 | Dependencias fijadas (three, R3F v9, drei, gsap, lenis, zustand, maath, detect-gpu, howler); `copy-decoders.mjs` en `postinstall`; `next.config.ts` con caché `immutable`; `CLAUDE.md` (Parte II del manual); contrato de carpetas `/public`; `LICENCIAS.md` plantilla; se eliminó el boilerplate; CI con typecheck | `75068d8` · `feat/dev-04-setup-base` |
+| 19-11-2026 | DEV-05 | `gpu-policy.ts` (políticas por tier + `ASSET_MANIFEST`), `math.ts` (`damp`, `clamp`, `mapRange`), `useExperienceStore.ts` | `47f5df7` · `feat/dev-05-gpu-policy-store` |
+| 19-11-2026 | DEV-06 | `SmoothScrollProvider`: Lenis (`autoRaf:false`) con `gsap.ticker`, sin Lenis con reduced motion, detect-gpu con benchmarks propios, puntero mutable, pausa con `visibilitychange`; montado en el layout | `07737d6` · `feat/dev-06-smooth-scroll` |
+
+### 0.3 Bloqueos y dependencias abiertas
+
+- **G1 / G2 sin aprobar:** DIR-01…05 y ART-01…05 siguen en Backlog. DEV avanzó en paralelo con la base técnica, que no depende del arte (ruta crítica, §6). La paleta y las fuentes reales entran en DEV-08, después de ART-03 y ART-04.
+- **Vercel:** las Preview URLs aún no están conectadas (pendiente de DEV-04).
+- **DIR-03:** `LICENCIAS.md` creado como plantilla; falta completarlo.
+
+---
+
 ## 1. ROLES DEL EQUIPO (3 sombreros)
 
 En un equipo pequeño cada persona cubre varios roles. Lo importante es que **cada tarjeta tenga un único responsable**.
@@ -427,6 +460,7 @@ Ref. M Fase 5 Paso 16.
 ### FASE 4 · ARQUITECTURA Y SETUP — Semanas 2-3 (en paralelo con Fase 2)
 
 **DEV-04 · Repo, proyecto Next.js 16 y CLAUDE.md** — DEV · `Dev-WebGL` `P0` · 3 h · G5 · ← G2
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-04-setup-base` · ✅ todo hecho salvo el deploy de Vercel
 Ref. M Parte II §3.
 - [ ] `create-next-app` (TS, Tailwind v4, App Router, `src/`)
 - [ ] Dependencias fijadas (R3F v9 + React 19)
@@ -437,10 +471,12 @@ Ref. M Parte II §3.
 ✔ URL de preview funcionando y `npm run build` limpio.
 
 **DEV-05 · Política de GPU, manifiesto y store** — DEV · `Dev-WebGL` `P0` · 3 h · G5 · ← DEV-04
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-05-gpu-policy-store`
 Ref. M Parte II §4-5. Prompt P1.
 ✔ `gpu-policy.ts` (con `totalFrames` por variante) y `useExperienceStore.ts` con `reducedMotion`/`webglAvailable`.
 
 **DEV-06 · SmoothScrollProvider + detect-gpu** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← DEV-05
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-06-smooth-scroll` · falta prueba en navegador real
 *Usar la PLANTILLA Componente WebGL.* Ref. M Parte II §6. Prompt P2.
 - [ ] `autoRaf:false`, un solo reloj (gsap.ticker)
 - [ ] Sin Lenis con `prefers-reduced-motion`
@@ -449,6 +485,7 @@ Ref. M Parte II §4-5. Prompt P1.
 ✔ Tier detectado visible en consola (en desarrollo); scroll fluido sin doble RAF.
 
 **DEV-07 · GlobalCanvas (Single-Canvas) + PerformanceMonitor** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← DEV-06
+> 📍 **Estado:** 🗓️ Sprint Actual (siguiente) · rama `feat/dev-07-global-canvas` (por crear)
 Ref. M Parte II §8. `flipflops={3}`, `onFallback`, no se monta si `webglAvailable=false`.
 ✔ Un único contexto WebGL (verificado en DevTools).
 

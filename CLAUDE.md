@@ -14,6 +14,7 @@
 - Commits con Conventional Commits: `feat(DEV-05): ...`, `fix(BUG-03): ...`, `chore(DEV-04): ...`.
 - Trabajo por módulos (Manual Paso 20): no tocar archivos fuera del alcance de la tarjeta.
 - Antes de cerrar una tarjeta: ejecutar el **Protocolo de verificación (§10)** — `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Obligatorio: actualizar `Manuales/FLUJO_TRELLO_WEB_HIPERREALISTA.md` §0** (tarjetas activas, hecho, bloqueos) en la misma rama, al crear la rama, al abrir el PR y al cerrar la tarjeta. Indicar siempre rama y tarjeta. Ver Guía de gobernanza §4.
 
 ---
 

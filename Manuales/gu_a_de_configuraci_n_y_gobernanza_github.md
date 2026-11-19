@@ -16,6 +16,9 @@ Para evitar que el código en producción se rompa o que el trabajo de una perso
 | `feat/<tarea>` | Nuevas funcionalidades (ej. `feat/scroll-sequence`, `feat/hero-3d`). | El desarrollador asignado. | Preview URL automática |
 | `fix/<bug>` | Corrección de errores (ej. `fix/ios-vram-leak`). | El desarrollador asignado. | Preview URL automática |
 | `assets/<tipo>` | Subida y optimización de `.glb`, secuencias `.webp` o audio. | Artista 3D / Diseñador. | Preview URL automática |
+| `docs/<tema>` | Cambios solo de documentación (manuales, tablero, guías). | Quien edita el documento. | — |
+
+**Nombre de rama con la tarjeta de Trello:** toda rama de trabajo incluye el ID de su tarjeta, por ejemplo `feat/dev-07-global-canvas` o `assets/art-13-hero-glb`. Los commits también lo llevan, por ejemplo `feat(DEV-07): ...`.
 
 ---
 
@@ -151,6 +154,24 @@ El trabajo del equipo se organiza en la pestaña **Projects** usando un tablero 
 
 ### 4. Entornos de Prueba Automáticos (Vercel Preview URLs)
 El repositorio está conectado a **Vercel**. Cada vez que un integrante sube una rama y abre un Pull Request, Vercel genera automáticamente una URL temporal privada. Esto permite que todo el equipo pruebe las animaciones 3D, los FPS y la memoria VRAM directamente en celulares reales antes de aprobar el código.
+
+---
+
+## 4. Registro de avance obligatorio en el Trello (regla de equipo)
+
+El archivo `Manuales/FLUJO_TRELLO_WEB_HIPERREALISTA.md` es la **única fuente de verdad** del avance, junto con el tablero de Trello. **Toda persona o agente de IA (incluido Claude Code) debe mantenerlo actualizado. No es opcional.**
+
+**Cuándo se edita:**
+1. **Al crear una rama:** agregar o mover la tarjeta en **§0.1 Tarjetas activas**, con estado `🔨 En Progreso`, responsable y nombre de la rama. Marcar también la línea `📍 Estado` de la tarjeta en el backlog.
+2. **Al abrir el PR:** cambiar el estado a `🔍 Revisión Interna / QA` e indicar la rama base del PR.
+3. **Al fusionar:** quitar la tarjeta de §0.1 y registrarla en **§0.2 Hecho**, con fecha, qué se hizo y el commit. Cambiar su `📍 Estado` a `✅ Hecho`.
+4. **Si algo bloquea:** anotarlo en **§0.3 Bloqueos** con el motivo y quién lo desbloquea.
+5. Actualizar siempre la línea **Última actualización** (fecha, sprint y autor).
+
+**Cómo se edita:**
+- El cambio en el Trello va **en la misma rama y en el mismo PR** que el trabajo. No se deja para después ni va en un PR aparte, salvo cambios que son solo de documentación (rama `docs/<tema>`).
+- La plantilla de PR incluye la casilla `[ ] FLUJO_TRELLO actualizado (§0)`. **Un PR sin esa casilla marcada no se aprueba.**
+- El tablero de Trello en línea se mueve al mismo tiempo para que coincida con el archivo.
 
 ---
 
