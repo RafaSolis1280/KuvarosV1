@@ -1,4 +1,4 @@
-// DEV-05 · Ref: Manual v2 Parte II §4. Toda pieza gráfica lee la política activa (GPU_STRICT_POLICY).
+// DEV-05 · Ref: Manual v2 Parte II §4. DEV-37: proyecto solo-video (sin .glb, HDRI ni Draco/KTX2). Toda pieza gráfica lee la política activa (GPU_STRICT_POLICY).
 export type GPUTierLevel = 1 | 2 | 3;
 export type SequenceVariant = "desktop" | "mobile";
 
@@ -23,16 +23,17 @@ export const GPU_STRICT_POLICIES: Record<GPUTierLevel, GPUStrictParameter> = {
 };
 
 export const ASSET_MANIFEST = {
-  dracoPath: "/draco/",
-  basisPath: "/basis/",
   benchmarksURL: "/benchmarks",
-  hdri: "/hdri/studio_dark_01.hdr",
-  heroModel: "/models/hero_artifact.glb",
   heroPoster: "/fallback/hero_poster.webp",
   sequences: {
     heroExplode: {
       basePath: "/sequences/hero_explode",
       // Conteo POR VARIANTE (deben coincidir si se exportan al mismo fps)
+      totalFrames: { desktop: 120, mobile: 120 } satisfies Record<SequenceVariant, number>,
+    },
+    // DEV-37 · El packaging también es video hiperrealista (sin modelo 3D / .glb)
+    packagingReveal: {
+      basePath: "/sequences/packaging_reveal",
       totalFrames: { desktop: 120, mobile: 120 } satisfies Record<SequenceVariant, number>,
     },
   },

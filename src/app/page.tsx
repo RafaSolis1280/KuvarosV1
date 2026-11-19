@@ -1,16 +1,18 @@
-// Página de la hamburguesa. Orden narrativo:
-//   1. Hero (SSR, el <h1> es el LCP)                       → DEV-18 lo convierte en tipografía cinética
-//   2. Secuencia: la hamburguesa se separa capa por capa   → DEV-09 + callouts de ingredientes (DEV-19)
-//   3. Packaging con especificaciones (modelo 3D en canvas) → DEV-11 + DEV-19
-//   4. Conversión                                           → DEV-25 (formulario / WhatsApp)
+// Página de la hamburguesa — experiencia 100 % video hiperrealista (DEV-37: sin modelos 3D).
+// Orden narrativo:
+//   1. Hero (SSR, el <h1> es el LCP)                         → DEV-18 lo convierte en tipografía cinética
+//   2. Video 1: la hamburguesa se separa capa por capa        → DEV-09 + callouts de ingredientes (DEV-19)
+//   3. Video 2: aparece el packaging + ficha técnica          → DEV-37
+//   4. Conversión                                             → DEV-25 (formulario / WhatsApp)
+// Los videos se reproducen como secuencias de frames controladas por el scroll (avanzan y retroceden).
 // Todo el texto sale de src/content/producto.ts (provisional hasta recibir el branding).
 import ImageSequenceCanvas from "@/components/sequence/ImageSequenceCanvas";
 import IngredientCallouts from "@/components/dom/IngredientCallouts";
-import PackagingSection from "@/components/dom/PackagingSection";
+import PackagingSpecs from "@/components/dom/PackagingSpecs";
 import { ASSET_MANIFEST } from "@/config/gpu-policy";
 import { PRODUCTO } from "@/content/producto";
 
-const secuencia = ASSET_MANIFEST.sequences.heroExplode;
+const { heroExplode, packagingReveal } = ASSET_MANIFEST.sequences;
 
 export default function HomePage() {
   const { packaging, cta } = PRODUCTO;
@@ -37,28 +39,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2 · SECUENCIA + INGREDIENTES */}
+      {/* 2 · VIDEO 1: HAMBURGUESA + INGREDIENTES */}
       <div className="relative z-[15]">
         <ImageSequenceCanvas
           id="ingredientes"
-          sequenceFolder={secuencia.basePath}
-          totalFrames={secuencia.totalFrames}
+          sequenceId="hamburguesa"
+          sequenceFolder={heroExplode.basePath}
+          totalFrames={heroExplode.totalFrames}
           scrollDistance={3600}
           ariaLabel={PRODUCTO.secuenciaAria}
         >
-          <IngredientCallouts ingredientes={PRODUCTO.ingredientes} />
+          <IngredientCallouts sequenceId="hamburguesa" ingredientes={PRODUCTO.ingredientes} />
         </ImageSequenceCanvas>
       </div>
 
-      {/* 3 · PACKAGING */}
-      <PackagingSection
-        eyebrow={packaging.eyebrow}
-        titulo={packaging.titulo}
-        descripcion={packaging.descripcion}
-        especificaciones={packaging.especificaciones}
-        nota={packaging.nota}
-        posterAlt={packaging.posterAlt}
-      />
+      {/* 3 · VIDEO 2: PACKAGING + FICHA TÉCNICA */}
+      <div className="relative z-[15]">
+        <ImageSequenceCanvas
+          id="packaging"
+          sequenceId="packaging"
+          sequenceFolder={packagingReveal.basePath}
+          totalFrames={packagingReveal.totalFrames}
+          scrollDistance={2800}
+          ariaLabel={packaging.secuenciaAria}
+        >
+          <PackagingSpecs
+            sequenceId="packaging"
+            eyebrow={packaging.eyebrow}
+            titulo={packaging.titulo}
+            descripcion={packaging.descripcion}
+            especificaciones={packaging.especificaciones}
+            nota={packaging.nota}
+          />
+        </ImageSequenceCanvas>
+      </div>
 
       {/* 4 · CONVERSIÓN */}
       <section

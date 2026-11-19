@@ -16,6 +16,16 @@
 - Antes de cerrar una tarjeta: ejecutar el **Protocolo de verificación (§10)** — `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Obligatorio: actualizar `Manuales/FLUJO_TRELLO_WEB_HIPERREALISTA.md` §0** (tarjetas activas, hecho, bloqueos) en la misma rama, al crear la rama, al abrir el PR y al cerrar la tarjeta. Indicar siempre rama y tarjeta. Ver Guía de gobernanza §4.
 
+## Decisiones de este proyecto (prevalecen sobre la Parte II copiada abajo)
+
+- **Solo video hiperrealista, sin modelos 3D** (decisión del cliente, 19-11-2026, tarjeta DEV-37). No se usan `.glb`,
+  HDRI, Draco ni KTX2: la hamburguesa (`/sequences/hero_explode`) y el packaging (`/sequences/packaging_reveal`) son
+  secuencias de frames controladas por el scroll con `ImageSequenceCanvas`. `HeroArtifactMesh` (§8) no existe en este repo.
+- El único `<Canvas>` WebGL se mantiene solo para el shader de fondo (DEV-10).
+- Todo el texto del sitio vive en `src/content/producto.ts`.
+- Contrato `/public` efectivo: `sequences/hero_explode/{desktop,mobile}`, `sequences/packaging_reveal/{desktop,mobile}`,
+  `fallback/`, `fonts/`, `audio/`, `benchmarks/` (generado), `og-image.jpg`. Detalle en el `README.md`.
+
 ---
 
 # PARTE II — ESPECIFICACIÓN DE CÓDIGO PARA EL AGENTE (`CLAUDE.md`)

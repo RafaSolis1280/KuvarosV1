@@ -4,7 +4,7 @@
 // Un ÚNICO <Canvas> WebGL fijo en toda la app (fixed; inset 0; pointer-events none; z-index 1).
 // Aquí se enchufan, cada uno en su tarjeta:
 //   DEV-10 → <BackgroundShaderQuad /> (shader de fondo fluido)
-//   DEV-11 → rig de iluminación + <HeroArtifactMesh />
+//   (DEV-11 descartada por DEV-37: el proyecto no usa modelos 3D, solo video)
 //   DEV-15 → <EffectComposer> (Bloom + Noise) solo si gpuPolicy.enablePostProcessing
 
 import { Component, type ReactNode } from "react";
@@ -12,8 +12,6 @@ import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import BackgroundShaderQuad from "./BackgroundShaderQuad";
-import LightingRig from "./LightingRig";
-import HeroArtifactMesh from "./HeroArtifactMesh";
 
 /**
  * Si el contexto WebGL no se puede crear (driver bloqueado, GPU perdida…), la capa visual
@@ -68,10 +66,6 @@ export default function GlobalCanvas() {
 
           {/* DEV-10 · Fondo fluido */}
           <BackgroundShaderQuad />
-
-          {/* DEV-11 · Rig PBR + packaging 3D (aparece al terminar la secuencia) */}
-          <LightingRig />
-          <HeroArtifactMesh />
         </Canvas>
       </CanvasErrorBoundary>
     </div>

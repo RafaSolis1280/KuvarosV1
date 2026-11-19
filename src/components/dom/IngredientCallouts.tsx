@@ -1,7 +1,7 @@
 "use client";
 
 // DEV-19 · Callouts de ingredientes sincronizados con el scroll de la secuencia (DEV-09).
-// Sin setState de React: se suscribe al store transiente (`sequenceProgress`) y escribe estilos
+// Sin setState de React: se suscribe al store transiente (`sequenceProgress[sequenceId]`) y escribe estilos
 // directamente en los nodos (Hard Constraint 1). El texto está siempre en el DOM → legible sin
 // WebGL y por lectores de pantalla (Hard Constraint 7).
 import { useEffect, useRef } from "react";
@@ -10,6 +10,8 @@ import { clamp } from "@/lib/math";
 import type { Ingrediente } from "@/content/producto";
 
 interface Props {
+  /** Id de la secuencia que controla los callouts */
+  sequenceId: string;
   ingredientes: readonly Ingrediente[];
 }
 
@@ -19,7 +21,7 @@ function visibilidad(p: number, [a, b]: readonly [number, number]): number {
   return clamp(Math.min((p - a) / fade, (b - p) / fade), 0, 1);
 }
 
-export default function IngredientCallouts({ ingredientes }: Props) {
+export default function IngredientCallouts({ sequenceId, ingredientes }: Props) {
   const refs = useRef<(HTMLLIElement | null)[]>([]);
 
   useEffect(() => {
@@ -37,9 +39,9 @@ export default function IngredientCallouts({ ingredientes }: Props) {
         el.dataset.active = v > 0.5 ? "true" : "false";
       });
     };
-    apply(useExperienceStore.getState().sequenceProgress);
-    return useExperienceStore.subscribe((s) => apply(s.sequenceProgress));
-  }, [ingredientes]);
+    apply(useExperienceStore.getState().sequenceProgress[sequenceId] ?? 0);
+    return useExperienceStore.subscribe((s) => apply(s.sequenceProgress[sequenceId] ?? 0));
+  }, [sequenceId, ingredientes]);
 
   return (
     <ol className="relative h-full w-full" aria-label="Ingredientes">

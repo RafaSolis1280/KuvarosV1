@@ -16,10 +16,11 @@ interface ExperienceState {
   scrollY: number;
   scrollVelocity: number;
   scrollProgress: number;
-  /** Progreso 0-1 del playhead de la secuencia pinneada (DEV-09). Lo leen los overlays por suscripción. */
-  sequenceProgress: number;
-  /** Revelado 0-1 del packaging 3D (DEV-11). Lo escribe el ScrollTrigger de la sección de packaging. */
-  packagingReveal: number;
+  /**
+   * Progreso 0-1 de cada secuencia pinneada, por id (DEV-09 / DEV-37). Lo escribe ImageSequenceCanvas
+   * y lo leen los overlays (ingredientes, specs del packaging) por suscripción, nunca con hooks.
+   */
+  sequenceProgress: Readonly<Record<string, number>>;
   /** Objeto MUTABLE: se modifica in situ para no generar basura en cada pointermove */
   pointerNDC: { x: number; y: number };
 
@@ -42,8 +43,7 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   scrollY: 0,
   scrollVelocity: 0,
   scrollProgress: 0,
-  sequenceProgress: 0,
-  packagingReveal: 0,
+  sequenceProgress: {},
   pointerNDC: { x: 0, y: 0 },
 
   setGPUTier: (tier) => set({ gpuPolicy: GPU_STRICT_POLICIES[tier] }),

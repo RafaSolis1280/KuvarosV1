@@ -52,7 +52,7 @@ export const PRODUCTO = {
       { etiqueta: "Sostenibilidad", valor: "100 % compostable" },
     ] satisfies readonly Especificacion[],
     nota: "Valores de ejemplo. Reemplazar por la ficha técnica real.",
-    posterAlt: "Packaging de la hamburguesa",
+    secuenciaAria: "Video del packaging de la hamburguesa presentándose en detalle",
   },
 
   cta: {

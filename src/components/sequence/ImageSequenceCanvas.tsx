@@ -4,8 +4,8 @@
 // - Solo [f-R, f+R] decodificados (R = gpuPolicy.sequenceWindowRadius); el resto se cierra con close().
 // - Fallback procedural SOLO si falta el frame 1 (Hard Constraint 4).
 // - Flush de caché al cambiar de tier/variante.
-// - El progreso se publica en el store transiente (`sequenceProgress`) para que los overlays
-//   (callouts de ingredientes) se sincronicen sin setState de React (Hard Constraint 1).
+// - El progreso se publica en el store transiente (`sequenceProgress[sequenceId]`) para que los
+//   overlays (ingredientes, specs del packaging) se sincronicen sin setState de React (Hard Constraint 1).
 
 import { useEffect, useRef, type ReactNode } from "react";
 import gsap from "gsap";
@@ -16,6 +16,8 @@ import type { SequenceVariant } from "@/config/gpu-policy";
 gsap.registerPlugin(ScrollTrigger);
 
 interface Props {
+  /** Id de la secuencia: clave de su progreso en el store (`sequenceProgress[sequenceId]`) */
+  sequenceId: string;
   /** p. ej. "/sequences/hero_explode" */
   sequenceFolder: string;
   /** Conteo por variante. Pasar una referencia estable (constante del manifiesto). */
@@ -30,6 +32,7 @@ interface Props {
 }
 
 export default function ImageSequenceCanvas({
+  sequenceId,
   sequenceFolder,
   totalFrames,
   scrollDistance = 2600,
@@ -80,7 +83,7 @@ export default function ImageSequenceCanvas({
       ctx.fillStyle = accentColor;
       ctx.font = `bold ${Math.max(14, Math.floor(w * 0.012))}px monospace`;
       ctx.textAlign = "center";
-      ctx.fillText(`[FALLBACK] FRAME ${i + 1}/${count}`, w / 2, h * 0.88);
+      ctx.fillText(`[FALLBACK] ${sequenceId.toUpperCase()} · FRAME ${i + 1}/${count}`, w / 2, h * 0.88);
     };
 
     const drawCover = (bmp: ImageBitmap) => {
@@ -143,7 +146,11 @@ export default function ImageSequenceCanvas({
     };
 
     const render = () => {
-      useExperienceStore.setState({ sequenceProgress: playhead.progress }); // escritura transiente
+      // Escritura transiente (sin setState de React): solo cuando cambia el progreso
+      const prog = useExperienceStore.getState().sequenceProgress;
+      if (prog[sequenceId] !== playhead.progress) {
+        useExperienceStore.setState({ sequenceProgress: { ...prog, [sequenceId]: playhead.progress } });
+      }
       const i = currentIndex();
       syncWindow(i);
       if (fallback) {
@@ -225,7 +232,7 @@ export default function ImageSequenceCanvas({
       bitmaps.forEach((b) => b?.close());
       bitmaps = [];
     };
-  }, [sequenceFolder, totalFrames, scrollDistance, accentColor]);
+  }, [sequenceId, sequenceFolder, totalFrames, scrollDistance, accentColor]);
 
   return (
     <section ref={containerRef} id={id} className="relative h-screen w-full overflow-hidden bg-base">
