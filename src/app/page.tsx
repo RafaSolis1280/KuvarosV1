@@ -1,3 +1,8 @@
+import ImageSequenceCanvas from "@/components/sequence/ImageSequenceCanvas";
+import { ASSET_MANIFEST } from "@/config/gpu-policy";
+
+const hero = ASSET_MANIFEST.sequences.heroExplode;
+
 // Página base (DEV-04). Las secciones reales llegan con DEV-09 (secuencia), DEV-18 (Hero UI)
 // y DEV-19+ (secciones narrativas). El <h1> se renderiza en SSR: es el elemento LCP.
 export default function HomePage() {
@@ -22,6 +27,16 @@ export default function HomePage() {
           </p>
         </div>
       </section>
+
+      {/* DEV-09 · Storytelling por secuencia (hamburguesa separándose en capas) */}
+      <div className="relative z-[15]">
+        <ImageSequenceCanvas
+          sequenceFolder={hero.basePath}
+          totalFrames={hero.totalFrames}
+          scrollDistance={2800}
+          ariaLabel="Animación de la hamburguesa separándose en sus ingredientes"
+        />
+      </div>
 
       <section
         id="contacto"
