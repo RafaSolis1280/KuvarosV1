@@ -25,8 +25,9 @@
 | DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | DEV | `feat/dev-09-image-sequence` | PR → `feat/dev-07-global-canvas` | Probado con `/public/sequences` vacío → fallback procedural. Falta probar con los frames reales de ART-10 (video de la hamburguesa) |
 | DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | DEV | `feat/dev-10-fluid-shader` | PR → `feat/dev-09-image-sequence` | Falta probar en Android de gama media (artefactos de precisión) |
 | DEV-11 · HeroArtifactMesh (packaging) + rig de iluminación | 🔍 Revisión Interna / QA | DEV | `feat/dev-11-packaging-mesh` | PR → `feat/dev-10-fluid-shader` | El artefacto 3D de este proyecto es el **packaging**. Fallback procedural (caja clamshell) hasta que llegue `hero_artifact.glb` (ART-13). Falta verificar dispose con el `.glb` real |
+| DEV-19 · Sección narrativa 1: ingredientes + packaging | 🔍 Revisión Interna / QA | DEV | `feat/dev-19-ingredientes-packaging` | PR → `feat/dev-11-packaging-mesh` | Copy y specs **provisionales** en `src/content/producto.ts` (⏳ esperando branding y ficha técnica del cliente). Pendiente: en móvil el packaging 3D queda detrás del final de la ficha; ajustar con el diseño final (ART-05) |
 
-**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11.
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11 → DEV-19.
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -42,12 +43,16 @@
 | 19-11-2026 | DEV-09 | `ImageSequenceCanvas`: ventana deslizante de `ImageBitmap` (radio por tier), `close()` fuera de ventana, frame más cercano mientras decodifica, flush al cambiar de tier, fallback solo si falta el frame 1, `aria-label`, capa DOM pinneada para overlays y `sequenceProgress` transiente en el store; montada en la página | `feat/dev-09-image-sequence` | 🔍 PR abierto |
 | 19-11-2026 | DEV-10 | `FluidBackgroundMaterial` (GLSL de three, hash sin `sin()`) + `BackgroundShaderQuad` con uniforms por `damp()`, lectura transiente del store y tiempo congelado con reduced motion; montado en `GlobalCanvas` | `feat/dev-10-fluid-shader` | 🔍 PR abierto |
 | 19-11-2026 | DEV-11 | `HeroArtifactMesh` = packaging 3D: GLTF + Draco/Meshopt/KTX2, caja procedural sin `.glb`, dispose al desmontar, revelado por `packagingReveal` (store transiente) con `damp()`, pose fija con reduced motion. `LightingRig`: luces PBR + HDRI opcional (sin HDRI → solo luces) | `feat/dev-11-packaging-mesh` | 🔍 PR abierto |
+| 19-11-2026 | DEV-10/11 | Fix: el import del material se eliminaba (solo se usaba como tipo) y R3F no encontraba `<fluidBackgroundMaterial>` → import con efecto. Ajuste de escala y tono del packaging procedural | `feat/dev-10-fluid-shader`, `feat/dev-11-packaging-mesh` | 🔍 PR abierto |
+| 19-11-2026 | DEV-19 | Página de la hamburguesa: hero → secuencia pinneada con 6 callouts de ingredientes sincronizados por `sequenceProgress` (sin setState) → sección packaging con ficha técnica (`<dl>`) y revelado del modelo 3D por ScrollTrigger → CTA. Todo el texto en `src/content/producto.ts`. Probado en Chrome headless 1440×900 y 390×844: 2 canvas (WebGL + 2D), sin errores, solo 404 esperados de assets faltantes | `feat/dev-19-ingredientes-packaging` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
 - **G1 / G2 sin aprobar:** DIR-01…05 y ART-01…05 siguen en Backlog. DEV avanzó en paralelo con la base técnica, que no depende del arte (ruta crítica, §6). La paleta y las fuentes reales entran en DEV-08, después de ART-03 y ART-04.
 - **Vercel:** las Preview URLs aún no están conectadas (pendiente de DEV-04).
 - **DIR-03:** `LICENCIAS.md` creado como plantilla; falta completarlo.
+- **⏳ Esperando cliente:** branding (paleta, logo, fuentes → DEV-08) y ficha técnica del packaging + descripción de ingredientes (→ `src/content/producto.ts`).
+- **⏳ Assets (ART-10 / ART-12 / ART-13):** video HD de la hamburguesa separándose → frames WebP; modelo `.glb` del packaging; póster de fallback. Lista completa en el `README.md`.
 
 ---
 
@@ -571,6 +576,7 @@ Ref. M Fase 5 Paso 16.
 
 **DEV-19 a DEV-2X · Secciones narrativas** — DEV · `Dev-UI` `P1` · 6 h c/u · G6 · ← ART-05, DIR-05
 *Una tarjeta por sección del storyboard* (PLANTILLA Sección UI).
+> 📍 **Estado:** DEV-19 (ingredientes + packaging) en 🔍 Revisión Interna / QA · rama `feat/dev-19-ingredientes-packaging`
 
 **DEV-23 · Transiciones entre secciones** — DEV · `Dev-WebGL` `Dev-UI` `P1` · 8 h · G6 · ← DEV-19…
 Ref. M Fase 6 Paso 19 (coreografía de cámara, clip-path, máscara de ruido).
