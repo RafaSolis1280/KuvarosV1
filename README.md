@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# web-3d-agency — Experiencia web hiperrealista
 
-## Getting Started
+Landing inmersiva (Next.js 16 · React 19 · R3F v9 · GSAP + Lenis · Tailwind v4) construida con la metodología de
+`Manuales/MANUAL_V2_WEB_HIPERREALISTA.md` y gestionada con el tablero de `Manuales/FLUJO_TRELLO_WEB_HIPERREALISTA.md`.
 
-First, run the development server:
+## Puesta en marcha
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git lfs install          # una sola vez por equipo
+npm install              # el postinstall copia Draco/Basis/benchmarks a /public
+npm run dev              # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | Qué hace |
+| :--- | :--- |
+| `npm run dev` | Servidor de desarrollo (Turbopack) |
+| `npm run build` | Build de producción |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Ramas (ver guía de gobernanza)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`main` (producción) ← PR ← `develop` (integración) ← PR ← `feat/<id-trello>-<tarea>` · `fix/<bug>` · `assets/<tipo>`.
+Nadie hace push directo a `main` ni a `develop`. Cada PR indica la tarjeta de Trello (`DEV-XX`) que resuelve.
 
-## Learn More
+## Contrato de assets (`/public`)
 
-To learn more about Next.js, take a look at the following resources:
+Ver `CLAUDE.md` §2. Los nombres son fijos; los assets se **versionan** al cambiar (caché `immutable`).
+`/public/draco`, `/public/basis` y `/public/benchmarks` se generan en `postinstall` y no se versionan en Git.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentos clave
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `CLAUDE.md` — especificación de código (Parte II del Manual v2) para humanos y agentes.
+- `LICENCIAS.md` — registro obligatorio de licencias.
+- `Manuales/` — manual técnico, flujo Trello y gobernanza Git/GitHub.
