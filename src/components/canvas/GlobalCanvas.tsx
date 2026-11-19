@@ -11,6 +11,7 @@ import { Component, type ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { useExperienceStore } from "@/store/useExperienceStore";
+import BackgroundShaderQuad from "./BackgroundShaderQuad";
 
 /**
  * Si el contexto WebGL no se puede crear (driver bloqueado, GPU perdida…), la capa visual
@@ -62,6 +63,9 @@ export default function GlobalCanvas() {
             onDecline={() => useExperienceStore.getState().downgradeGPUTier()}
             onFallback={() => useExperienceStore.getState().setGPUTier(1)}
           />
+
+          {/* DEV-10 · Fondo fluido */}
+          <BackgroundShaderQuad />
         </Canvas>
       </CanvasErrorBoundary>
     </div>
