@@ -12,6 +12,8 @@ import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import BackgroundShaderQuad from "./BackgroundShaderQuad";
+import LightingRig from "./LightingRig";
+import HeroArtifactMesh from "./HeroArtifactMesh";
 
 /**
  * Si el contexto WebGL no se puede crear (driver bloqueado, GPU perdida…), la capa visual
@@ -66,6 +68,10 @@ export default function GlobalCanvas() {
 
           {/* DEV-10 · Fondo fluido */}
           <BackgroundShaderQuad />
+
+          {/* DEV-11 · Rig PBR + packaging 3D (aparece al terminar la secuencia) */}
+          <LightingRig />
+          <HeroArtifactMesh />
         </Canvas>
       </CanvasErrorBoundary>
     </div>

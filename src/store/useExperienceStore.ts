@@ -18,6 +18,8 @@ interface ExperienceState {
   scrollProgress: number;
   /** Progreso 0-1 del playhead de la secuencia pinneada (DEV-09). Lo leen los overlays por suscripción. */
   sequenceProgress: number;
+  /** Revelado 0-1 del packaging 3D (DEV-11). Lo escribe el ScrollTrigger de la sección de packaging. */
+  packagingReveal: number;
   /** Objeto MUTABLE: se modifica in situ para no generar basura en cada pointermove */
   pointerNDC: { x: number; y: number };
 
@@ -41,6 +43,7 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   scrollVelocity: 0,
   scrollProgress: 0,
   sequenceProgress: 0,
+  packagingReveal: 0,
   pointerNDC: { x: 0, y: 0 },
 
   setGPUTier: (tier) => set({ gpuPolicy: GPU_STRICT_POLICIES[tier] }),

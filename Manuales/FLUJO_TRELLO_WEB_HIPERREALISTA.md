@@ -24,8 +24,9 @@
 | DEV-07 · GlobalCanvas + PerformanceMonitor | 🔍 Revisión Interna / QA | DEV | `feat/dev-07-global-canvas` | PR → `docs/trello-registro-avance` | Probado en Chrome headless: 1 solo `<canvas>`; sin WebGL → 0 canvas y la página sigue funcionando |
 | DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | DEV | `feat/dev-09-image-sequence` | PR → `feat/dev-07-global-canvas` | Probado con `/public/sequences` vacío → fallback procedural. Falta probar con los frames reales de ART-10 (video de la hamburguesa) |
 | DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | DEV | `feat/dev-10-fluid-shader` | PR → `feat/dev-09-image-sequence` | Falta probar en Android de gama media (artefactos de precisión) |
+| DEV-11 · HeroArtifactMesh (packaging) + rig de iluminación | 🔍 Revisión Interna / QA | DEV | `feat/dev-11-packaging-mesh` | PR → `feat/dev-10-fluid-shader` | El artefacto 3D de este proyecto es el **packaging**. Fallback procedural (caja clamshell) hasta que llegue `hero_artifact.glb` (ART-13). Falta verificar dispose con el `.glb` real |
 
-**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10.
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11.
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -40,6 +41,7 @@
 | 19-11-2026 | DEV-07 | `GlobalCanvas`: un solo `<Canvas>` fijo con `dpr` y `antialias` según la política, `frameloop` en pausa con la pestaña oculta, `PerformanceMonitor` (`flipflops={3}`, `onDecline` baja un tier, `onFallback` → Tier 1), no se monta sin WebGL, barrera de errores que retira el canvas si WebGL falla; carga diferida con `next/dynamic` (`ssr:false`) para proteger el LCP | `feat/dev-07-global-canvas` | 🔍 PR abierto |
 | 19-11-2026 | DEV-09 | `ImageSequenceCanvas`: ventana deslizante de `ImageBitmap` (radio por tier), `close()` fuera de ventana, frame más cercano mientras decodifica, flush al cambiar de tier, fallback solo si falta el frame 1, `aria-label`, capa DOM pinneada para overlays y `sequenceProgress` transiente en el store; montada en la página | `feat/dev-09-image-sequence` | 🔍 PR abierto |
 | 19-11-2026 | DEV-10 | `FluidBackgroundMaterial` (GLSL de three, hash sin `sin()`) + `BackgroundShaderQuad` con uniforms por `damp()`, lectura transiente del store y tiempo congelado con reduced motion; montado en `GlobalCanvas` | `feat/dev-10-fluid-shader` | 🔍 PR abierto |
+| 19-11-2026 | DEV-11 | `HeroArtifactMesh` = packaging 3D: GLTF + Draco/Meshopt/KTX2, caja procedural sin `.glb`, dispose al desmontar, revelado por `packagingReveal` (store transiente) con `damp()`, pose fija con reduced motion. `LightingRig`: luces PBR + HDRI opcional (sin HDRI → solo luces) | `feat/dev-11-packaging-mesh` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -521,6 +523,7 @@ Ref. M Parte II §8. Prompt P4. Hash sin `sin()`.
 ✔ Sin artefactos en Android de gama media.
 
 **DEV-11 · HeroArtifactMesh + rig de iluminación** — DEV · `Dev-WebGL` `3D` `P0` · 8 h · G5 · ← DEV-07 (y DEV-03 para el asset real)
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-11-packaging-mesh` · el artefacto es el packaging
 Ref. M Parte II §8. Prompt P5.
 ✔ Fallback procedural sin `.glb`; con el `.glb`, dispose verificado al desmontar.
 
