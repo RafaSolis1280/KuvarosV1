@@ -409,6 +409,7 @@ export default function ImageSequenceCanvas({
     let loading: boolean[] = new Array(count).fill(false);
     let generation = 0;             // invalida cargas en vuelo al cambiar de variante
     let fallback = false;
+    let probed = false;             // no se piden frames hasta saber si existe el frame 1 (v2.1)
     let drawn = -1;
     const playhead = { progress: 0 };
 
@@ -450,7 +451,7 @@ export default function ImageSequenceCanvas({
     };
 
     const syncWindow = (center: number) => {
-      if (fallback) return;
+      if (fallback || !probed) return;
       const R = getPolicy().sequenceWindowRadius;
       const min = Math.max(0, center - R);
       const max = Math.min(count - 1, center + R);
@@ -500,7 +501,7 @@ export default function ImageSequenceCanvas({
     fetch(frameUrl(0), { method: "HEAD" })
       .then((r) => { if (!r.ok) fallback = true; })
       .catch(() => { fallback = true; })
-      .finally(() => { drawn = -1; render(); });
+      .finally(() => { probed = true; drawn = -1; render(); });
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, getPolicy().dpr[1]);
@@ -620,6 +621,8 @@ declare module "@react-three/fiber" {
 
 ### `src/components/canvas/HeroArtifactMesh.tsx`
 
+> **Opcional según el proyecto.** Si el cliente pide solo video (sin modelos 3D), este componente, el HDRI y el pipeline `.glb` (Fase 3) no se usan: el producto se cuenta con secuencias (§7). Ver Anexo B del Manual.
+
 ```tsx
 "use client";
 
@@ -731,7 +734,10 @@ import * as THREE from "three";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { damp } from "@/lib/math";
 import HeroArtifactMesh from "./HeroArtifactMesh";
-import { FluidBackgroundMaterial } from "./shaders/FluidBackgroundMaterial";
+// Import con efecto (v2.1): registra el material con extend(). Si solo se usara como tipo,
+// TypeScript eliminaría el import y R3F no encontraría <fluidBackgroundMaterial>.
+import "./shaders/FluidBackgroundMaterial";
+import type { FluidBackgroundMaterial } from "./shaders/FluidBackgroundMaterial";
 
 type FluidMat = InstanceType<typeof FluidBackgroundMaterial> & {
   uTime: number; uScrollVelocity: number; uPointer: THREE.Vector2;

@@ -36,8 +36,9 @@ El proyecto nació utilizando **Next.js (App Router), TypeScript, Tailwind CSS y
 2. **Activación de Git LFS (Obligatorio para archivos 3D y audio):**
    ```bash
    git lfs install
-   git lfs track "*.glb" "*.hdr" "*.ktx2" "*.webm" "*.mp3"
+   git lfs track "*.glb" "*.hdr" "*.ktx2" "*.webm" "*.mp3" "*.webp" "*.m4a" "*.mp4" "*.mov"
    ```
+   *(Actualizado 19-11-2026: se agregaron `*.webp` (frames de las secuencias), `*.m4a`, `*.mp4` y `*.mov`; en el proyecto de la hamburguesa, que es solo video, `.glb`/`.hdr`/`.ktx2` no se usan.)*
    Esto genera el archivo `.gitattributes`, el cual le indica a GitHub que esos formatos deben almacenarse como punteros ligeros y no como archivos binarios tradicionales.
 
 3. **Reglas de `.gitignore` (Lo que NUNCA se sube a GitHub):**

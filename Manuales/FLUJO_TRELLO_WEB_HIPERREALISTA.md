@@ -28,8 +28,9 @@
 | DEV-19 · Sección narrativa 1: ingredientes + packaging | 🔍 Revisión Interna / QA | DEV | `feat/dev-19-ingredientes-packaging` | PR → `feat/dev-11-packaging-mesh` | Copy y specs **provisionales** en `src/content/producto.ts` (⏳ esperando branding y ficha técnica del cliente). Pendiente: en móvil el packaging 3D queda detrás del final de la ficha; ajustar con el diseño final (ART-05) |
 | DOCS · README con lista de archivos + script de frames | 🔍 Revisión Interna / QA | DEV | `docs/readme-assets-hamburguesa` | PR → `feat/dev-19-ingredientes-packaging` | Lista de lo que debe entregar el cliente y arte; `npm run frames` (ffmpeg) para ART-10 |
 | DEV-37 · Packaging como video (proyecto 100 % video, sin `.glb`) | 🔍 Revisión Interna / QA | DEV | `feat/dev-37-packaging-video` | PR → `docs/readme-assets-hamburguesa` | Segunda secuencia `packaging_reveal` con la ficha técnica sincronizada. Probado con fallback; falta el video real del packaging |
+| DOCS · Manuales actualizados (solo video + correcciones v2.1) | 🔍 Revisión Interna / QA | DEV | `docs/manuales-solo-video` | PR → `feat/dev-37-packaging-video` | Manual v2.1, `CLAUDE.md`, guía de gobernanza y este tablero |
 
-**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11 → DEV-19 → DOCS (README) → DEV-37.
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07 → DEV-09 → DEV-10 → DEV-11 → DEV-19 → DOCS (README) → DEV-37 → DOCS (manuales).
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -50,6 +51,7 @@
 | 19-11-2026 | DOCS | `README.md`: experiencia por secciones, **lista de archivos necesarios** (branding, contenido, video, frames, `.glb`, pósters, audio) con especificación del video de la hamburguesa y del modelo del packaging; `scripts/video-to-frames.mjs` (`npm run frames`) genera desktop 1600 px / mobile 800 px con el mismo conteo | `docs/readme-assets-hamburguesa` | 🔍 PR abierto |
 | 19-11-2026 | DEV-37 | **Decisión del cliente: solo video hiperrealista, sin modelos 3D.** Se eliminan `HeroArtifactMesh`, `LightingRig` y `PackagingSection`; el packaging pasa a ser la secuencia `packaging_reveal` con `PackagingSpecs` (panel + specs que aparecen por tramos). `sequenceProgress` pasa a ser por id (varias secuencias). Fuera del manifiesto: `.glb`, HDRI, Draco/Basis (ya no se copian en `postinstall`). El GlobalCanvas queda solo con el shader de fondo | `feat/dev-37-packaging-video` | 🔍 PR abierto |
 | 19-11-2026 | DEV-37 (fix) | Bug de DEV-04: el color `--color-base` chocaba con la utilidad `text-base` y pintaba textos del color del fondo (bajada del hero y ficha del packaging invisibles en desktop) → token renombrado a `surface`. `ImageSequenceCanvas` ya no pide frames antes de comprobar el frame 1 (de 20 a 2 peticiones 404 sin assets). Probado en Chrome headless 1440×900 y 390×844 | `feat/dev-37-packaging-video` | 🔍 PR abierto |
+| 19-11-2026 | DOCS | Manual → **v2.1**: Fase 3 y `HeroArtifactMesh` marcados como opcionales, Anexo A #36-40 (import con efecto de `extend()`, sondeo antes de pedir frames, token `base` vs `text-base`, progreso por secuencia, script de frames) y **Anexo B** (decisiones del proyecto: 100 % video). Código de la Parte II corregido también en `CLAUDE.md`. Guía de GitHub: `git lfs track` con `*.webp`, `*.m4a`, `*.mp4`, `*.mov` | `docs/manuales-solo-video` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
