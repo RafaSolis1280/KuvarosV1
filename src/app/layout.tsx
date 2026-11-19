@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/dom/SmoothScrollProvider";
+import GlobalCanvasLoader from "@/components/canvas/GlobalCanvasLoader";
 
 // Metadatos provisionales: el copy definitivo llega con DIR-05 y el SEO técnico con DEV-30.
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Saltar al contenido
         </a>
         <SmoothScrollProvider>
-          {/* DEV-07 añadirá aquí el <GlobalCanvas /> único */}
+          <GlobalCanvasLoader />
           <main id="contenido" className="relative z-[10]">
             {children}
           </main>

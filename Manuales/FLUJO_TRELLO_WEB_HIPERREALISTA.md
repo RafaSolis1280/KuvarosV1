@@ -21,17 +21,22 @@
 | DEV-05 · Política de GPU, manifiesto y store | 🔍 Revisión Interna / QA | DEV | `feat/dev-05-gpu-policy-store` | PR → `feat/dev-04-setup-base` | `damp` verificado independiente de FPS |
 | DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | DEV | `feat/dev-06-smooth-scroll` | PR → `feat/dev-05-gpu-policy-store` | Falta probar en navegador: tier en consola y scroll sin doble RAF |
 | DOCS · Registro de avance en Trello y gobernanza | 🔍 Revisión Interna / QA | DEV | `docs/trello-registro-avance` | PR → `feat/dev-06-smooth-scroll` | Esta sección + regla en la guía de GitHub |
-| DEV-07 · GlobalCanvas + PerformanceMonitor | 🗓️ Sprint Actual (siguiente) | DEV | `feat/dev-07-global-canvas` (por crear) | — | Sale de DEV-06 |
+| DEV-07 · GlobalCanvas + PerformanceMonitor | 🔍 Revisión Interna / QA | DEV | `feat/dev-07-global-canvas` | PR → `docs/trello-registro-avance` | Probado en Chrome headless: 1 solo `<canvas>`; sin WebGL → 0 canvas y la página sigue funcionando |
+| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🗓️ Sprint Actual (siguiente) | DEV | `feat/dev-09-image-sequence` (por crear) | — | Depende de DEV-06. Se prueba con el fallback hasta que lleguen los frames de ART-10 |
 
-**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS.
+**Orden de fusión del stack:** DEV-04 → `develop`; luego cambiar la base de cada PR siguiente a `develop` y fusionar DEV-05 → DEV-06 → DOCS → DEV-07.
 
-### 0.2 Hecho (resumen de lo trabajado)
+### 0.2 Bitácora de trabajo realizado
 
-| Fecha | Tarjeta | Qué se hizo | Commit / rama |
-| :--- | :--- | :--- | :--- |
-| 19-11-2026 | DEV-04 | Dependencias fijadas (three, R3F v9, drei, gsap, lenis, zustand, maath, detect-gpu, howler); `copy-decoders.mjs` en `postinstall`; `next.config.ts` con caché `immutable`; `CLAUDE.md` (Parte II del manual); contrato de carpetas `/public`; `LICENCIAS.md` plantilla; se eliminó el boilerplate; CI con typecheck | `75068d8` · `feat/dev-04-setup-base` |
-| 19-11-2026 | DEV-05 | `gpu-policy.ts` (políticas por tier + `ASSET_MANIFEST`), `math.ts` (`damp`, `clamp`, `mapRange`), `useExperienceStore.ts` | `47f5df7` · `feat/dev-05-gpu-policy-store` |
-| 19-11-2026 | DEV-06 | `SmoothScrollProvider`: Lenis (`autoRaf:false`) con `gsap.ticker`, sin Lenis con reduced motion, detect-gpu con benchmarks propios, puntero mutable, pausa con `visibilitychange`; montado en el layout | `07737d6` · `feat/dev-06-smooth-scroll` |
+> Cada tarjeta se anota aquí al hacer commit. La columna *Estado* pasa a ✅ Hecho cuando su PR se fusiona en `develop`.
+
+| Fecha | Tarjeta | Qué se hizo | Commit / rama | Estado |
+| :--- | :--- | :--- | :--- | :-: |
+| 19-11-2026 | DEV-04 | Dependencias fijadas (three, R3F v9, drei, gsap, lenis, zustand, maath, detect-gpu, howler); `copy-decoders.mjs` en `postinstall`; `next.config.ts` con caché `immutable`; `CLAUDE.md` (Parte II del manual); contrato de carpetas `/public`; `LICENCIAS.md` plantilla; se eliminó el boilerplate; CI con typecheck | `75068d8` · `feat/dev-04-setup-base` | 🔍 PR abierto |
+| 19-11-2026 | DEV-05 | `gpu-policy.ts` (políticas por tier + `ASSET_MANIFEST`), `math.ts` (`damp`, `clamp`, `mapRange`), `useExperienceStore.ts` | `47f5df7` · `feat/dev-05-gpu-policy-store` | 🔍 PR abierto |
+| 19-11-2026 | DEV-06 | `SmoothScrollProvider`: Lenis (`autoRaf:false`) con `gsap.ticker`, sin Lenis con reduced motion, detect-gpu con benchmarks propios, puntero mutable, pausa con `visibilitychange`; montado en el layout | `07737d6` · `feat/dev-06-smooth-scroll` | 🔍 PR abierto |
+| 19-11-2026 | DOCS | §0 de este archivo, regla de actualización obligatoria en la guía de GitHub y en `CLAUDE.md`, plantilla de PR | `9f7d539` · `docs/trello-registro-avance` | 🔍 PR abierto |
+| 19-11-2026 | DEV-07 | `GlobalCanvas`: un solo `<Canvas>` fijo con `dpr` y `antialias` según la política, `frameloop` en pausa con la pestaña oculta, `PerformanceMonitor` (`flipflops={3}`, `onDecline` baja un tier, `onFallback` → Tier 1), no se monta sin WebGL, barrera de errores que retira el canvas si WebGL falla; carga diferida con `next/dynamic` (`ssr:false`) para proteger el LCP | `feat/dev-07-global-canvas` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -485,7 +490,7 @@ Ref. M Parte II §4-5. Prompt P1.
 ✔ Tier detectado visible en consola (en desarrollo); scroll fluido sin doble RAF.
 
 **DEV-07 · GlobalCanvas (Single-Canvas) + PerformanceMonitor** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← DEV-06
-> 📍 **Estado:** 🗓️ Sprint Actual (siguiente) · rama `feat/dev-07-global-canvas` (por crear)
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-07-global-canvas` · un solo contexto WebGL verificado
 Ref. M Parte II §8. `flipflops={3}`, `onFallback`, no se monta si `webglAvailable=false`.
 ✔ Un único contexto WebGL (verificado en DevTools).
 
@@ -499,6 +504,7 @@ Ref. M Parte II §8. `flipflops={3}`, `onFallback`, no se monta si `webglAvailab
 ### FASE 5 · EXPERIENCIA INMERSIVA — Semanas 4-6 → **G5**
 
 **DEV-09 · ImageSequenceCanvas (ventana deslizante)** — DEV · `Dev-WebGL` `⚠` `P0` · 8 h · G5 · ← DEV-06
+> 📍 **Estado:** 🗓️ Sprint Actual (siguiente) · rama `feat/dev-09-image-sequence` (por crear)
 *PLANTILLA Componente WebGL.* Ref. M Parte II §7. Prompt P3.
 - [ ] Fallback solo si falta el frame 1
 - [ ] Dibuja el frame más cercano

@@ -164,9 +164,10 @@ El archivo `Manuales/FLUJO_TRELLO_WEB_HIPERREALISTA.md` es la **única fuente de
 **Cuándo se edita:**
 1. **Al crear una rama:** agregar o mover la tarjeta en **§0.1 Tarjetas activas**, con estado `🔨 En Progreso`, responsable y nombre de la rama. Marcar también la línea `📍 Estado` de la tarjeta en el backlog.
 2. **Al abrir el PR:** cambiar el estado a `🔍 Revisión Interna / QA` e indicar la rama base del PR.
-3. **Al fusionar:** quitar la tarjeta de §0.1 y registrarla en **§0.2 Hecho**, con fecha, qué se hizo y el commit. Cambiar su `📍 Estado` a `✅ Hecho`.
-4. **Si algo bloquea:** anotarlo en **§0.3 Bloqueos** con el motivo y quién lo desbloquea.
-5. Actualizar siempre la línea **Última actualización** (fecha, sprint y autor).
+3. **Al hacer commit del trabajo:** anotarlo en la **§0.2 Bitácora**, con fecha, qué se hizo y el commit o la rama.
+4. **Al fusionar en `develop`:** quitar la tarjeta de §0.1, cambiar su estado en la bitácora a `✅ Hecho` y su `📍 Estado` en el backlog también a `✅ Hecho`.
+5. **Si algo bloquea:** anotarlo en **§0.3 Bloqueos** con el motivo y quién lo desbloquea.
+6. Actualizar siempre la línea **Última actualización** (fecha, sprint y autor).
 
 **Cómo se edita:**
 - El cambio en el Trello va **en la misma rama y en el mismo PR** que el trabajo. No se deja para después ni va en un PR aparte, salvo cambios que son solo de documentación (rama `docs/<tema>`).
