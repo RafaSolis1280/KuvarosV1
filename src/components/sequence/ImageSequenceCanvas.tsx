@@ -59,6 +59,7 @@ export default function ImageSequenceCanvas({
     let loading: boolean[] = new Array(count).fill(false);
     let generation = 0; // invalida cargas en vuelo al cambiar de variante o desmontar
     let fallback = false;
+    let probed = false; // no se piden frames hasta saber si existe el frame 1 (evita una ráfaga de 404)
     let drawn = -1;
     const playhead = { progress: 0 };
 
@@ -102,7 +103,7 @@ export default function ImageSequenceCanvas({
     };
 
     const syncWindow = (center: number) => {
-      if (fallback) return;
+      if (fallback || !probed) return;
       const R = getPolicy().sequenceWindowRadius;
       const min = Math.max(0, center - R);
       const max = Math.min(count - 1, center + R);
@@ -187,6 +188,7 @@ export default function ImageSequenceCanvas({
       })
       .finally(() => {
         if (!alive) return;
+        probed = true;
         drawn = -1;
         render();
       });
@@ -235,7 +237,7 @@ export default function ImageSequenceCanvas({
   }, [sequenceId, sequenceFolder, totalFrames, scrollDistance, accentColor]);
 
   return (
-    <section ref={containerRef} id={id} className="relative h-screen w-full overflow-hidden bg-base">
+    <section ref={containerRef} id={id} className="relative h-screen w-full overflow-hidden bg-surface">
       <canvas ref={canvasRef} className="block h-full w-full" role="img" aria-label={ariaLabel} />
       {children ? <div className="pointer-events-none absolute inset-0">{children}</div> : null}
     </section>

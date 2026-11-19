@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className="bg-base text-ink antialiased">
+    <html lang="es" className="bg-surface text-ink antialiased">
       <body className="selection:bg-accent selection:text-black">
         <a
           href="#contenido"

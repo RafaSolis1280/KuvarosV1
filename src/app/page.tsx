@@ -77,7 +77,7 @@ export default function HomePage() {
       {/* 4 · CONVERSIÓN */}
       <section
         id="contacto"
-        className="relative z-[15] flex min-h-dvh flex-col items-center justify-center bg-base/90 px-6 text-center backdrop-blur-sm"
+        className="relative z-[15] flex min-h-dvh flex-col items-center justify-center bg-surface/90 px-6 text-center backdrop-blur-sm"
       >
         <h2 className="text-4xl font-extrabold uppercase tracking-tight md:text-6xl">{cta.titulo}</h2>
         <p className="mt-4 max-w-md text-muted">{cta.texto}</p>
