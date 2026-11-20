@@ -21,6 +21,7 @@
 ## Imagen / video generado con IA
 | Asset | Herramienta + versión | Prompt / seed | Plan / términos comerciales | Fecha | Comprobante |
 | :--- | :--- | :--- | :--- | :--- | :--- |
+| Video de marca Kuvaro's (master `Marca/Video.mp4`, fuera de Git) → `public/sequences/hero_explode/**` y `public/sequences/packaging_reveal/**` | ⏳ entregado por el cliente; confirmar si es IA o rodaje y con qué herramienta | ⏳ | ⏳ cesión de uso web del cliente | 20-11-2026 | ⏳ pedir confirmación escrita (DIR-03) |
 
 ## Librerías de código
 Las dependencias npm se rigen por sus licencias (MIT en su mayoría). GSAP: licencia estándar gratuita de GSAP (incluye plugins).
