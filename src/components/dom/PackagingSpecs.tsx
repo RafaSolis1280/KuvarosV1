@@ -20,6 +20,8 @@ interface Props {
   entrada?: readonly [number, number];
   /** Tramo (0-1) a lo largo del cual se van sumando las especificaciones */
   tramoSpecs?: readonly [number, number];
+  /** Lado del panel en desktop: el contrario a donde está el producto en el encuadre del video */
+  lado?: "izquierda" | "derecha";
 }
 
 const ENTRADA_DEFECTO = [0.08, 0.2] as const;
@@ -36,6 +38,7 @@ export default function PackagingSpecs({
   nota,
   entrada = ENTRADA_DEFECTO,
   tramoSpecs = TRAMO_SPECS_DEFECTO,
+  lado = "izquierda",
 }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -51,7 +54,7 @@ export default function PackagingSpecs({
       if (panel) {
         const v = rampa(p, entrada[0], entrada[1]);
         panel.style.opacity = String(reduced ? (v > 0.5 ? 1 : 0) : v);
-        panel.style.transform = reduced ? "none" : `translate3d(${(1 - v) * -24}px, 0, 0)`;
+        panel.style.transform = reduced ? "none" : `translate3d(${(1 - v) * (lado === "derecha" ? 24 : -24)}px, 0, 0)`;
       }
       const [a, b] = tramoSpecs;
       const step = (b - a) / Math.max(1, n);
@@ -64,26 +67,26 @@ export default function PackagingSpecs({
     };
     apply(useExperienceStore.getState().sequenceProgress[sequenceId] ?? 0);
     return useExperienceStore.subscribe((s) => apply(s.sequenceProgress[sequenceId] ?? 0));
-  }, [sequenceId, especificaciones, entrada, tramoSpecs]);
+  }, [sequenceId, especificaciones, entrada, tramoSpecs, lado]);
 
   return (
-    <div className="flex h-full w-full items-end px-4 pb-8 md:items-center md:px-16 md:pb-0">
+    <div className={`flex h-full w-full items-end px-4 pb-8 md:items-center md:px-16 md:pb-0 ${lado === "derecha" ? "md:justify-end" : ""}`}>
       <div
         ref={panelRef}
-        className="w-full max-w-md rounded-3xl border border-ink/10 bg-surface-deep/75 p-6 opacity-0 backdrop-blur-md will-change-[opacity,transform] md:p-8"
+        className="w-full max-w-md rounded-3xl md:max-w-sm border border-ink/10 bg-surface-deep/75 p-5 opacity-0 backdrop-blur-md will-change-[opacity,transform] md:p-8"
       >
         <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent">{eyebrow}</p>
         <h2 className="font-display mt-3 text-3xl uppercase leading-[0.95] tracking-tight md:text-5xl">{titulo}</h2>
-        <p className="mt-4 text-sm text-muted md:text-base">{descripcion}</p>
+        <p className="mt-3 text-xs text-muted md:mt-4 md:text-base">{descripcion}</p>
 
-        <dl className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
+        <dl className="mt-4 divide-y md:mt-6 divide-ink/10 border-y border-ink/10">
           {especificaciones.map((spec, i) => (
             <div
               key={spec.etiqueta}
               ref={(el) => {
                 rowRefs.current[i] = el;
               }}
-              className="flex items-baseline justify-between gap-6 py-3 opacity-0 will-change-[opacity,transform]"
+              className="flex items-baseline justify-between gap-6 py-2 opacity-0 md:py-3 will-change-[opacity,transform]"
             >
               <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">{spec.etiqueta}</dt>
               <dd className="text-right text-sm font-semibold md:text-base">{spec.valor}</dd>

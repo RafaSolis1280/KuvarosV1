@@ -90,6 +90,17 @@ export default function ImageSequenceCanvas({
 
     const drawCover = (bmp: ImageBitmap) => {
       const { width: cw, height: ch } = canvas;
+      // Pantalla vertical con master horizontal (DEV-19): "cover" recortaría el producto por los lados.
+      // Se muestra el 72 % central del ancho y se rellena con el negro del video, con la imagen en la
+      // mitad superior para que las fichas (abajo en móvil) no la tapen.
+      if (cw / ch < 0.8 && bmp.width / bmp.height > 1) {
+        const s = cw / (bmp.width * 0.72);
+        const h = bmp.height * s;
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(bmp, (cw - bmp.width * s) / 2, Math.max(0, (ch - h) * 0.12), bmp.width * s, h);
+        return;
+      }
       const s = Math.max(cw / bmp.width, ch / bmp.height);
       ctx.drawImage(bmp, (cw - bmp.width * s) / 2, (ch - bmp.height * s) / 2, bmp.width * s, bmp.height * s);
     };
