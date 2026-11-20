@@ -29,12 +29,14 @@ export const ASSET_MANIFEST = {
     heroExplode: {
       basePath: "/sequences/hero_explode",
       // Conteo POR VARIANTE (deben coincidir si se exportan al mismo fps)
-      totalFrames: { desktop: 120, mobile: 120 } satisfies Record<SequenceVariant, number>,
+      // ART-10 · Marca/Video.mp4, tramo 0-2.25 s a 24 fps nativos (armada → capas separadas → se vuelve a juntar)
+      totalFrames: { desktop: 54, mobile: 54 } satisfies Record<SequenceVariant, number>,
     },
     // DEV-37 · El packaging también es video hiperrealista (sin modelo 3D / .glb)
     packagingReveal: {
       basePath: "/sequences/packaging_reveal",
-      totalFrames: { desktop: 120, mobile: 120 } satisfies Record<SequenceVariant, number>,
+      // ART-10 · Marca/Video.mp4, tramo 2.25-8.79 s a 24 fps nativos (papas + hamburguesa entran a la bolsa → logo)
+      totalFrames: { desktop: 157, mobile: 157 } satisfies Record<SequenceVariant, number>,
     },
   },
   audio: {

@@ -102,6 +102,26 @@ npm run frames -- ruta/al/packaging_master.mp4 --out public/sequences/packaging_
 Si el número de frames cambia, actualizar `totalFrames` de esa secuencia en `src/config/gpu-policy.ts`.
 **Budget orientativo por video:** ≤ 25 MB la secuencia desktop y ≤ 8 MB la mobile (ajustar `--quality`).
 
+**Un solo master para las dos secuencias** (`--start` / `--end` en segundos) y **frames nativos** (`--frames native`,
+sin cuadros duplicados). El script nunca agranda: si el master mide menos de 1600 px, desktop queda en su ancho nativo.
+
+#### Entrega actual (ART-10 · 20-11-2026)
+
+El cliente entregó **un único video** (`Marca/Video.mp4`, 1292 × 696, 24 fps, 8.8 s, fuera de Git) que cuenta las
+dos historias. Se cortó en 2.25 s, donde la hamburguesa termina de volver a juntarse y entran las papas:
+
+```bash
+npm run frames -- Marca/Video.mp4 --frames native --start 0 --end 2.25 --quality 88 --out public/sequences/hero_explode
+npm run frames -- Marca/Video.mp4 --frames native --start 2.25 --quality 88 --out public/sequences/packaging_reveal
+```
+
+| Secuencia | Tramo | Frames | Desktop (1292 px) | Mobile (800 px) |
+| :--- | :--- | :-: | :-: | :-: |
+| `hero_explode` | 0 – 2.25 s · armada → 5 capas separadas → se vuelve a juntar | 54 | 1.29 MB | 0.73 MB |
+| `packaging_reveal` | 2.25 – 8.79 s · papas y hamburguesa entran a la bolsa → bolsa cerrada con el logo | 157 | 3.50 MB | 1.94 MB |
+
+⏳ **Pendiente para la versión final:** master de ≥ 1600 px de ancho (idealmente 1920) para pantallas grandes/retina.
+
 #### B4 · Video 2: el packaging
 
 - **Duración:** 4 a 5 s (120 frames por defecto).
