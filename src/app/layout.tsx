@@ -3,6 +3,7 @@ import { Bree_Serif, League_Spartan } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/dom/SmoothScrollProvider";
 import GlobalCanvasLoader from "@/components/canvas/GlobalCanvasLoader";
+import { PRODUCTO } from "@/content/producto";
 
 // DEV-08 · Tipografías de marca (Manual de marca, Página 5). next/font las descarga en el build y las sirve
 // desde el propio dominio (sin peticiones a Google en el navegador) con métricas de fallback → sin CLS.
@@ -12,11 +13,21 @@ import GlobalCanvasLoader from "@/components/canvas/GlobalCanvasLoader";
 const display = Bree_Serif({ weight: "400", subsets: ["latin", "latin-ext"], variable: "--font-kuvaros-display" });
 const sans = League_Spartan({ subsets: ["latin", "latin-ext"], variable: "--font-kuvaros-sans" });
 
-// Metadatos provisionales: el copy definitivo llega con DIR-05 y el SEO técnico con DEV-30.
+// Metadatos de marca (texto en src/content/producto.ts). El SEO técnico completo llega con DEV-30.
+// NEXT_PUBLIC_SITE_URL = dominio de producción (o la Preview URL); sin él, las URLs del OG se resuelven contra localhost.
 export const metadata: Metadata = {
-  title: "Nombre de Marca | Propuesta de valor en una línea",
-  description: "Descripción real orientada a búsqueda (150-160 caracteres).",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: PRODUCTO.seo.titulo,
+  description: PRODUCTO.seo.descripcion,
   alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "es_BO",
+    siteName: `${PRODUCTO.marca} ${PRODUCTO.bajadaMarca}`,
+    title: PRODUCTO.seo.titulo,
+    description: PRODUCTO.seo.descripcion,
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: PRODUCTO.seo.ogAlt }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
