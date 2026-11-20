@@ -20,12 +20,12 @@
 | Tarjeta | Estado (lista) | Responsable | Rama | PR / base | Falta para cerrar |
 | :--- | :--- | :-: | :--- | :--- | :--- |
 | DEV-04 · Repo, Next.js 16 y CLAUDE.md | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` | — | Conectar Vercel (Preview URL) con Git LFS activado |
-| DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | Gabriel verifica | fusionada en `main` | — | Probar en navegador real: tier en consola y scroll sin doble RAF |
+| DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar en navegador real: tier en consola y scroll sin doble RAF |
 | DEV-08 · Tokens de diseño y fuentes (marca Kuvaro's) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #16) | — | ⏳ Fuente primaria real (ART-04); hoy Bree Serif provisional |
-| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | Gabriel verifica | fusionada en `main` | — | Probar con los frames reales en dispositivos reales (los frames ya están en `main`) |
-| DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | Gabriel verifica | fusionada en `main` | — | Probar en Android de gama media (artefactos de precisión) |
+| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar con los frames reales en dispositivos reales (los frames ya están en `main`) |
+| DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar en Android de gama media (artefactos de precisión) |
 | DEV-19 · Contenido real de la marca (Kuvaro's) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #13) | — | ⏳ DIR-05 valida el copy; DIR-01 define el canal de pedido (WhatsApp) |
-| DEV-37 · Packaging como video (100 % video, sin `.glb`) | 🔍 Revisión Interna / QA | Gabriel verifica | fusionada en `main` | — | Probar con el video real en dispositivos reales |
+| DEV-37 · Packaging como video (100 % video, sin `.glb`) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar con el video real en dispositivos reales |
 | ART-10 · Export WebP desktop/mobile (video de marca) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #15) | — | ⏳ Master del cliente ≥ 1600 px (hoy 1292 px) |
 | ART-12 · Pósters de fallback, OG y fotos de marca | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #14) | — | Póster de `packaging_reveal`; ⏳ cesión de derechos de las fotos (DIR-03) |
 | DOCS · Sincronización + criterios de aceptación + reparto | 🔍 Revisión Interna / QA | Javier (fusiona Rafael) | `docs/criterios-aceptacion` (incluye `docs/sync-estado-repo-y-limpieza`) | PR → `develop` tras sincronizarla (o → `main`, como #3-#16, si Rafael lo prefiere antes) | Revisión y merge de Rafael |
@@ -59,7 +59,7 @@
 | 20-11-2026 | ART-12 | Póster de fallback y OG 1200×630 desde el frame de 1.25 s del video; fotos de `Marca/` a WebP 1000 px **sin EXIF** (los originales tenían GPS); nueva carpeta `public/photos/` en el contrato (README, `CLAUDE.md`) y en la caché `immutable` de `next.config.ts`; `LICENCIAS.md` | `assets/art-12-poster-og-fotos` | 🔍 PR abierto |
 | 20-11-2026 | DEV-19 | `src/content/producto.ts` con la marca real (voz del manual §7, PVU §3.2, packaging §8; sin cifras inventadas). 5 ingredientes = 5 capas del video (pan brioche, salsa de la casa, cheddar, doble smash, base) con `rango` y `ancla` ajustados a los 54 frames. `Wordmark` tipográfico, sección «Primer bocado» con las fotos (`next/image`), CTA a @Kuvaros_burger, metadatos + Open Graph. Ficha del packaging a la derecha en desktop; en pantallas verticales `ImageSequenceCanvas` muestra el 72 % central del master horizontal (antes recortaba la hamburguesa). Manual de marca versionado en `Manuales/MANUAL_MARCA_KUVAROS.md`; `/Marca/` fuera de Git. Probado en Chrome headless 1440×900 y 390×844: 0 errores, 0 404, 3 canvas (1 WebGL + 2 secuencias) | `feat/dev-19-contenido-marca-kuvaros` | 🔍 PR abierto |
 | 20-11-2026 | MERGE | PR #13 a #16 fusionados en **`main`** (DEV-08, ART-10, ART-12, DEV-19). Verificado en `main` (`db88ce1`): `npm run lint`, `typecheck` y `build` sin errores. Quedan en revisión hasta completar su checklist (ver §0.1) | `db88ce1` · `main` | ✅ En `main` |
-| 20-11-2026 | DOCS | **Reparto del equipo** (§0.5): Rafael (experiencia, contenido, assets, repo), Javier (interfaz DOM + SEO), Gabriel (rendimiento, QA, plataforma), con propiedad de archivos para trabajar en paralelo sin conflictos, reglas de convivencia y dependencias con quién las provee. En Trello: responsable en el título («· 👤 Nombre») y en la descripción; tarjetas del sprint en «1er spring» agrupadas por persona; tarjeta «📌 Reparto del equipo» | `docs/criterios-aceptacion` | 🔍 PR abierto |
+| 20-11-2026 | DOCS | **Reparto del equipo** (§0.5) entre Rafael (experiencia, contenido, assets, rendimiento y repo) y Javier (interfaz DOM, SEO y QA), con propiedad de archivos para trabajar en paralelo sin conflictos, reglas de convivencia y dependencias con quién las provee. En Trello: el responsable es el miembro asignado de cada tarjeta; tarjetas del sprint en «1er spring» agrupadas por persona; tarjeta «📌 Reparto del equipo» | `docs/criterios-aceptacion` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -89,41 +89,40 @@ Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026
 
 ### 0.5 Reparto del equipo (desde el 20-11-2026)
 
-> Objetivo: que los tres trabajen **en paralelo sin conflictos de código**. Cada archivo tiene **un solo dueño**; quien necesite cambiar un archivo ajeno abre una tarjeta `BUG-XX · 👤 Dueño` o se lo pide en un PR pequeño. Revisado contra `main` (`db88ce1`). En Trello: «· 👤 Nombre» en el título y tarjeta «📌 Reparto del equipo» en «1er spring».
+> Objetivo: que **Rafael y Javier** trabajen **en paralelo sin conflictos de código**. En Trello, el responsable de cada tarjeta es su **miembro asignado**; el detalle está en la tarjeta «📌 Reparto del equipo» de «1er spring». Cada archivo tiene **un solo dueño**: quien necesite cambiar un archivo ajeno abre una tarjeta `BUG-XX` asignada al dueño o se lo pide en un PR pequeño. Revisado contra `main` (`db88ce1`).
 
 | Persona | Área | Archivos que le pertenecen | Sprint (en orden) | Después |
 | :--- | :--- | :--- | :--- | :--- |
-| **Rafael** | Experiencia, contenido, assets y repo | `src/components/canvas/**`, `src/components/sequence/**`, `IngredientCallouts`, `PackagingSpecs`, `Wordmark`, `Preloader` (nuevo), `src/content/producto.ts`, `src/config/**`, `src/store/**`, `src/lib/math.ts`, `globals.css`, `public/**`, `scripts/**`, fuentes en `layout.tsx`, secciones 2-4 de `page.tsx` | DEV-12 → DEV-15 → DEV-13; cerrar DEV-08, DEV-19, ART-10, ART-12; corregir `BUG-XX` | DEV-14, DEV-16, DEV-23 |
-| **Javier** | Interfaz DOM + SEO | `SiteHeader`, `ContactSection`, `HeroTitle`, `SiteFooter`, `ContactForm` (nuevos), `src/app/api/contacto/route.ts`, `src/content/sitio.ts` (nuevo), `src/app/sitemap.ts`, `src/app/robots.ts`, `src/components/seo/JsonLd.tsx`, secciones 1 y 5 de `page.tsx`, bloque `metadata` de `layout.tsx` | DEV-17 (PR 0: extraer header y Conversión a componentes sin cambiar el aspecto) → DEV-18 → DEV-30 → DEV-25 → DEV-29 | DEV-20 |
-| **Gabriel** | Rendimiento, QA y plataforma | `SmoothScrollProvider.tsx`, `src/lib/dev-overrides.ts` (nuevo), `next.config.ts`, `package.json` + lockfile (único que añade dependencias este sprint), `CustomCursor` y analítica (nuevos), informes en `Manuales/qa/` | DEV-27 → DEV-26 → DEV-28 → DEV-34; verificar DEV-06, 09, 10 y 37 en dispositivos reales | DEV-24, DEV-33 |
+| **Rafael** | Experiencia, contenido, assets, rendimiento y repo | `src/components/canvas/**`, `src/components/sequence/**`, `IngredientCallouts`, `PackagingSpecs`, `Wordmark`, `Preloader` (nuevo), `SmoothScrollProvider.tsx`, `src/lib/dev-overrides.ts` (nuevo), `src/content/producto.ts`, `src/config/**`, `src/store/**`, `src/lib/math.ts`, `globals.css`, `next.config.ts`, `package.json` + lockfile (único que añade dependencias este sprint), `public/**`, `scripts/**`, fuentes en `layout.tsx`, secciones 2-4 de `page.tsx` | DEV-12 → DEV-15 → DEV-13 → DEV-27 → DEV-28 → DEV-34; cerrar DEV-04, DEV-08, DEV-19, ART-10, ART-12; corregir `BUG-XX`; desbloquear los Blockers | DEV-14, DEV-16, DEV-23 |
+| **Javier** | Interfaz DOM, SEO y QA | `SiteHeader`, `ContactSection`, `HeroTitle`, `SiteFooter`, `ContactForm`, `CustomCursor` (nuevos), `src/components/analytics/**`, `src/app/api/contacto/route.ts`, `src/content/sitio.ts` (nuevo), `src/app/sitemap.ts`, `src/app/robots.ts`, `src/components/seo/JsonLd.tsx`, secciones 1 y 5 de `page.tsx`, bloque `metadata` de `layout.tsx`, informes en `Manuales/qa/` | DEV-17 (PR 0: extraer header y Conversión a componentes sin cambiar el aspecto) → DEV-18 → DEV-30 → DEV-25 → DEV-29 → DEV-26; verificar DEV-06, 09, 10 y 37 en dispositivos reales | DEV-20, DEV-24, DEV-33 |
 
 **Reglas de convivencia**
 1. Una rama = una tarjeta; nunca push a `main` ni a `develop`.
-2. `layout.tsx` es compartido: cada uno añade solo su línea (Rafael: fuentes y `<Preloader />`; Javier: `metadata` y `<JsonLd />`; Gabriel: `<CustomCursor />` y analítica).
+2. `layout.tsx` es compartido: cada uno añade solo su línea (Rafael: fuentes y `<Preloader />`; Javier: `metadata`, `<JsonLd />`, cursor y analítica).
 3. `page.tsx`: Javier solo las secciones 1 y 5, Rafael solo las 2 a 4. Tras el PR 0 de Javier, cada uno trabaja en sus componentes.
-4. Textos del producto en `producto.ts` (Rafael); textos del sitio (nav, footer, formulario, legales) en `sitio.ts` (Javier).
+4. Textos del producto en `producto.ts` (Rafael); textos del sitio (nav, footer, formulario, legales, cookies) en `sitio.ts` (Javier).
 5. §0 de este archivo: cada uno edita solo sus filas.
 6. Antes de abrir un PR: `git merge origin/develop` (u `origin/main` mientras `develop` siga desincronizada), y `npm run lint`, `typecheck` y `build`.
-7. El PR lo aprueba alguien que no lo escribió.
+7. Revisión cruzada: el PR de uno lo aprueba el otro (Javier verifica el código de Rafael y viceversa).
 
 **Dependencias: qué falta y quién lo da**
 
 | Falta | Lo da | Lo necesita |
 | :--- | :--- | :--- |
-| Sincronizar `develop` con `main` (28 commits detrás) | Rafael | Todos |
+| Sincronizar `develop` con `main` (28 commits detrás) | Rafael | Los dos |
 | Vercel + Git LFS + Preview URLs | Rafael | DEV-04, DEV-12, pruebas en móvil, G5 |
 | Dominio / `NEXT_PUBLIC_SITE_URL` | Rafael (con el cliente) | DEV-30, DEV-34 |
 | Servicio de email + API key (solo en Vercel) | Rafael | DEV-25 |
-| Invitación de Gabriel al repo de GitHub | Rafael | Gabriel |
-| Invitación de Gabriel al tablero de Trello | Javier (admin del tablero) | Gabriel |
+| Dependencias nuevas (email, captcha, analítica) | Rafael | DEV-25, DEV-33 |
+| Dominios externos para la CSP | Javier | DEV-34 |
 | Número de WhatsApp | Cliente → Rafael | DEV-17, DEV-25 |
 | Datos del negocio (zona, horario, teléfono) | Cliente → Rafael | DEV-30 (JSON-LD) |
 | Fuente display real (`.woff2`) | Cliente / ART-04 → Rafael | DEV-08 |
 | Master del video ≥ 1600 px | Cliente → Rafael | ART-10 |
 
-**Orden de fusión recomendado:** (1) Rafael sincroniza `develop` y fusiona este PR de docs; (2) PR 0 de Javier y DEV-27 de Gabriel, que son pequeños y desbloquean al resto; (3) el resto en cualquier orden, porque no comparten archivos.
+**Orden de fusión recomendado:** (1) Rafael sincroniza `develop` y fusiona este PR de docs; (2) PR 0 de Javier y DEV-27 de Rafael, que son pequeños y desbloquean al resto; (3) el resto en cualquier orden, porque no comparten archivos.
 
-**Sin responsable todavía:** las tarjetas DIR y ART (brief, storyboard, licencias, QA de dirección). Las decide el equipo.
+**Sin responsable todavía:** las tarjetas DIR y ART (brief, storyboard, licencias, QA de dirección).
 
 ---
 
