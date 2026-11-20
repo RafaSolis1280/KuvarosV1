@@ -6,7 +6,7 @@ import type { NextConfig } from "next";
  * (p. ej. `/sequences/hero_explode_v2/`).
  */
 const IMMUTABLE_ASSET_DIRS =
-  "sequences|benchmarks|audio|fonts|fallback";
+  "sequences|benchmarks|audio|fonts|fallback|photos";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

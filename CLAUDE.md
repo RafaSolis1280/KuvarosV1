@@ -24,7 +24,8 @@
 - El único `<Canvas>` WebGL se mantiene solo para el shader de fondo (DEV-10).
 - Todo el texto del sitio vive en `src/content/producto.ts`.
 - Contrato `/public` efectivo: `sequences/hero_explode/{desktop,mobile}`, `sequences/packaging_reveal/{desktop,mobile}`,
-  `fallback/`, `fonts/`, `audio/`, `benchmarks/` (generado), `og-image.jpg`. Detalle en el `README.md`.
+  `fallback/`, `photos/` (fotos de marca en WebP, ART-12), `fonts/`, `audio/`, `benchmarks/` (generado), `og-image.jpg`.
+  Detalle en el `README.md`.
 
 ---
 
