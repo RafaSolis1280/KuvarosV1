@@ -3,6 +3,7 @@
 import * as THREE from "three";
 import { shaderMaterial } from "@react-three/drei";
 import { extend, type ThreeElement } from "@react-three/fiber";
+import { BRAND_COLORS } from "@/config/brand";
 
 export const FluidBackgroundMaterial = shaderMaterial(
   {
@@ -10,8 +11,8 @@ export const FluidBackgroundMaterial = shaderMaterial(
     uScrollVelocity: 0,
     uIntensity: 1,
     uPointer: new THREE.Vector2(0, 0),
-    uColorBase: new THREE.Color("#0A0A0A"),
-    uColorAccent: new THREE.Color("#FFD645"),
+    uColorBase: new THREE.Color(BRAND_COLORS.negroProfundo),
+    uColorAccent: new THREE.Color(BRAND_COLORS.amarilloMostaza),
   },
   /* glsl */ `
     varying vec2 vUv;

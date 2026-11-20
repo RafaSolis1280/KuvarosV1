@@ -6,7 +6,9 @@
 ## Fuentes tipográficas
 | Familia | Archivo(s) | Proveedor | Tipo de licencia | Uso web permitido | Comprobante |
 | :--- | :--- | :--- | :--- | :-: | :--- |
-| _pendiente ART-04_ | | | | | |
+| League Spartan (secundaria oficial de marca) | autoalojada por `next/font/google` en el build | Google Fonts | SIL Open Font License 1.1 | ✅ | https://fonts.google.com/specimen/League+Spartan/license |
+| Bree Serif (display **provisional**, reemplaza a la primaria no identificada del manual) | autoalojada por `next/font/google` en el build | Google Fonts | SIL Open Font License 1.1 | ✅ | https://fonts.google.com/specimen/Bree+Serif/license |
+| _Primaria de marca: pendiente ART-04 (nombre y licencia web)_ | `public/fonts/` | | | | |
 
 ## Modelos 3D / HDRI / texturas
 | Asset | Ruta en `/public` | Origen | Licencia | Uso comercial | Comprobante |

@@ -56,14 +56,14 @@ export default function IngredientCallouts({ sequenceId, ingredientes }: Props) 
           style={{ "--x": `${ing.ancla.x}%`, "--y": `${ing.ancla.y}%` } as React.CSSProperties}
         >
           <div
-            className={`rounded-2xl border border-white/10 bg-black/60 p-5 backdrop-blur-md ${
+            className={`rounded-2xl border border-ink/10 bg-surface-deep/75 p-5 backdrop-blur-md ${
               ing.lado === "derecha" ? "md:border-l-accent md:border-l-2" : "md:border-r-accent md:border-r-2"
             }`}
           >
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
               {String(i + 1).padStart(2, "0")} · {ing.dato}
             </p>
-            <h3 className="mt-2 text-xl font-bold uppercase tracking-tight md:text-2xl">{ing.nombre}</h3>
+            <h3 className="font-display mt-2 text-xl uppercase tracking-tight md:text-2xl">{ing.nombre}</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted">{ing.descripcion}</p>
           </div>
         </li>

@@ -1,15 +1,25 @@
 @import "tailwindcss";
 
 /*
- * Tokens provisionales (Manual v2: fondo #0A0A0A, acento #FFD645).
- * La paleta oficial y las fuentes llegan con ART-03 / ART-04 y se integran en DEV-08.
+ * DEV-08 · Tokens de marca de Kuvaro's (Manual de marca, Página 4 y 5).
+ * Paleta oficial: Negro Profundo #303030 · Beige Claro #DDD1B7 · Amarillo Mostaza #DDA730.
+ * Regla 60-30-10: fondo negro (60 %), texto/neutros beige (30 %), mostaza solo para acentos y CTA (10 %).
+ * Los mismos HEX están en src/config/brand.ts para el shader y los canvas.
+ *
+ * Contraste (WCAG 2.1) sobre surface #303030: ink 8.6:1 · accent 6.2:1 · muted 4.9:1 → AA en texto normal.
  */
 @theme {
   /* No llamar "base" a un color: chocaría con la utilidad de tamaño `text-base` (pintaría el texto del color del fondo). */
-  --color-surface: #0a0a0a;
-  --color-accent: #ffd645;
-  --color-ink: #ffffff;
-  --color-muted: #a1a1aa;
+  --color-surface: #303030; /* Negro Profundo */
+  --color-surface-deep: #242424; /* derivado: paneles y degradados, más oscuro que el fondo */
+  --color-accent: #dda730; /* Amarillo Mostaza */
+  --color-ink: #ddd1b7; /* Beige Claro */
+  --color-muted: #a69d8a; /* derivado del beige (≈ 70 %) para textos secundarios */
+  --color-on-accent: #303030; /* texto sobre botones mostaza */
+
+  /* Tipografías: las variables las declara next/font en layout.tsx */
+  --font-display: var(--font-kuvaros-display), "Georgia", serif;
+  --font-sans: var(--font-kuvaros-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 html {
@@ -19,5 +29,5 @@ html {
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
 }
