@@ -62,7 +62,21 @@
 - **Alcance reducido (cliente, 19-11-2026):** ART-13, ART-14, DEV-03 y DEV-11 descartadas (sin 3D). ART-08/09/10 cubren ahora los dos videos.
 - **`develop` desincronizada:** sigue en `f9fd483` porque los PR se fusionaron en `main`. **Desbloquea:** RafaSolis1280 abre y fusiona un PR `main` → `develop`. Desde ahí, los PR de trabajo van **solo a `develop`** (Guía de gobernanza §1).
 - **Ramas remotas ya fusionadas:** las 13 ramas de trabajo están 100 % en `main`. **Desbloquea:** RafaSolis1280 puede borrarlas desde GitHub (botón *Delete branch* de cada PR), o activar *Automatically delete head branches* en Settings.
-- **Tablero de Trello "Kuvaros web":** las tarjetas de §5 aún no están cargadas. Hay que dar acceso de escritura a la cuenta conectada a Claude, o conectar Claude con la cuenta dueña del tablero.
+- **Vercel sin conectar:** no hay Preview URLs por PR (bloquea el cierre de DEV-04, las pruebas en móviles reales y G5). **Desbloquea:** RafaSolis1280.
+
+### 0.4 Tablero de Trello en línea
+
+Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026 desde §5 de este archivo: 73 tarjetas abiertas, sin duplicados. Las descartadas (DEV-03, DEV-11, ART-13, ART-14) están archivadas. Equivalencia de listas:
+
+| Lista en Trello | Equivale a (§2.1) | Contenido hoy |
+| :--- | :--- | :--- |
+| spring backlog | 📥 Backlog | 📌 Guía del tablero + fases 5 a 10, G5-G7 y post-lanzamiento (31) |
+| 1er spring | 🗓️ Sprint actual / 🔨 En progreso | Fase 0 + Fase 1, G1 y G2, con checklists (14) |
+| 2do spring | 🗓️ Sprint siguiente | Assets y videos (ART-06…12, ART-15), G3, G4, DEV-08, DEV-27, DEV-29 (13) |
+| Blockers | 🚧 Bloqueado / ⏳ Esperando cliente | `develop` desincronizada, Vercel, branding/contenido/videos del cliente (3) |
+| reviews | 🔍 Revisión Interna / QA | DEV-04, 06, 09, 10, 19, 37 y DOCS de sincronización (7) |
+| completados 1er spring | ✅ Hecho | DEV-05, DEV-07 y 3 DOCS (5) |
+| completados 2do spring | ✅ Hecho (sprint 2) | — |
 
 ---
 
