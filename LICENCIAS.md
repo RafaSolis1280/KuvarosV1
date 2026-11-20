@@ -18,6 +18,13 @@
 | Asset | Ruta en `/public` | Origen | Licencia | Uso comercial | Comprobante |
 | :--- | :--- | :--- | :--- | :-: | :--- |
 
+## Fotografía
+| Asset | Ruta en `/public` | Origen | Licencia | Uso comercial | Comprobante |
+| :--- | :--- | :--- | :--- | :-: | :--- |
+| Foto bolsa + hamburguesa | `photos/kuvaros_bolsa_mano.webp` | Cliente (sesión Sony A7 III, 05-2026) | ⏳ cesión de uso web | ⏳ | ⏳ DIR-03 (confirmar autor y derechos de imagen de la persona que aparece) |
+| Foto papas + hamburguesa | `photos/kuvaros_papas_banca.webp` | Cliente (sesión Sony A7 III, 05-2026) | ⏳ cesión de uso web | ⏳ | ⏳ DIR-03 (ídem) |
+| Póster y OG (frame del video de marca) | `fallback/hero_poster.webp`, `og-image.jpg` | Derivados de `Marca/Video.mp4` | Igual que el video | ⏳ | Ver fila del video |
+
 ## Imagen / video generado con IA
 | Asset | Herramienta + versión | Prompt / seed | Plan / términos comerciales | Fecha | Comprobante |
 | :--- | :--- | :--- | :--- | :--- | :--- |
