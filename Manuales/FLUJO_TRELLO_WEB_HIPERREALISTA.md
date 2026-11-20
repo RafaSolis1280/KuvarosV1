@@ -51,6 +51,7 @@
 | 19-11-2026 | DEV-37 (fix) | Bug de DEV-04: el color `--color-base` chocaba con la utilidad `text-base` y pintaba textos del color del fondo (bajada del hero y ficha del packaging invisibles en desktop) → token renombrado a `surface`. `ImageSequenceCanvas` ya no pide frames antes de comprobar el frame 1 (de 20 a 2 peticiones 404 sin assets). Probado en Chrome headless 1440×900 y 390×844 | `feat/dev-37-packaging-video` | 🔍 PR abierto |
 | 19-11-2026 | MERGE | PR #3 a #12 fusionados en **`main`** (no en `develop`): DEV-04…07, DEV-09, DEV-10, DEV-11 (retirada por DEV-37), DEV-19, DEV-37 y los 3 DOCS. Estado real: ✅ en `main`; DEV-05, DEV-07 y los DOCS pasan a Hecho, el resto queda en revisión (ver §0.1) | `ab344d8` · `main` | ✅ En `main` |
 | 19-11-2026 | DOCS | Sincronización: §0 al estado real, README sin la mención a Draco/Basis, `.gitignore` explica las carpetas legado. Repo local vinculado a la cuenta del proyecto (Javier Gómez / `Gomezinho`) | `docs/sync-estado-repo-y-limpieza` | 🔍 PR abierto |
+| 20-11-2026 | DOCS | **Criterios como checklist:** en Trello cada historia tiene el checklist «✔ Criterios de aceptación» (gates: «✔ Criterios de salida»), con los ítems ya cumplidos marcados; criterios breves o ambiguos reescritos como frases verificables (quién aprueba, dónde queda la evidencia, cómo se mide), sin cambiar el alcance. §5 usa el mismo checklist | `docs/criterios-aceptacion` | 🔍 PR abierto |
 | 20-11-2026 | DOCS | **Criterios de aceptación:** todas las historias de §5 con línea *Como… quiero… para…* y criterios numerados y verificables (✅/⏳ en las ya implementadas, sin cambiar su funcionalidad). Completados los que faltaban (DEV-37, ART-11, GATE-G3, DIR-11, DEV-36, DIR-12); DEV-14/15 reescritas sobre el shader de fondo; peso por video; nuevo §3.7 con umbrales. Mismo texto en las tarjetas de Trello | `docs/criterios-aceptacion` | 🔍 PR abierto |
 | 19-11-2026 | DOCS | Manual → **v2.1**: Fase 3 y `HeroArtifactMesh` marcados como opcionales, Anexo A #36-40 (import con efecto de `extend()`, sondeo antes de pedir frames, token `base` vs `text-base`, progreso por secuencia, script de frames) y **Anexo B** (decisiones del proyecto: 100 % video). Código de la Parte II corregido también en `CLAUDE.md`. Guía de GitHub: `git lfs track` con `*.webp`, `*.m4a`, `*.mp4`, `*.mov` | `docs/manuales-solo-video` | 🔍 PR abierto |
 
@@ -230,7 +231,7 @@ Cada gate es una tarjeta en la lista **🚦 Gates** con su checklist. **No se em
 
 ### 3.7 Formato de las historias y umbrales comunes
 
-Cada tarjeta de trabajo lleva una línea de historia (*Como… quiero… para…*) y una lista numerada **✔ Criterios de aceptación**: cada criterio dice qué se entrega, cómo se comprueba y, si hace falta, quién lo aprueba. En las tarjetas ya implementadas, ✅ = verificado en el código y ⏳ = falta verificar. Los gates usan **✔ Criterios de salida**.
+Cada tarjeta de trabajo lleva una línea de historia (*Como… quiero… para…*) en la descripción y un **checklist de Trello «✔ Criterios de aceptación»** (en los gates, «✔ Criterios de salida»). Cada ítem es una frase completa que dice qué se entrega, cómo se comprueba y, si hace falta, quién lo aprueba. Los ítems ya cumplidos en el código vienen marcados; una tarjeta pasa a «completados» solo con el checklist al 100 % y verificado por otra persona. Este §5 refleja el mismo checklist (`- [x]` cumplido · `- [ ]` pendiente).
 
 Umbrales que usan los criterios (acordados el 20-11-2026; DEV-01 puede ajustarlos con la analítica del cliente):
 
@@ -358,11 +359,11 @@ Reunión de descubrimiento: objetivo de negocio, público, competencia y referen
 - [ ] Analítica actual: % móvil, % iOS, países
 
 _Como dirección del proyecto, quiero un brief validado con el cliente para que todo el equipo trabaje hacia el mismo objetivo de negocio._
-✔ **Criterios de aceptación:**
-1. Brief de 1 página en Drive, enlazado en la tarjeta, con objetivo de negocio, público, 3 referencias (qué gusta y qué no) y acción de conversión principal.
-2. Un KPI medible con valor objetivo y plazo (p. ej. «N pedidos por WhatsApp al mes»).
-3. Datos de analítica actual (% móvil, % iOS, países) o la nota explícita «sin datos».
-4. Aprobación del cliente registrada (email adjunto o comentario en la tarjeta).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El brief (1 página) está en Drive y enlazado en esta tarjeta, con objetivo de negocio, público, 3 referencias (qué gusta y qué no) y la acción de conversión principal.
+- [ ] El brief define un KPI medible con valor objetivo y plazo (p. ej. «40 pedidos por WhatsApp al mes en 3 meses»).
+- [ ] El brief incluye la analítica actual (% móvil, % iOS, países) o dice explícitamente «sin datos».
+- [ ] La aprobación del cliente queda registrada en la tarjeta (email adjunto o comentario).
 
 **DIR-02 · Alcance cerrado y cronograma** — DIR · `P0` · 3 h · G1 · ← DIR-01
 - [ ] Nº de secciones, idiomas, CMS sí/no, e-commerce sí/no
@@ -371,11 +372,11 @@ _Como dirección del proyecto, quiero un brief validado con el cliente para que 
 - [ ] Qué queda **fuera** del alcance (por escrito)
 
 _Como dirección, quiero un alcance cerrado y un cronograma con fechas de gates para controlar cambios y plazos._
-✔ **Criterios de aceptación:**
-1. Documento de alcance con nº de secciones, idiomas, CMS sí/no, e-commerce sí/no y nº de rondas de revisión por gate.
-2. Lista explícita de lo que queda fuera, incluida la decisión «solo video, sin modelos 3D» (19-11-2026).
-3. Cronograma de 8 semanas con la fecha de cada gate (G1-G7), cargada como vencimiento en cada tarjeta de gate.
-4. Alcance aprobado por el cliente por escrito (adjunto). Define si DEV-31 (CMS) y DEV-32 (e-commerce) entran.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El documento de alcance indica nº de secciones, idiomas, si hay CMS, si hay e-commerce y cuántas rondas de revisión tiene cada gate.
+- [ ] El documento lista por escrito lo que queda fuera del alcance, incluida la decisión «solo video, sin modelos 3D» (19-11-2026).
+- [ ] El cronograma de 8 semanas fija la fecha de cada gate (G1 a G7) y esa fecha está cargada como vencimiento en cada tarjeta de gate.
+- [ ] El cliente aprueba el alcance por escrito (adjunto en la tarjeta), y queda decidido si entran DEV-31 (CMS) y DEV-32 (e-commerce).
 
 **DEV-01 · Performance Budget y matriz de dispositivos** — DEV · `Dev-WebGL` `P0` · 2 h · G1 · ← DIR-01
 Ref. M Fase 0. Ajustar la tabla según la analítica del cliente.
@@ -384,29 +385,29 @@ Ref. M Fase 0. Ajustar la tabla según la analítica del cliente.
 - [ ] Objetivos de CWV y FPS
 
 _Como desarrollo, quiero un Performance Budget y una matriz de dispositivos acordados para medir cada entrega contra números concretos._
-✔ **Criterios de aceptación:**
-1. Tabla publicada en la tarjeta 📌 Guía con: JS inicial, peso crítico, peso total, peso por secuencia (≤ 8 MB desktop / ≤ 4 MB mobile por video), LCP, CLS, INP y FPS objetivo.
-2. Matriz QA con 6 dispositivos concretos (modelo + navegador) de las categorías del manual.
-3. Valores ajustados a la analítica de DIR-01, o justificados si no hay datos.
-4. Validado por DIR (comentario en la tarjeta).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La tarjeta 📌 Guía tiene una tabla con el límite de: JS inicial, peso crítico, peso total, peso por secuencia (≤ 8 MB desktop / ≤ 4 MB mobile por video), LCP, CLS, INP y FPS.
+- [ ] La matriz de QA nombra 6 dispositivos concretos (modelo y navegador): iPhone reciente, iPhone de 3-4 años, Android gama media, Android gama baja, MacBook y Windows con GPU integrada.
+- [ ] Cada valor está ajustado a la analítica de DIR-01, o se explica por qué se usa el valor del manual si no hay datos.
+- [ ] DIR valida el budget con un comentario en la tarjeta.
 
 **DIR-03 · Registro de licencias** — DIR · `SEO/Negocio` `P1` · 1 h · G1
 - [ ] Crear `LICENCIAS.md` (fuentes, modelos, audio, IA)
 - [ ] Revisar los términos de uso comercial de cada herramienta IA del plan
 
 _Como dirección, quiero un registro de licencias para usar comercialmente cada fuente, audio y asset IA sin riesgo legal._
-✔ **Criterios de aceptación:**
-1. `LICENCIAS.md` con una fila por asset: nombre, origen o herramienta, tipo de licencia, enlace o comprobante y uso comercial sí/no.
-2. Términos de uso comercial de cada herramienta IA del plan revisados, con enlace.
-3. Ningún archivo de `/public` sin su fila en `LICENCIAS.md`.
-4. Enlazado desde la tarjeta 📌 Guía.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] `LICENCIAS.md` tiene una fila por asset con: nombre, origen o herramienta, tipo de licencia, enlace o comprobante y si permite uso comercial.
+- [ ] Para cada herramienta IA del plan se revisaron sus términos de uso comercial y se anotó el enlace en `LICENCIAS.md`.
+- [ ] Todos los archivos de `/public` tienen su fila en `LICENCIAS.md` (ninguno queda sin registrar).
+- [ ] La tarjeta 📌 Guía enlaza a `LICENCIAS.md`.
 
 **GATE-G1 · Brief y alcance aprobados** — DIR + Cliente
 
-✔ **Criterios de salida:**
-1. DIR-01, DIR-02, DEV-01 y DIR-03 en Hecho.
-2. Aprobación escrita del cliente del brief y del alcance.
-3. Fechas de G2 a G7 cargadas como vencimiento en sus tarjetas.
+✔ **Criterios de salida** (checklist en Trello):
+- [ ] DIR-01, DIR-02, DEV-01 y DIR-03 están en «completados».
+- [ ] El cliente aprobó por escrito el brief y el alcance (email o comentario enlazado).
+- [ ] Las fechas de G2 a G7 están cargadas como vencimiento en sus tarjetas de gate.
 
 ---
 
@@ -419,11 +420,11 @@ Ref. M Fase 1 Paso 1.
 - [ ] 3 palabras clave sensoriales
 
 _Como dirección creativa, quiero una ficha de concepto para que arte y desarrollo compartan la misma intención visual y de movimiento._
-✔ **Criterios de aceptación:**
-1. Ficha de 1 página en Drive, enlazada en la tarjeta.
-2. Incluye arquetipo, 3 palabras clave sensoriales y un valor λ por interacción (scroll, puntero, entrada de texto).
-3. Los λ están en los rangos del manual (denso 2-4 / natural 5-7 / preciso 10-14).
-4. DIR deja su aprobación como comentario.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La ficha de concepto (1 página) está en Drive y enlazada en esta tarjeta.
+- [ ] La ficha define el arquetipo, 3 palabras clave sensoriales y un valor λ (suavizado) para cada interacción: scroll, puntero y entrada de texto.
+- [ ] Cada valor λ está dentro de los rangos del manual: denso 2-4, natural 5-7 o preciso 10-14.
+- [ ] DIR deja su aprobación como comentario en la tarjeta.
 
 **ART-02 · Moodboard estético + motion** — ART · `Concepto/Arte` `P0` · 6 h · G2 · ← ART-01
 Ref. M Fase 1 Paso 2.
@@ -432,11 +433,11 @@ Ref. M Fase 1 Paso 2.
 - [ ] 3 exploraciones de material/luz con IA
 
 _Como arte, quiero un moodboard estético y de motion para alinear con el cliente el look y el ritmo antes de producir._
-✔ **Criterios de aceptación:**
-1. Tablero de estética con ≥ 15 referencias, enlazado en la tarjeta.
-2. Tablero de motion con ≥ 5 sitios de referencia (con enlace) y qué se toma de cada uno.
-3. 3 exploraciones de material y luz con IA de la hamburguesa, con la herramienta registrada.
-4. Aprobado por DIR y por el cliente (comentario o email).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El tablero de estética tiene al menos 15 referencias y está enlazado en la tarjeta.
+- [ ] El tablero de motion tiene al menos 5 sitios de referencia (con enlace) y, para cada uno, qué se toma de él.
+- [ ] Hay 3 exploraciones de material y luz de la hamburguesa hechas con IA, con la herramienta usada anotada.
+- [ ] DIR y el cliente aprueban el moodboard (comentario o email enlazado).
 
 **ART-03 · Paleta, luz y LUT** — ART · `Concepto/Arte` `P0` · 3 h · G2 · ← ART-02
 - [ ] Hex de fondo (`#0A0A0A` o el definido) y acentos
@@ -444,12 +445,12 @@ _Como arte, quiero un moodboard estético y de motion para alinear con el client
 - [ ] LUT de color para todos los assets
 
 _Como arte, quiero una paleta, un esquema de luz y una LUT únicos para que los videos y el sitio se vean coherentes._
-✔ **Criterios de aceptación:**
-1. Hex de fondo, superficie, acento, texto y texto secundario publicados en la tarjeta 📌 Guía.
-2. Contraste texto/fondo ≥ 4.5:1 verificado (herramienta y resultado anotados).
-3. Diagrama de Key Light y Rim Light adjunto.
-4. Archivo LUT (`.cube`) en Drive, enlazado.
-5. Aprobado por DIR.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Los hex de fondo, superficie, acento, texto y texto secundario están publicados en la tarjeta 📌 Guía.
+- [ ] El contraste entre texto y fondo es ≥ 4.5:1, con la herramienta usada y el resultado anotados.
+- [ ] El diagrama de luz principal (Key Light) y de contorno (Rim Light) está adjunto.
+- [ ] El archivo LUT (`.cube`) está en Drive y enlazado en la tarjeta.
+- [ ] DIR deja su aprobación como comentario en la tarjeta.
 
 **ART-04 · Sistema tipográfico con licencia** — ART/DIR · `Dev-UI` `P1` · 2 h · G2
 - [ ] Display (preferible variable font) + técnica (una sola familia, no "Slab/Mono")
@@ -457,10 +458,10 @@ _Como arte, quiero una paleta, un esquema de luz y una LUT únicos para que los 
 - [ ] Archivos `.woff2` entregados a DEV
 
 _Como arte, quiero un sistema tipográfico con licencia web para que desarrollo lo integre sin riesgo legal ni saltos de texto._
-✔ **Criterios de aceptación:**
-1. Familia display + familia de texto elegidas, con los pesos que se usarán.
-2. Archivos `.woff2` (subconjunto latino) entregados a DEV.
-3. Licencia web (comprobante o licencia open source) registrada en `LICENCIAS.md`.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Están elegidas una familia para titulares y otra para texto, con los pesos que se usarán (p. ej. 400 y 700).
+- [ ] Los archivos `.woff2` (subconjunto latino) están entregados a DEV.
+- [ ] La licencia web (comprobante de compra o licencia open source) está registrada en `LICENCIAS.md`.
 
 **DIR-04 · Storyboard por sección** — DIR · `Concepto/Arte` `P0` · 6 h · G2 · ← ART-02
 Ref. M Fase 1 entregable. Cuadro por cuadro, del preloader al CTA.
@@ -469,11 +470,11 @@ Ref. M Fase 1 entregable. Cuadro por cuadro, del preloader al CTA.
 - [ ] Transiciones entre secciones
 
 _Como dirección, quiero un storyboard sección por sección para que arte y desarrollo sepan qué construir y con qué técnica._
-✔ **Criterios de aceptación:**
-1. Un cuadro por sección, del preloader al CTA (mínimo: preloader, Hero, Video 1 hamburguesa, Video 2 packaging y conversión).
-2. Por sección: objetivo, técnica (secuencia / shader 2D / UI) y fallback T1/T0.
-3. Ubicación del CTA persistente y transición entre cada par de secciones vecinas.
-4. Aprobado por el cliente.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El storyboard tiene un cuadro por sección, del preloader al CTA, como mínimo: preloader, Hero, Video 1 (hamburguesa), Video 2 (packaging) y conversión.
+- [ ] Cada sección indica su objetivo, la técnica (secuencia de video, shader 2D o UI) y qué se ve en T1/T0 (fallback).
+- [ ] El storyboard marca dónde vive el CTA persistente y cómo es la transición entre cada par de secciones vecinas.
+- [ ] El cliente aprueba el storyboard (email o comentario enlazado).
 
 **DEV-02 · Validación técnica del storyboard** — DEV · `Dev-WebGL` `P0` · 3 h · G2 · ← DIR-04
 - [ ] Cada técnica es viable dentro del budget
@@ -481,10 +482,10 @@ _Como dirección, quiero un storyboard sección por sección para que arte y des
 - [ ] Estimación de peso por sección
 
 _Como desarrollo, quiero validar técnicamente el storyboard para detectar antes de producir lo que no cabe en el presupuesto._
-✔ **Criterios de aceptación:**
-1. Comentario en DIR-04 con un veredicto por sección: viable / viable con riesgo ⚠ / no viable.
-2. Peso estimado por sección y total, comparado con el budget de DEV-01.
-3. Cada riesgo ⚠ convertido en una tarjeta nueva en el backlog.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Hay un comentario en DIR-04 con un veredicto por sección: viable, viable con riesgo ⚠ o no viable.
+- [ ] Se estima el peso de cada sección y el total, y se compara con el budget de DEV-01.
+- [ ] Cada riesgo ⚠ tiene su propia tarjeta nueva en el backlog.
 
 **ART-05 · Wireframes y grilla en Figma** — ART/DIR · `Dev-UI` `P1` · 8 h · G2 · ← DIR-04
 - [ ] Grilla de 12 columnas, desktop y mobile
@@ -492,28 +493,28 @@ _Como desarrollo, quiero validar técnicamente el storyboard para detectar antes
 - [ ] Estados de botones, nav y preloader
 
 _Como arte y dirección, quiero wireframes en Figma sobre una grilla de 12 columnas para que desarrollo maquete sin ambigüedad._
-✔ **Criterios de aceptación:**
-1. Figma enlazado con frames de 360, 768 y 1440 px de todas las secciones del storyboard.
-2. Grilla de 12 columnas visible en desktop y su equivalente en mobile.
-3. Estados de botones (normal, hover, foco, deshabilitado), navegación y preloader.
-4. Aprobado por DIR y por el cliente.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El Figma enlazado tiene frames de 360, 768 y 1440 px para todas las secciones del storyboard.
+- [ ] La grilla de 12 columnas se ve en desktop y hay una equivalente en mobile.
+- [ ] Están diseñados los estados de los botones (normal, hover, foco, deshabilitado), la navegación y el preloader.
+- [ ] DIR y el cliente aprueban los wireframes (comentario o email enlazado).
 
 **DIR-05 · Copy v1** — DIR · `SEO/Negocio` `P1` · 6 h · G2 · ← DIR-04
 - [ ] Titulares, textos y CTAs por sección
 - [ ] Palabras clave SEO objetivo
 
 _Como dirección, quiero el copy v1 de todas las secciones para reemplazar el texto provisional del sitio._
-✔ **Criterios de aceptación:**
-1. Documento con todos los textos de `src/content/producto.ts`: marca, nombre, titular, bajada, ingredientes (en el orden del video), ficha del packaging y CTA.
-2. 3 a 5 palabras clave SEO objetivo.
-3. Revisión ortográfica hecha.
-4. Aprobado por el cliente.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El documento de copy cubre todos los textos de `src/content/producto.ts`: marca, nombre, titular, bajada, ingredientes (en el orden en que se separan en el video), ficha del packaging y CTA.
+- [ ] El documento incluye de 3 a 5 palabras clave SEO objetivo.
+- [ ] Una segunda persona revisó la ortografía y no quedan errores pendientes.
+- [ ] El cliente aprueba el copy (email o comentario enlazado).
 
 **GATE-G2 · Dirección de arte y storyboard aprobados** — Cliente + DIR
 
-✔ **Criterios de salida:**
-1. ART-01 a ART-05, DIR-04, DIR-05 y DEV-02 en Hecho.
-2. Aprobación escrita del cliente de moodboard, paleta, tipografía y storyboard.
+✔ **Criterios de salida** (checklist en Trello):
+- [ ] ART-01 a ART-05, DIR-04, DIR-05 y DEV-02 están en «completados».
+- [ ] El cliente aprobó por escrito el moodboard, la paleta, la tipografía y el storyboard.
 
 ---
 
@@ -526,51 +527,51 @@ Ref. M Fase 2 Paso 3.
 - [ ] Prueba de borde en navegador
 
 _Como arte, quiero imágenes maestras con la luz del proyecto para fijar el look final antes de generar video._
-✔ **Criterios de aceptación:**
-1. Una imagen maestra del Hero, de la hamburguesa y del packaging, en Drive.
-2. Fondo idéntico al hex de fondo del sitio (o con alfa).
-3. Prueba en navegador sobre el fondo real sin costura visible (captura adjunta).
-4. Aprobado por DIR.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Hay una imagen maestra del Hero, de la hamburguesa y del packaging en Drive, con la luz de ART-03.
+- [ ] El fondo de cada imagen es exactamente el hex de fondo del sitio (o transparente).
+- [ ] Puesta sobre el fondo real del sitio en el navegador, no se ve borde ni costura (captura adjunta).
+- [ ] DIR deja su aprobación como comentario en la tarjeta.
 
 **ART-07 · Keyframes inicial/final para la secuencia Hero** — ART · `IA-Video` `P0` · 6 h · G3 · ← ART-06
 - [ ] Mismo aspect ratio, lente y altura de cámara
 - [ ] Inicial (producto cerrado) y final (exploded view)
 
 _Como arte, quiero keyframes inicial y final de cada video para guiar la generación IA sin saltos de cámara._
-✔ **Criterios de aceptación:**
-1. Par inicial/final de la hamburguesa (cerrada → capas separadas) y del packaging.
-2. Mismo aspect ratio, lente y altura de cámara dentro de cada par.
-3. El orden de las capas de la hamburguesa coincide con el orden de ingredientes del copy (DIR-05).
-4. Aprobados por DIR.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Hay un par de keyframes inicial/final de la hamburguesa (cerrada → capas separadas) y otro del packaging.
+- [ ] Dentro de cada par, el aspect ratio, la lente y la altura de cámara son iguales.
+- [ ] Las capas de la hamburguesa siguen el mismo orden que los ingredientes del copy (DIR-05).
+- [ ] DIR deja su aprobación como comentario en la tarjeta.
 
 **GATE-G3 · Key visuals + coherencia lumínica** — Cliente + DIR · ← ART-06, ART-07
 
-✔ **Criterios de salida:**
-1. ART-06 y ART-07 en Hecho.
-2. Keyframes de los dos videos aprobados por el cliente.
-3. Prueba en navegador de un frame sobre el fondo del sitio sin costura (captura adjunta).
+✔ **Criterios de salida** (checklist en Trello):
+- [ ] ART-06 y ART-07 están en «completados».
+- [ ] El cliente aprobó los keyframes de los dos videos.
+- [ ] Un frame puesto sobre el fondo del sitio en el navegador no muestra costura (captura adjunta).
 
 **ART-08 · Generación de la secuencia IA Hero** — ART · `IA-Video` `P0` · 10 h · G4 · ← G3
 > 📍 En este proyecto: **dos videos** — hamburguesa separándose (`hero_explode`) y packaging (`packaging_reveal`). Especificación en el `README.md`.
 *Usar la PLANTILLA Asset IA-Video.* Ref. M Fase 2 Paso 4 (verificar el flujo vigente de la herramienta).
 
 _Como arte, quiero generar los dos videos hiperrealistas para contar el producto a medida que el visitante hace scroll._
-✔ **Criterios de aceptación:**
-1. Dos clips master: hamburguesa (`hero_explode`) y packaging (`packaging_reveal`), según la especificación del `README.md`.
-2. Revisados frame a frame: sin morphing, sin logo deformado y con movimiento natural.
-3. Prompt, seed, herramienta y versión registrados en la tarjeta.
-4. Licencia registrada en `LICENCIAS.md`.
-5. Aprobados por DIR.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Existen los dos clips master, hamburguesa (`hero_explode`) y packaging (`packaging_reveal`), según la especificación del `README.md`.
+- [ ] Revisados frame a frame: sin morphing, con el logo intacto y con movimiento natural.
+- [ ] Prompt, seed, herramienta y versión usados están anotados en la tarjeta.
+- [ ] La licencia de la herramienta IA está registrada en `LICENCIAS.md`.
+- [ ] DIR deja su aprobación de los dos clips como comentario en la tarjeta.
 
 **ART-09 · Upscale y color de la secuencia** — ART · `IA-Video` `P1` · 4 h · G4 · ← ART-08
 - [ ] Topaz Video / DaVinci a FPS constantes
 - [ ] LUT del proyecto aplicada
 
 _Como arte, quiero escalar y corregir el color de los videos para que coincidan con el sitio._
-✔ **Criterios de aceptación:**
-1. FPS constante (24) verificado en los dos videos.
-2. LUT de ART-03 aplicada a los dos videos.
-3. Masters finales en Drive (nunca en Git), enlazados en la tarjeta.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Los dos videos tienen FPS constante a 24, comprobado en el editor.
+- [ ] La LUT de ART-03 está aplicada a los dos videos.
+- [ ] Los masters finales están en Drive (nunca en Git) y enlazados en la tarjeta.
 
 **ART-10 · Export WebP desktop/mobile** — ART · `IA-Video` `⚠` `P0` · 2 h · G4 · ← ART-09
 Ref. M Fase 2 Paso 5 (corrección: **mismo fps**).
@@ -580,30 +581,30 @@ Ref. M Fase 2 Paso 5 (corrección: **mismo fps**).
 - [ ] Copiar a `/public/sequences/hero_explode/{desktop,mobile}`
 
 _Como arte, quiero exportar los videos a secuencias WebP para que desarrollo los controle con el scroll._
-✔ **Criterios de aceptación:**
-1. Por video: desktop 1600 px y mobile 800 px a 24 fps, generados con `npm run frames`.
-2. Mismo nº de frames en desktop y mobile, igual a `totalFrames` de `ASSET_MANIFEST` (hoy 120); si cambia, DEV lo actualiza en el mismo PR.
-3. Peso por video ≤ 8 MB desktop y ≤ 4 MB mobile.
-4. Subidos por PR desde una rama `assets/art-10-…` a `/public/sequences/{hero_explode,packaging_reveal}/{desktop,mobile}/`.
-5. DEV confirma en navegador que las dos secuencias cargan sin fallback.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Cada video está exportado con `npm run frames` en desktop (1600 px) y mobile (800 px) a 24 fps.
+- [ ] Desktop y mobile tienen el mismo nº de frames, igual a `totalFrames` de `ASSET_MANIFEST` (hoy 120); si cambia, DEV lo actualiza en el mismo PR.
+- [ ] Cada video pesa ≤ 8 MB en desktop y ≤ 4 MB en mobile.
+- [ ] Los frames se suben por PR desde una rama `assets/art-10-…` a `/public/sequences/{hero_explode,packaging_reveal}/{desktop,mobile}/`.
+- [ ] DEV confirma en el navegador que las dos secuencias cargan sin mostrar el fallback.
 
 **ART-11 · Secuencias / imágenes de secciones secundarias** — ART · `IA-Video` `P1` · 12 h · G4 · ← G3
 *Una tarjeta por asset* (duplicar desde la plantilla).
 
 _Como arte, quiero producir los assets de las secciones secundarias para completar el storyboard._
-✔ **Criterios de aceptación:**
-1. Una tarjeta por asset, creada a partir de DIR-04, con su propio criterio de aceptación.
-2. Si el storyboard no pide secciones extra, esta tarjeta se archiva con un comentario que lo explique.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Por cada asset extra que pida el storyboard (DIR-04) hay una tarjeta propia, creada con la plantilla Asset IA-Video y con sus criterios.
+- [ ] Si el storyboard no pide secciones extra, esta tarjeta se archiva con un comentario que lo explica.
 
 **ART-12 · Pósters de fallback T0/T1 y OG image** — ART · `Concepto/Arte` `P1` · 3 h · G4 · ← ART-06
 - [ ] `hero_poster.webp` y un póster por secuencia
 - [ ] `og-image.jpg` 1200×630
 
 _Como visitante sin WebGL o con un móvil de gama baja, quiero ver una imagen fija de calidad para entender el producto igual._
-✔ **Criterios de aceptación:**
-1. `hero_poster.webp` y un póster por secuencia en `/public/fallback`.
-2. `og-image.jpg` de 1200×630 en `/public`.
-3. Mismo fondo y LUT que los videos; pesos dentro del budget de DEV-01.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] En `/public/fallback` están `hero_poster.webp` y un póster por secuencia.
+- [ ] En `/public` está `og-image.jpg` de 1200×630 px.
+- [ ] Los pósters usan el mismo fondo y LUT que los videos y su peso entra en el budget de DEV-01.
 
 ---
 
@@ -634,20 +635,20 @@ Ref. M Fase 5 Paso 16.
 - [ ] Licencia anotada
 
 _Como visitante, quiero un sonido ambiental opcional para que la experiencia se sienta inmersiva sin molestar._
-✔ **Criterios de aceptación:**
-1. Loop ambiental en `.webm` y `.m4a` que se repite sin corte audible.
-2. SFX de hover de menos de 80 ms en `.webm` y `.m4a`.
-3. Licencias registradas en `LICENCIAS.md`.
-4. En `/public/audio` con los nombres del contrato (`ambient_drone`, `ui_hover_tick`).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El loop ambiental existe en `.webm` y `.m4a` y se repite sin corte audible.
+- [ ] El sonido de hover dura menos de 80 ms y existe en `.webm` y `.m4a`.
+- [ ] Las licencias de los audios están registradas en `LICENCIAS.md`.
+- [ ] Los archivos están en `/public/audio` con los nombres del contrato (`ambient_drone`, `ui_hover_tick`).
 
 **GATE-G4 · Assets optimizados** — DIR + DEV
 
-✔ **Criterios de salida:**
-1. ART-08, ART-09, ART-10 y ART-12 en Hecho (y ART-15 si entra en el alcance).
-2. Todos los archivos en `/public` con los nombres del contrato.
-3. Pesos dentro del budget (≤ 8 MB desktop / ≤ 4 MB mobile por video).
-4. `LICENCIAS.md` completo.
-5. DEV confirma que el conteo de frames coincide con `ASSET_MANIFEST`.
+✔ **Criterios de salida** (checklist en Trello):
+- [ ] ART-08, ART-09, ART-10 y ART-12 están en «completados» (y ART-15, si entra en el alcance).
+- [ ] Todos los archivos están en `/public` con los nombres del contrato.
+- [ ] Cada video pesa ≤ 8 MB en desktop y ≤ 4 MB en mobile.
+- [ ] `LICENCIAS.md` tiene una fila por cada archivo de `/public`.
+- [ ] DEV confirma que el nº de frames coincide con `ASSET_MANIFEST`.
 
 ---
 
@@ -664,22 +665,22 @@ Ref. M Parte II §3.
 - [ ] Deploy de preview en Vercel conectado a GitHub
 
 _Como equipo de desarrollo, quiero un repositorio base configurado para construir sobre una estructura común._
-✔ **Criterios de aceptación:**
-1. ✅ Next.js 16 con TypeScript, Tailwind v4, App Router y `src/`; dependencias fijadas (R3F v9 + React 19).
-2. ✅ `CLAUDE.md` con la Parte II del Manual.
-3. ✅ `postinstall` copia los benchmarks; `next.config.ts` con caché `immutable`.
-4. ✅ `npm run lint`, `typecheck` y `build` sin errores.
-5. ⏳ Preview URL de Vercel generada en cada PR.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] El proyecto usa Next.js 16 con TypeScript, Tailwind v4, App Router y `src/`, con dependencias fijadas (R3F v9 + React 19).
+- [x] `CLAUDE.md` contiene la Parte II del Manual.
+- [x] `postinstall` copia los benchmarks y `next.config.ts` sirve los assets con caché `immutable`.
+- [x] `npm run lint`, `npm run typecheck` y `npm run build` terminan sin errores.
+- [ ] Cada PR genera una URL de preview en Vercel.
 
 **DEV-05 · Política de GPU, manifiesto y store** — DEV · `Dev-WebGL` `P0` · 3 h · G5 · ← DEV-04
 > 📍 **Estado:** ✅ Hecho · fusionada en `main`
 Ref. M Parte II §4-5. Prompt P1.
 
 _Como desarrollo, quiero una política de GPU, un manifiesto de assets y un store transiente para que todos los componentes lean la misma configuración._
-✔ **Criterios de aceptación:**
-1. ✅ `gpu-policy.ts` con las políticas T1-T3 y `ASSET_MANIFEST` con `totalFrames` por variante.
-2. ✅ `damp` independiente de los FPS.
-3. ✅ Store con `reducedMotion` y `webglAvailable`; los campos transientes se leen con `getState()`.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] `gpu-policy.ts` define las políticas T1-T3 y `ASSET_MANIFEST` con `totalFrames` por variante.
+- [x] `damp` da el mismo resultado sin importar los FPS.
+- [x] El store expone `reducedMotion` y `webglAvailable`, y los campos de scroll y puntero se leen con `getState()`.
 
 **DEV-06 · SmoothScrollProvider + detect-gpu** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← DEV-05
 > 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-06-smooth-scroll` · falta prueba en navegador real
@@ -690,34 +691,34 @@ _Como desarrollo, quiero una política de GPU, un manifiesto de assets y un stor
 - [ ] Puntero mutable
 
 _Como visitante, quiero un scroll suave y una calidad visual adaptada a mi dispositivo._
-✔ **Criterios de aceptación:**
-1. ✅ Lenis con `autoRaf:false` manejado por `gsap.ticker` (un solo reloj).
-2. ✅ Con `prefers-reduced-motion` no se crea Lenis.
-3. ✅ detect-gpu con benchmarks propios fija el tier; en desarrollo se ve en consola.
-4. ✅ Puntero normalizado en un objeto mutable, sin re-renders.
-5. ⏳ Probado en navegador real (desktop y móvil): scroll fluido y un solo bucle RAF en Performance.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] Lenis funciona con `autoRaf:false` y lo mueve `gsap.ticker` (un solo reloj).
+- [x] Con `prefers-reduced-motion` activo no se crea Lenis.
+- [x] detect-gpu, con benchmarks propios, fija el tier y en desarrollo se ve en la consola.
+- [x] El puntero se guarda en un objeto mutable, sin re-renders de React.
+- [ ] En un navegador real (desktop y móvil) el scroll es fluido y en Performance hay un solo bucle de animación.
 
 **DEV-07 · GlobalCanvas (Single-Canvas) + PerformanceMonitor** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← DEV-06
 > 📍 **Estado:** ✅ Hecho · fusionada en `main` · un solo contexto WebGL verificado
 Ref. M Parte II §8. `flipflops={3}`, `onFallback`, no se monta si `webglAvailable=false`.
 
 _Como desarrollo, quiero un único Canvas WebGL adaptado al dispositivo para no gastar memoria con varios contextos._
-✔ **Criterios de aceptación:**
-1. ✅ Un solo `<canvas>` WebGL en el DOM.
-2. ✅ `dpr` y `antialias` según la política; el render se pausa con la pestaña oculta.
-3. ✅ PerformanceMonitor baja de tier ante caídas de FPS.
-4. ✅ Sin WebGL no se monta y la página sigue siendo usable.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] En el DOM hay un solo `<canvas>` WebGL.
+- [x] `dpr` y `antialias` salen de la política del tier, y el render se pausa con la pestaña oculta.
+- [x] Si los FPS caen, PerformanceMonitor baja un tier.
+- [x] Sin WebGL el Canvas no se monta y la página se sigue usando con normalidad.
 
 **DEV-08 · Tokens de diseño y fuentes** — DEV · `Dev-UI` `P1` · 2 h · G5 · ← ART-03, ART-04
 - [ ] `@theme` de Tailwind v4 con la paleta
 - [ ] `next/font/local` con las `.woff2`
 
 _Como visitante, quiero ver la marca con sus colores y tipografías reales, sin saltos de texto al cargar._
-✔ **Criterios de aceptación:**
-1. Paleta de ART-03 en el `@theme` de `globals.css` (el token de fondo es `surface`).
-2. Fuentes de ART-04 cargadas con `next/font/local`.
-3. CLS causado por fuentes = 0 en Lighthouse y sin FOUT visible en una carga con red lenta simulada.
-4. `npm run lint`, `typecheck` y `build` sin errores.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La paleta de ART-03 está en el `@theme` de `globals.css` (el token de fondo se llama `surface`, no `base`).
+- [ ] Las fuentes de ART-04 se cargan con `next/font/local`.
+- [ ] Lighthouse no muestra CLS causado por fuentes y, con red lenta simulada, no se ve el cambio de fuente al cargar.
+- [ ] `npm run lint`, `npm run typecheck` y `npm run build` terminan sin errores.
 
 ---
 
@@ -732,22 +733,22 @@ _Como visitante, quiero ver la marca con sus colores y tipografías reales, sin 
 - [ ] `aria-label`
 
 _Como visitante, quiero ver el video de la hamburguesa avanzar y retroceder con mi scroll, sin cortes._
-✔ **Criterios de aceptación:**
-1. ✅ Con `/public` vacío se ve el fallback procedural, sin errores fatales.
-2. ✅ Solo se mantienen decodificados los frames [f-R, f+R] (≤ 2R+1 ImageBitmaps vivos).
-3. ✅ Al cambiar de tier se vacía la caché.
-4. ✅ El canvas tiene `aria-label`.
-5. ⏳ Con los frames reales: se recorre toda la secuencia sin frames en blanco ni saltos (← ART-10).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] Con `/public` vacío se ve la animación de respaldo, sin errores fatales.
+- [x] Solo se mantienen en memoria los frames cercanos al actual [f-R, f+R] (como máximo 2R+1).
+- [x] Al cambiar de tier se vacía la caché de frames.
+- [x] El canvas tiene `aria-label` que describe la animación.
+- [ ] Con los frames reales (ART-10), se recorre toda la secuencia sin frames en blanco ni saltos.
 
 **DEV-10 · Shader de fondo (fluido)** — DEV · `Dev-WebGL` `P1` · 6 h · G5 · ← DEV-07
 > 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-10-fluid-shader`
 Ref. M Parte II §8. Prompt P4. Hash sin `sin()`.
 
 _Como visitante, quiero un fondo vivo que reaccione a mi puntero y al scroll para que la página se sienta inmersiva._
-✔ **Criterios de aceptación:**
-1. ✅ Shader con hash sin `sin()`; los uniforms pasan por `damp()`.
-2. ✅ Con reduced motion el fondo queda quieto.
-3. ⏳ En un Android de gama media: ≥ 50 FPS y sin bandas ni bloques visibles (captura adjunta).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] El shader usa un hash sin `sin()` y todos sus uniforms pasan por `damp()`.
+- [x] Con `prefers-reduced-motion` activo el fondo queda quieto.
+- [ ] En un Android de gama media el fondo va a ≥ 50 FPS y no muestra bandas ni bloques (captura adjunta).
 
 **DEV-11 · HeroArtifactMesh + rig de iluminación** — DEV · `Dev-WebGL` `3D` `P0` · 8 h · G5 · ← DEV-07 (y DEV-03 para el asset real)
 > ❌ **Descartada en este proyecto** (decisión del cliente 19-11-2026: solo video hiperrealista, sin 3D). Ver DEV-37.
@@ -759,22 +760,22 @@ Ref. M Parte II §8. Prompt P5.
 Segunda secuencia `packaging_reveal` con `PackagingSpecs` (ficha técnica que aparece por tramos). Fuera del manifiesto: `.glb`, HDRI y Draco/Basis.
 
 _Como visitante, quiero ver el packaging en un video hiperrealista con su ficha técnica para conocer el envase._
-✔ **Criterios de aceptación:**
-1. ✅ Segunda secuencia `packaging_reveal` controlada por el scroll, con su propio id de progreso.
-2. ✅ Las especificaciones del packaging aparecen por tramos según el progreso.
-3. ✅ Sin `.glb`, HDRI ni Draco/KTX2 en el código ni en el manifiesto.
-4. ✅ Con `/public` vacío: fallback sin errores y sin pedir frames antes de comprobar el frame 1.
-5. ⏳ Con el video real: se recorre la secuencia sin frames en blanco (← ART-08 / ART-10).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] El packaging es una segunda secuencia (`packaging_reveal`) controlada por el scroll, con su propio id de progreso.
+- [x] Las especificaciones del packaging aparecen por tramos según avanza el video.
+- [x] El código y el manifiesto no usan `.glb`, HDRI ni Draco/KTX2.
+- [x] Con `/public` vacío se ve el fallback sin errores y no se piden frames antes de comprobar que existe el frame 1.
+- [ ] Con el video real (ART-08 / ART-10), se recorre la secuencia sin frames en blanco.
 
 **DEV-12 · Integrar assets reales en la vertical slice** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← G4, DEV-09, DEV-37 (los dos videos)
 
 _Como cliente, quiero ver la vertical slice con los videos y textos definitivos para aprobar el rumbo antes del pulido._
-✔ **Criterios de aceptación:**
-1. Los dos videos reales cargan en la preview sin fallback.
-2. Copy definitivo de DIR-05 cargado en `src/content/producto.ts`.
-3. Scroll de principio a fin sin frames en blanco ni saltos.
-4. Lighthouse móvil: el rendimiento no baja más de 5 puntos frente a `main`.
-5. URL de preview enlazada en la tarjeta.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Los dos videos reales cargan en la preview sin mostrar el fallback.
+- [ ] El copy definitivo de DIR-05 está cargado en `src/content/producto.ts`.
+- [ ] Se puede hacer scroll de principio a fin sin frames en blanco ni saltos.
+- [ ] El rendimiento en Lighthouse móvil no baja más de 5 puntos frente a `main`.
+- [ ] La URL de preview está enlazada en la tarjeta.
 
 **DEV-13 · Preloader por prioridades** — DEV · `Dev-UI` `P1` · 6 h · G5 · ← DEV-12
 Ref. M Fase 8 Paso 22.
@@ -783,40 +784,40 @@ Ref. M Fase 8 Paso 22.
 - [ ] Botón "Entrar con sonido" / "Saltar"
 
 _Como visitante, quiero que la primera interacción sea fluida para no ver tirones ni pantallas vacías al empezar._
-✔ **Criterios de aceptación:**
-1. La precarga crítica (fuentes, 15-20 primeros frames de cada secuencia y compilación del shader) termina en < 2.5 s.
-2. El resto de los frames se carga en segundo plano sin bloquear el scroll.
-3. Botones «Entrar con sonido» y «Saltar», usables con teclado.
-4. El `<h1>` es visible desde el HTML del servidor.
-5. El primer scroll no tiene tirones (captura de Performance adjunta).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La carga crítica (fuentes, primeros 15-20 frames de cada secuencia y compilación del shader) termina en menos de 2.5 s.
+- [ ] El resto de los frames se carga en segundo plano sin bloquear el scroll.
+- [ ] Los botones «Entrar con sonido» y «Saltar» funcionan con ratón y con teclado.
+- [ ] El `<h1>` ya está en el HTML que envía el servidor (visible antes de que cargue JavaScript).
+- [ ] El primer scroll no tiene tirones (captura de Performance adjunta).
 
 **GATE-G5 · Vertical slice** — DIR + Cliente
 
-✔ **Criterios de salida:**
-1. Preview con Hero + los dos videos + CTA con assets reales.
-2. ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media (captura de Performance adjunta).
-3. Feedback del cliente registrado y convertido en tarjetas.
+✔ **Criterios de salida** (checklist en Trello):
+- [ ] La preview muestra Hero, los dos videos y el CTA con assets reales.
+- [ ] En Performance: ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media (captura adjunta).
+- [ ] El feedback del cliente está registrado y cada pedido es una tarjeta nueva.
 
 **DEV-14 · Partículas (InstancedMesh / GPGPU)** — DEV · `Dev-WebGL` `⚠` `P2` · 8 h · G6 · ← G5
 - [ ] Conteo leído de `gpuPolicy.maxParticles`
 - [ ] Un solo draw call
 
 _Como visitante, quiero partículas sutiles sobre el fondo para dar profundidad sin distraer de los videos._
-✔ **Criterios de aceptación:**
-1. Partículas dentro del único Canvas, sobre el shader de fondo y por detrás de las secuencias.
-2. Cantidad = `gpuPolicy.maxParticles` del tier activo; con reduced motion quedan quietas.
-3. Un solo draw call (InstancedMesh o Points).
-4. ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media con las partículas activas.
-5. Geometría y material liberados al desmontar.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Las partículas se dibujan en el único Canvas, encima del shader de fondo y por detrás de las secuencias.
+- [ ] La cantidad de partículas es `gpuPolicy.maxParticles` del tier activo, y con `prefers-reduced-motion` quedan quietas.
+- [ ] Todas las partículas se dibujan en un solo draw call (InstancedMesh o Points).
+- [ ] Con las partículas activas: ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media.
+- [ ] Al desmontar el componente se liberan su geometría y su material.
 
 **DEV-15 · Post-procesado (Bloom + Noise)** — DEV · `Dev-WebGL` `P1` · 3 h · G6 · ← G5
 
 _Como visitante, quiero un acabado cinematográfico en el fondo (brillo suave y grano) para que el sitio se sienta premium._
-✔ **Criterios de aceptación:**
-1. EffectComposer con Bloom suave + Noise aplicado solo al Canvas del fondo.
-2. Se monta solo si `gpuPolicy.enablePostProcessing` (T2/T3); en T1 no existe.
-3. No altera el color de las secuencias (van en un canvas 2D aparte) ni el contraste del texto.
-4. ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media con el efecto activo.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Bloom suave y grano (Noise) se aplican solo al Canvas del fondo.
+- [ ] El efecto solo se monta si `gpuPolicy.enablePostProcessing` está activo (T2/T3); en T1 no existe.
+- [ ] El color de las secuencias (canvas 2D aparte) y el contraste del texto no cambian.
+- [ ] Con el efecto activo: ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media.
 
 **DEV-16 · SoundController** — DEV · `Audio` `P2` · 5 h · G6 · ← ART-15, G5
 Ref. M Fase 5 Paso 16.
@@ -826,12 +827,12 @@ Ref. M Fase 5 Paso 16.
 - [ ] Fallback `.m4a`
 
 _Como visitante, quiero activar el sonido cuando yo decida para disfrutar una experiencia inmersiva sin sorpresas._
-✔ **Criterios de aceptación:**
-1. No suena nada hasta un gesto explícito del usuario.
-2. Filtro low-pass de 400 a 2 500 Hz según la velocidad del scroll.
-3. Botón de silencio visible, con `aria-label` y estado; el audio se pausa al ocultar la pestaña.
-4. El fallback `.m4a` suena en iOS Safari (probado en un iPhone real).
-5. Si faltan los archivos de audio, no hay errores fatales.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] No suena nada hasta que el usuario lo activa con un clic o toque.
+- [ ] Un filtro low-pass se abre de 400 a 2 500 Hz según la velocidad del scroll.
+- [ ] Hay un botón de silencio visible, con `aria-label` y estado (activado/desactivado), y el audio se pausa al ocultar la pestaña.
+- [ ] En iOS Safari suena el archivo `.m4a` (probado en un iPhone real).
+- [ ] Si faltan los archivos de audio, la página funciona sin errores.
 
 ---
 
@@ -840,52 +841,52 @@ _Como visitante, quiero activar el sonido cuando yo decida para disfrutar una ex
 **DEV-17 · Navbar + CTA persistente** — DEV · `Dev-UI` `P0` · 4 h · G6 · ← DEV-08
 
 _Como visitante, quiero un CTA siempre visible para pedir el producto desde cualquier punto de la página._
-✔ **Criterios de aceptación:**
-1. Navbar con el CTA visible durante todo el scroll, por encima de las secuencias pinneadas (`z-index: 50`).
-2. Desde cualquier punto, la conversión está a ≤ 3 clics.
-3. Usable con teclado y con foco visible.
-4. Responsive en 360, 768 y 1440 px sin tapar contenido importante.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La navbar con el CTA se ve durante todo el scroll, por encima de las secuencias fijadas (`z-index: 50`).
+- [ ] Desde cualquier punto de la página se llega a la conversión en 3 clics o menos.
+- [ ] La navbar se puede usar con teclado y el foco se ve en cada control.
+- [ ] En 360, 768 y 1440 px la navbar no tapa contenido importante.
 
 **DEV-18 · Hero UI (tipografía cinética)** — DEV · `Dev-UI` `P0` · 5 h · G6 · ← DEV-12
 *PLANTILLA Sección UI.* GSAP SplitText, `cubic-bezier(0.16,1,0.3,1)`.
 
 _Como visitante, quiero un titular con una entrada animada para entender al instante qué ofrece la marca._
-✔ **Criterios de aceptación:**
-1. Animación de entrada con SplitText y `cubic-bezier(0.16,1,0.3,1)`.
-2. El `<h1>` sigue siendo el elemento LCP y está en el HTML del servidor (verificado en Lighthouse).
-3. Con reduced motion el texto aparece sin animación.
-4. LCP < 2.5 s en Lighthouse móvil y CLS = 0 en la sección.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El titular entra animado con SplitText y la curva `cubic-bezier(0.16,1,0.3,1)`.
+- [ ] Lighthouse confirma que el `<h1>` sigue siendo el elemento LCP y que está en el HTML del servidor.
+- [ ] Con `prefers-reduced-motion` activo el titular aparece sin animación.
+- [ ] Lighthouse móvil: LCP < 2.5 s y CLS = 0 en la sección.
 
 **DEV-19 a DEV-2X · Secciones narrativas** — DEV · `Dev-UI` `P1` · 6 h c/u · G6 · ← ART-05, DIR-05
 *Una tarjeta por sección del storyboard* (PLANTILLA Sección UI).
 > 📍 **Estado:** DEV-19 (ingredientes + packaging) en 🔍 Revisión Interna / QA · rama `feat/dev-19-ingredientes-packaging`
 
 _Como visitante, quiero que cada sección del storyboard cuente una parte del producto para entenderlo completo._
-✔ **Criterios de aceptación:**
-1. Una tarjeta por sección del storyboard (DEV-19 ya cubre ingredientes + packaging); si no hay más secciones, la tarjeta genérica se archiva.
-2. HTML semántico (h2, p, botones reales), responsive en 360, 768 y 1440 px.
-3. Teclado + foco visible + contraste AA.
-4. CLS = 0 en la sección y Lighthouse móvil sin bajar más de 5 puntos frente a `main`.
-5. DIR aprueba la composición.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Hay una tarjeta por sección del storyboard (DEV-19 ya cubre ingredientes + packaging); si no hay más secciones, la tarjeta genérica se archiva.
+- [ ] Cada sección usa HTML semántico (h2, p, botones reales) y se ve bien en 360, 768 y 1440 px.
+- [ ] Cada sección se puede usar con teclado, el foco se ve y el contraste cumple WCAG AA (≥ 4.5:1).
+- [ ] Cada sección tiene CLS = 0 y no baja más de 5 puntos el rendimiento en Lighthouse móvil frente a `main`.
+- [ ] DIR aprueba la composición con un comentario.
 
 **DEV-23 · Transiciones entre secciones** — DEV · `Dev-WebGL` `Dev-UI` `P1` · 8 h · G6 · ← DEV-19…
 Ref. M Fase 6 Paso 19 (coreografía de cámara, clip-path, máscara de ruido).
 
 _Como visitante, quiero pasar de una sección a otra sin cortes para que la navegación se sienta continua._
-✔ **Criterios de aceptación:**
-1. Cada par de secciones vecinas tiene la transición definida en DIR-04 (clip-path o máscara de ruido).
-2. Con reduced motion: corte directo o fundido simple.
-3. ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media durante las transiciones.
-4. DIR aprueba que la navegación se siente continua.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Cada par de secciones vecinas tiene la transición que define DIR-04 (recorte animado o máscara de ruido).
+- [ ] Con `prefers-reduced-motion` activo, la transición es un corte directo o un fundido simple.
+- [ ] Durante las transiciones: ≥ 55 FPS de media en desktop y ≥ 50 en Android de gama media.
+- [ ] DIR confirma con un comentario que la navegación se siente continua.
 
 **DEV-24 · Cursor personalizado** — DEV · `Dev-UI` `P2` · 3 h · G6
 
 _Como visitante en desktop, quiero un cursor personalizado que refuerce la estética sin estorbar._
-✔ **Criterios de aceptación:**
-1. Solo se activa con puntero fino (no en pantallas táctiles).
-2. Se desactiva con reduced motion.
-3. En campos de texto se ve el cursor nativo.
-4. Lee el puntero del store transiente, sin setState por `pointermove`.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El cursor personalizado solo aparece con ratón o trackpad (no en pantallas táctiles).
+- [ ] Con `prefers-reduced-motion` activo se usa el cursor normal del sistema.
+- [ ] En los campos de texto se ve el cursor normal del sistema.
+- [ ] El cursor lee la posición del store transiente, sin setState de React en cada movimiento.
 
 **DEV-25 · Footer + formulario de contacto** — DEV · `Dev-UI` `SEO/Negocio` `P0` · 5 h · G6
 - [ ] Validación cliente + servidor
@@ -893,12 +894,12 @@ _Como visitante en desktop, quiero un cursor personalizado que refuerce la esté
 - [ ] Mensajes de error accesibles
 
 _Como visitante, quiero contactar a la marca desde el sitio para hacer un pedido o una consulta._
-✔ **Criterios de aceptación:**
-1. Formulario con validación en cliente y en servidor, con un mensaje claro por campo.
-2. Rate-limit o captcha activo (probado con envíos repetidos).
-3. Los errores se anuncian a lectores de pantalla (`aria-live`) y el foco va al primer campo con error.
-4. Prueba real: el mensaje llega al email o WhatsApp del cliente.
-5. Footer con datos de contacto y enlaces a los textos legales.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El formulario valida los datos en el navegador y en el servidor, con un mensaje claro por cada campo con error.
+- [ ] Hay límite de envíos o captcha, comprobado enviando el formulario varias veces seguidas.
+- [ ] Los errores se anuncian a lectores de pantalla (`aria-live`) y el foco salta al primer campo con error.
+- [ ] En una prueba real, el mensaje llega al email o WhatsApp del cliente.
+- [ ] El footer muestra los datos de contacto y enlaces a los textos legales.
 
 ---
 
@@ -911,12 +912,12 @@ Prompt P7. Ref. M Parte II §10.
 - [ ] Todos los ScrollTriggers matados al desmontar
 
 _Como desarrollo, quiero auditar la memoria y las fugas para que el sitio no se cuelgue ni se recargue en móviles._
-✔ **Criterios de aceptación:**
-1. Revisados todos los `useState` de `canvas/` y `sequence/`: ninguno se escribe por frame, scroll o puntero.
-2. Tras 10 scrolls completos, el heap JS vuelve a ±10 % del valor inicial.
-3. Nunca hay más de 2R+1 ImageBitmaps vivos por secuencia (R según el tier).
-4. Al desmontar quedan 0 ScrollTriggers activos y se eliminan los listeners.
-5. Informe con capturas adjunto.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Revisados todos los `useState` de `canvas/` y `sequence/`: ninguno se actualiza en cada frame, scroll o movimiento del puntero.
+- [ ] Tras recorrer la página de arriba a abajo 10 veces, la memoria JS vuelve a ±10 % del valor inicial.
+- [ ] Nunca hay más de 2R+1 frames (ImageBitmaps) en memoria por secuencia, siendo R el radio del tier.
+- [ ] Al desmontar quedan 0 ScrollTriggers activos y se eliminan todos los listeners.
+- [ ] El informe con las capturas de memoria (heap y GPU) está adjunto a la tarjeta.
 
 **DEV-27 · Prueba de tiers y fallbacks** — DEV · `Dev-WebGL` `P0` · 3 h · G6
 - [ ] Forzar T1, T2 y T3 (override de desarrollo)
@@ -924,12 +925,12 @@ _Como desarrollo, quiero auditar la memoria y las fugas para que el sitio no se 
 - [ ] `prefers-reduced-motion` → sin Lenis ni rotaciones
 
 _Como desarrollo, quiero comprobar cada tier y cada fallback para garantizar que el sitio funciona en cualquier dispositivo._
-✔ **Criterios de aceptación:**
-1. Override de desarrollo para forzar T1, T2 y T3 (no activo en producción).
-2. Los 5 escenarios documentados con captura: T3, T2, T1, sin WebGL y reduced motion.
-3. Sin WebGL: 0 canvas WebGL, la página se recorre completa y el CTA funciona.
-4. Con reduced motion: sin Lenis, shader quieto y las secuencias avanzan solo con el scroll nativo.
-5. Sin errores en consola, salvo los 404 esperados de assets aún no entregados.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Hay un modo de desarrollo para forzar T1, T2 y T3, que no está activo en producción.
+- [ ] Los 5 escenarios están documentados con captura: T3, T2, T1, sin WebGL y con reduced motion.
+- [ ] Sin WebGL: no hay canvas WebGL, la página se recorre completa y el CTA funciona.
+- [ ] Con reduced motion: no se crea Lenis, el shader queda quieto y las secuencias avanzan solo con el scroll nativo.
+- [ ] La consola no muestra errores, salvo los 404 esperados de assets aún no entregados.
 
 **DEV-28 · Core Web Vitals y bundle** — DEV · `Dev-WebGL` `P0` · 4 h · G6
 - [ ] Lighthouse móvil: LCP < 2.5 s, CLS < 0.1, INP < 200 ms
@@ -937,10 +938,11 @@ _Como desarrollo, quiero comprobar cada tier y cada fallback para garantizar que
 - [ ] Dynamic import del Canvas y las secciones pesadas
 
 _Como visitante en móvil, quiero que el sitio cargue rápido y responda al instante._
-✔ **Criterios de aceptación:**
-1. Lighthouse móvil: LCP < 2.5 s, CLS < 0.1 e INP < 200 ms (informe adjunto).
-2. JS inicial dentro del budget de DEV-01 (captura del bundle analyzer adjunta).
-3. El Canvas WebGL se carga en diferido (✅ hecho en DEV-07) y las secciones pesadas usan dynamic import.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Lighthouse móvil: LCP < 2.5 s, CLS < 0.1 e INP < 200 ms (informe adjunto).
+- [ ] El JS inicial entra en el budget de DEV-01 (captura del bundle analyzer adjunta).
+- [x] El Canvas WebGL se carga en diferido (hecho en DEV-07).
+- [ ] Las secciones pesadas se cargan con dynamic import.
 
 ---
 
@@ -952,11 +954,11 @@ _Como visitante en móvil, quiero que el sitio cargue rápido y responda al inst
 - [ ] Cada fallo → tarjeta `BUG-XX`
 
 _Como dirección, quiero probar el sitio en los dispositivos reales del público para detectar fallos antes del lanzamiento._
-✔ **Criterios de aceptación:**
-1. Los 6 dispositivos de DEV-01 probados: scroll completo, CTA, formulario, audio y rotación de pantalla.
-2. Prueba con red lenta (Fast 3G simulado).
-3. Cada fallo registrado como tarjeta `BUG-XX` con dispositivo, pasos para reproducirlo y captura.
-4. Cero bugs P0 abiertos al cerrar la tarjeta.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] En los 6 dispositivos de DEV-01 se probó: scroll completo, CTA, formulario, audio y rotación de pantalla.
+- [ ] Se probó con red lenta (Fast 3G simulado).
+- [ ] Cada fallo es una tarjeta `BUG-XX` con dispositivo, pasos para reproducirlo y captura.
+- [ ] Al cerrar, no queda ninguna tarjeta `BUG` con prioridad P0 abierta.
 
 **DEV-29 · Accesibilidad WCAG 2.2 AA** — DEV · `Dev-UI` `P0` · 4 h · G6
 Prompt P8.
@@ -966,29 +968,29 @@ Prompt P8.
 - [ ] Lighthouse accesibilidad ≥ 95
 
 _Como visitante que navega con teclado o lector de pantalla, quiero usar todo el sitio para llegar al producto y al CTA._
-✔ **Criterios de aceptación:**
-1. Recorrido completo con Tab: el skip link es lo primero, el foco es visible en cada control y el orden es lógico.
-2. Controles de icono y canvas de secuencias con `aria-label`; la capa WebGL con `aria-hidden`.
-3. Contraste ≥ 4.5:1 en texto normal y ≥ 3:1 en texto grande.
-4. Lighthouse accesibilidad ≥ 95 (informe adjunto).
-5. Se repite al final con el diseño definitivo, antes de G6.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Con Tab se recorre todo el sitio: el enlace «Saltar al contenido» es lo primero, el foco se ve en cada control y el orden es lógico.
+- [ ] Los botones de icono y los canvas de las secuencias tienen `aria-label`, y la capa WebGL tiene `aria-hidden`.
+- [ ] El contraste es ≥ 4.5:1 en texto normal y ≥ 3:1 en texto grande.
+- [ ] Lighthouse accesibilidad ≥ 95 (informe adjunto).
+- [ ] La prueba se repite con el diseño definitivo antes de G6.
 
 **DIR-07 · Revisión de dirección de arte final** — DIR · `Concepto/Arte` `P1` · 3 h · G6
 - [ ] Coherencia lumínica entre todos los assets
 - [ ] Jerarquía tipográfica y espaciado (Prompt P6 si hace falta)
 
 _Como dirección, quiero una revisión final de arte para asegurar la coherencia visual de todo el sitio._
-✔ **Criterios de aceptación:**
-1. Coherencia de luz y color revisada entre videos, pósters y fondo.
-2. Jerarquía tipográfica y espaciado revisados en 360, 768 y 1440 px.
-3. Ajustes pendientes convertidos en tarjetas P2.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Revisado que luz y color coinciden entre videos, pósters y fondo.
+- [ ] Revisadas la jerarquía tipográfica y el espaciado en 360, 768 y 1440 px.
+- [ ] Cada ajuste pendiente es una tarjeta P2 en el backlog.
 
 **GATE-G6 · Beta QA** — DIR
 
-✔ **Criterios de salida:**
-1. DEV-26 a DEV-29, DIR-06 y DIR-07 en Hecho.
-2. Lighthouse móvil: LCP < 2.5 s, CLS < 0.1, INP < 200 ms y accesibilidad ≥ 95.
-3. Cero bugs P0 abiertos.
+✔ **Criterios de salida** (checklist en Trello):
+- [ ] DEV-26 a DEV-29, DIR-06 y DIR-07 están en «completados».
+- [ ] Lighthouse móvil: LCP < 2.5 s, CLS < 0.1, INP < 200 ms y accesibilidad ≥ 95.
+- [ ] No queda ninguna tarjeta `BUG` con prioridad P0 abierta.
 
 ---
 
@@ -1002,30 +1004,30 @@ Ref. M Fase 9 Paso 25.
 - [ ] Todo el texto en el DOM real
 
 _Como marca, quiero que el sitio aparezca en buscadores y se comparta bien en redes para atraer clientes._
-✔ **Criterios de aceptación:**
-1. `metadata` real: title ≤ 60 caracteres, description ≤ 155, Open Graph con `og-image.jpg` y URL canónica.
-2. `sitemap.ts` y `robots.ts` generan `/sitemap.xml` y `/robots.txt` válidos.
-3. JSON-LD del tipo de negocio sin errores en Rich Results Test.
-4. Todo el texto está en el HTML (nada solo dentro de un canvas).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La `metadata` es real: título ≤ 60 caracteres, descripción ≤ 155, imagen Open Graph (`og-image.jpg`) y URL canónica.
+- [ ] `/sitemap.xml` y `/robots.txt` existen y son válidos (generados con `sitemap.ts` y `robots.ts`).
+- [ ] Los datos estructurados (JSON-LD) del negocio pasan Rich Results Test sin errores.
+- [ ] Todo el texto está en el HTML de la página (nada existe solo dentro de un canvas).
 
 **DEV-31 · CMS headless (si está en alcance)** — DEV · `SEO/Negocio` `P1` · 10 h · G7
 
 _Como cliente, quiero editar textos y precios sin programar para mantener el sitio al día._
-✔ **Criterios de aceptación:**
-1. Solo si DIR-02 lo incluye en el alcance; si no, la tarjeta se archiva.
-2. Los textos que hoy viven en `src/content/producto.ts` salen del CMS.
-3. El cliente cambia un texto y se ve en la web sin redeploy del código.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Solo se hace si DIR-02 lo incluye en el alcance; si no, la tarjeta se archiva.
+- [ ] Los textos que hoy están en `src/content/producto.ts` se leen desde el CMS.
+- [ ] El cliente cambia un texto en el CMS y el cambio se ve en la web sin volver a desplegar el código.
 
 **DEV-32 · E-commerce / checkout (si está en alcance)** — DEV · `SEO/Negocio` `P0` · 16 h · G7
 - [ ] `frameloop` en pausa con carrito o checkout abierto
 - [ ] Pago probado de punta a punta (sandbox y real)
 
 _Como visitante, quiero comprar desde el sitio para pedir sin salir de la experiencia._
-✔ **Criterios de aceptación:**
-1. Solo si DIR-02 lo incluye en el alcance; si no, la tarjeta se archiva.
-2. Con el carrito o el checkout abiertos, el Canvas se pausa (`frameloop` en «never»).
-3. Pago probado en sandbox y con una compra real.
-4. Compra real exitosa en iOS y en Android.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Solo se hace si DIR-02 lo incluye en el alcance; si no, la tarjeta se archiva.
+- [ ] Con el carrito o el checkout abiertos, el Canvas se pausa (`frameloop` en «never»).
+- [ ] El pago funciona en modo de prueba (sandbox) y con una compra real.
+- [ ] Se completó una compra real en iOS y otra en Android.
 
 **DEV-33 · Analítica, Sentry y consentimiento de cookies** — DEV · `SEO/Negocio` `P1` · 4 h · G7
 - [ ] Eventos de conversión (clic en CTA, envío de formulario, compra)
@@ -1033,19 +1035,19 @@ _Como visitante, quiero comprar desde el sitio para pedir sin salir de la experi
 - [ ] Banner de consentimiento + política de privacidad
 
 _Como dirección, quiero medir conversiones y errores para saber si el sitio cumple el KPI._
-✔ **Criterios de aceptación:**
-1. Eventos de clic en CTA y envío de formulario (y compra, si aplica) visibles en el panel de analítica.
-2. Sentry recibe un error WebGL de prueba.
-3. Sin aceptar el banner de consentimiento, no se carga ningún script de analítica.
-4. Política de privacidad publicada y enlazada en el footer.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] En el panel de analítica se ven los eventos de clic en el CTA y de envío de formulario (y compra, si aplica).
+- [ ] Sentry recibe un error WebGL de prueba.
+- [ ] Mientras el visitante no acepta el banner de cookies, no se carga ningún script de analítica.
+- [ ] La política de privacidad está publicada y enlazada en el footer.
 
 **DIR-08 · Copy final + textos legales** — DIR · `SEO/Negocio` `P1` · 4 h · G7
 
 _Como dirección, quiero el copy final y los textos legales aprobados para publicar sin errores ni riesgos._
-✔ **Criterios de aceptación:**
-1. Copy final revisado (ortografía) y cargado en `src/content/producto.ts`.
-2. Textos legales listos: privacidad, cookies y alérgenos / tabla nutricional si corresponde.
-3. Aprobado por el cliente por escrito.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El copy final está revisado por una segunda persona y cargado en `src/content/producto.ts`.
+- [ ] Están listos los textos legales: privacidad, cookies y, si corresponde, alérgenos y tabla nutricional.
+- [ ] El cliente aprueba el copy y los textos legales por escrito.
 
 ---
 
@@ -1057,19 +1059,19 @@ _Como dirección, quiero el copy final y los textos legales aprobados para publi
 - [ ] `Cache-Control immutable` en assets **versionados**
 
 _Como visitante, quiero un sitio seguro y rápido en el dominio oficial de la marca._
-✔ **Criterios de aceptación:**
-1. Dominio apuntando a producción con SSL válido y HTTPS forzado.
-2. Cabeceras CSP y HSTS activas; SecurityHeaders ≥ A.
-3. `Cache-Control immutable` solo en assets versionados (nombre o carpeta nueva en cada cambio).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El dominio apunta a producción con certificado SSL válido y siempre redirige a HTTPS.
+- [ ] Las cabeceras CSP y HSTS están activas y securityheaders.com da nota A o superior.
+- [ ] Solo los assets versionados (con nombre o carpeta nueva en cada cambio) usan `Cache-Control immutable`.
 
 **DIR-09 · Checklist de lanzamiento** — DIR · `P0` · 3 h · G7 · ← todo lo anterior
 Copiar como checklist la **Parte III del Manual v2** completa.
 
 _Como dirección, quiero un checklist de lanzamiento completo para no olvidar nada antes de publicar._
-✔ **Criterios de aceptación:**
-1. Parte III del Manual copiada como checklist en la tarjeta.
-2. 100 % de los ítems marcados, o justificados como «no aplica».
-3. Revisado por DIR y por DEV.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La Parte III del Manual está copiada como checklist en esta tarjeta.
+- [ ] Todos los ítems están marcados, o justificados como «no aplica» con un comentario.
+- [ ] DIR y DEV revisaron el checklist y lo dejan aprobado con un comentario.
 
 **DEV-35 · Deploy a producción + verificación en vivo** — DEV · `P0` · 3 h · G7 · ← DIR-09
 - [ ] Deploy
@@ -1077,18 +1079,18 @@ _Como dirección, quiero un checklist de lanzamiento completo para no olvidar na
 - [ ] Plan de rollback documentado
 
 _Como cliente, quiero el sitio en producción y verificado para lanzarlo con confianza._
-✔ **Criterios de aceptación:**
-1. Deploy a producción desde `main`.
-2. Lighthouse móvil y QA rápido repetidos en producción, con los mismos umbrales de G6.
-3. Plan de rollback documentado (cómo volver a la versión anterior).
-4. Sin regresiones frente a la preview aprobada.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El sitio está desplegado en producción desde la rama `main`.
+- [ ] En producción se repitieron Lighthouse móvil y una prueba rápida de QA, con los mismos umbrales de G6.
+- [ ] Está documentado cómo volver a la versión anterior si algo falla (plan de rollback).
+- [ ] Producción se comporta igual que la preview aprobada, sin regresiones.
 
 **GATE-G7 · Go-live** — Cliente + DIR
 
-✔ **Criterios de salida:**
-1. DIR-09 al 100 %.
-2. DEV-35 verificado en producción.
-3. Aprobación escrita del cliente.
+✔ **Criterios de salida** (checklist en Trello):
+- [ ] El checklist de lanzamiento de DIR-09 está completo al 100 %.
+- [ ] DEV-35 está verificado en producción.
+- [ ] El cliente aprueba el lanzamiento por escrito.
 
 **DIR-10 · Entrega y handoff** — DIR · `P1` · 3 h
 - [ ] Accesos entregados al cliente
@@ -1096,11 +1098,11 @@ _Como cliente, quiero el sitio en producción y verificado para lanzarlo con con
 - [ ] `LICENCIAS.md` final
 
 _Como cliente, quiero recibir los accesos y la documentación para operar el sitio sin depender del estudio._
-✔ **Criterios de aceptación:**
-1. Accesos (dominio, hosting, CMS, analítica) entregados mediante un gestor de contraseñas.
-2. Guía de uso del CMS, si aplica.
-3. `LICENCIAS.md` final entregado.
-4. Acta de entrega firmada.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Los accesos (dominio, hosting, CMS y analítica) se entregan mediante un gestor de contraseñas.
+- [ ] Si hay CMS, el cliente recibe una guía de uso (documento o video).
+- [ ] El cliente recibe la versión final de `LICENCIAS.md`.
+- [ ] El acta de entrega está firmada por el cliente.
 
 ---
 
@@ -1109,27 +1111,27 @@ _Como cliente, quiero recibir los accesos y la documentación para operar el sit
 **DIR-11 · Medición a 30 días** — DIR · 2 h: KPI de negocio vs. objetivo, embudo de conversión y mapa de calor.
 
 _Como dirección, quiero medir los resultados a los 30 días para saber si el sitio cumple el KPI del brief._
-✔ **Criterios de aceptación:**
-1. Informe con el KPI real frente al objetivo de DIR-01.
-2. Embudo completo: visitas → clic en CTA → conversión.
-3. Mapa de calor o grabaciones de las secciones clave.
-4. Recomendaciones convertidas en tarjetas.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] El informe compara el KPI real con el objetivo de DIR-01.
+- [ ] El informe muestra el embudo completo: visitas → clic en CTA → conversión.
+- [ ] Hay un mapa de calor o grabaciones de las secciones clave.
+- [ ] Cada recomendación del informe es una tarjeta nueva.
 
 **DEV-36 · Monitoreo semanal (Card Repeater)** — DEV · 1 h/sem: errores de Sentry, CWV de campo (CrUX/Vercel) y FPS reportados.
 
 _Como desarrollo, quiero revisar cada semana los errores y el rendimiento real para detectar problemas antes que los usuarios._
-✔ **Criterios de aceptación:**
-1. Revisión semanal registrada como comentario: errores nuevos de Sentry, Core Web Vitals de campo y FPS reportados.
-2. Cada problema nuevo se convierte en una tarjeta `BUG-XX`.
-3. Core Web Vitals de campo en verde (LCP < 2.5 s, CLS < 0.1, INP < 200 ms) o una tarjeta de mejora abierta.
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] Cada semana queda un comentario con: errores nuevos de Sentry, Core Web Vitals de usuarios reales y FPS reportados.
+- [ ] Cada problema nuevo se convierte en una tarjeta `BUG-XX`.
+- [ ] Las Core Web Vitals de usuarios reales están en verde (LCP < 2.5 s, CLS < 0.1, INP < 200 ms) o hay una tarjeta de mejora abierta.
 
 **DIR-12 · Retro del proyecto y actualización del Manual** — Todo el equipo · 2 h: lecciones aprendidas → nueva versión del Manual (v2.1).
 
 _Como equipo, queremos cerrar el proyecto con una retro para mejorar el proceso en el siguiente._
-✔ **Criterios de aceptación:**
-1. Retro hecha con todo el equipo: qué funcionó, qué no y qué acciones tomar.
-2. Cada acción tiene un responsable.
-3. Lecciones aprendidas incorporadas a una nueva versión del Manual (PR en una rama `docs/`).
+✔ **Criterios de aceptación** (checklist en Trello):
+- [ ] La retro se hizo con todo el equipo y registra qué funcionó, qué no y qué acciones tomar.
+- [ ] Cada acción de la retro tiene un responsable.
+- [ ] Las lecciones aprendidas están en una nueva versión del Manual (PR en una rama `docs/`).
 
 ---
 
