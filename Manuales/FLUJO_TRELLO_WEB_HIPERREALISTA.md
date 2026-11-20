@@ -68,7 +68,7 @@
 
 ### 0.4 Tablero de Trello en línea
 
-Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026 desde §5 de este archivo: 73 tarjetas abiertas, sin duplicados. Las descartadas (DEV-03, DEV-11, ART-13, ART-14) están archivadas. Equivalencia de listas:
+Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026 desde §5 de este archivo: 74 tarjetas abiertas, sin duplicados. Las descartadas (DEV-03, DEV-11, ART-13, ART-14) están archivadas. Equivalencia de listas:
 
 | Lista en Trello | Equivale a (§2.1) | Contenido hoy |
 | :--- | :--- | :--- |
@@ -76,7 +76,7 @@ Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026
 | 1er spring | 🗓️ Sprint actual / 🔨 En progreso | Fase 0 + Fase 1, G1 y G2, con checklists (14) |
 | 2do spring | 🗓️ Sprint siguiente | Assets y videos (ART-06…12, ART-15), G3, G4, DEV-08, DEV-27, DEV-29 (13) |
 | Blockers | 🚧 Bloqueado / ⏳ Esperando cliente | `develop` desincronizada, Vercel, branding/contenido/videos del cliente (3) |
-| reviews | 🔍 Revisión Interna / QA | DEV-04, 06, 09, 10, 19, 37 y DOCS de sincronización (7) |
+| reviews | 🔍 Revisión Interna / QA | DEV-04, 06, 09, 10, 19, 37 y los 2 DOCS en curso (8) |
 | completados 1er spring | ✅ Hecho | DEV-05, DEV-07 y 3 DOCS (5) |
 | completados 2do spring | ✅ Hecho (sprint 2) | — |
 
