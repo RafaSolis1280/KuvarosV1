@@ -25,14 +25,14 @@ export default function HomePage() {
           <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent">{PRODUCTO.marca}</span>
           <a
             href={cta.href}
-            className="pointer-events-auto rounded-full border border-white/15 bg-black/50 px-5 py-2 text-xs font-semibold uppercase tracking-widest backdrop-blur-md transition hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="pointer-events-auto rounded-full border border-ink/15 bg-surface-deep/60 px-5 py-2 text-xs font-semibold uppercase tracking-widest backdrop-blur-md transition hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             {cta.boton}
           </a>
         </header>
         <div className="max-w-3xl">
           <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-muted">{PRODUCTO.nombre}</p>
-          <h1 className="text-5xl font-black uppercase leading-[0.92] tracking-tighter md:text-8xl">
+          <h1 className="font-display text-5xl uppercase leading-[0.92] tracking-tighter md:text-8xl">
             {PRODUCTO.titular.linea1} <span className="text-accent">{PRODUCTO.titular.destacado}</span>
           </h1>
           <p className="mt-4 max-w-xl text-sm text-muted md:text-base">{PRODUCTO.bajada}</p>
@@ -79,7 +79,7 @@ export default function HomePage() {
         id="contacto"
         className="relative z-[15] flex min-h-dvh flex-col items-center justify-center bg-surface/90 px-6 text-center backdrop-blur-sm"
       >
-        <h2 className="text-4xl font-extrabold uppercase tracking-tight md:text-6xl">{cta.titulo}</h2>
+        <h2 className="font-display text-4xl uppercase tracking-tight md:text-6xl">{cta.titulo}</h2>
         <p className="mt-4 max-w-md text-muted">{cta.texto}</p>
       </section>
     </>

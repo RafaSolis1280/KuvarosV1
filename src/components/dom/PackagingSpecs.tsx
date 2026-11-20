@@ -70,13 +70,13 @@ export default function PackagingSpecs({
     <div className="flex h-full w-full items-end px-4 pb-8 md:items-center md:px-16 md:pb-0">
       <div
         ref={panelRef}
-        className="w-full max-w-md rounded-3xl border border-white/10 bg-black/60 p-6 opacity-0 backdrop-blur-md will-change-[opacity,transform] md:p-8"
+        className="w-full max-w-md rounded-3xl border border-ink/10 bg-surface-deep/75 p-6 opacity-0 backdrop-blur-md will-change-[opacity,transform] md:p-8"
       >
         <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent">{eyebrow}</p>
-        <h2 className="mt-3 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-5xl">{titulo}</h2>
+        <h2 className="font-display mt-3 text-3xl uppercase leading-[0.95] tracking-tight md:text-5xl">{titulo}</h2>
         <p className="mt-4 text-sm text-muted md:text-base">{descripcion}</p>
 
-        <dl className="mt-6 divide-y divide-white/10 border-y border-white/10">
+        <dl className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
           {especificaciones.map((spec, i) => (
             <div
               key={spec.etiqueta}
