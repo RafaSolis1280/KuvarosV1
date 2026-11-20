@@ -67,6 +67,7 @@ npm run dev              # http://localhost:3000
 | B6 | Frames mobile del video 2 | `public/sequences/packaging_reveal/mobile/frame_0001.webp … frame_0120.webp` | 800 px · mismo conteo | ART-10 | P0 |
 | B7 | Póster de fallback (equipos de gama baja / sin JavaScript) | `public/fallback/hero_poster.webp` | 1600 px, la hamburguesa armada | ART-12 | P1 |
 | B8 | Imagen para compartir en redes (OG) | `public/og-image.jpg` | 1200 × 630 px, < 300 KB | ART-12 | P1 |
+| B8b | Fotos de marca (lifestyle / producto real) | `public/photos/<nombre>.webp` | 1000 px de ancho, WebP, **sin EXIF/GPS** | ART-12 | P1 |
 | B9 | Sonido ambiente (opcional) | `public/audio/ambient_drone.webm` + `.m4a` | Loop sin cortes, < 400 KB | ART-15 | P2 |
 | B10 | Sonido de hover (opcional) | `public/audio/ui_hover_tick.webm` + `.m4a` | < 80 ms | ART-15 | P2 |
 
@@ -101,6 +102,38 @@ npm run frames -- ruta/al/packaging_master.mp4 --out public/sequences/packaging_
 
 Si el número de frames cambia, actualizar `totalFrames` de esa secuencia en `src/config/gpu-policy.ts`.
 **Budget orientativo por video:** ≤ 25 MB la secuencia desktop y ≤ 8 MB la mobile (ajustar `--quality`).
+
+**Un solo master para las dos secuencias** (`--start` / `--end` en segundos) y **frames nativos** (`--frames native`,
+sin cuadros duplicados). El script nunca agranda: si el master mide menos de 1600 px, desktop queda en su ancho nativo.
+
+#### Entrega actual (ART-10 · 20-11-2026)
+
+El cliente entregó **un único video** (`Marca/Video.mp4`, 1292 × 696, 24 fps, 8.8 s, fuera de Git) que cuenta las
+dos historias. Se cortó en 2.25 s, donde la hamburguesa termina de volver a juntarse y entran las papas:
+
+```bash
+npm run frames -- Marca/Video.mp4 --frames native --start 0 --end 2.25 --quality 88 --out public/sequences/hero_explode
+npm run frames -- Marca/Video.mp4 --frames native --start 2.25 --quality 88 --out public/sequences/packaging_reveal
+```
+
+| Secuencia | Tramo | Frames | Desktop (1292 px) | Mobile (800 px) |
+| :--- | :--- | :-: | :-: | :-: |
+| `hero_explode` | 0 – 2.25 s · armada → 5 capas separadas → se vuelve a juntar | 54 | 1.29 MB | 0.73 MB |
+| `packaging_reveal` | 2.25 – 8.79 s · papas y hamburguesa entran a la bolsa → bolsa cerrada con el logo | 157 | 3.50 MB | 1.94 MB |
+
+⏳ **Pendiente para la versión final:** master de ≥ 1600 px de ancho (idealmente 1920) para pantallas grandes/retina.
+
+#### Póster, OG y fotos (ART-12 · 20-11-2026)
+
+| Archivo | Origen | Tamaño |
+| :--- | :--- | :-: |
+| `public/fallback/hero_poster.webp` | frame de `Marca/Video.mp4` a 1.25 s (capas separadas), 1292 px | 27 KB |
+| `public/og-image.jpg` | mismo frame, 1200 × 630 | 33 KB |
+| `public/photos/kuvaros_bolsa_mano.webp` | `Marca/DSC05620.jpg` (Sony A7 III), 1000 px | 78 KB |
+| `public/photos/kuvaros_papas_banca.webp` | `Marca/papas.jpg` (Sony A7 III), 1000 px | 108 KB |
+
+Las fotos originales traen **coordenadas GPS en el EXIF**: las versiones web se exportan con ffmpeg, que no copia
+metadatos. Comprobar siempre que ningún archivo de `/public` conserve EXIF.
 
 #### B4 · Video 2: el packaging
 

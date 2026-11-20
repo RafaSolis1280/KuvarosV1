@@ -43,6 +43,9 @@ next-env.d.ts
 # --- Proyecto (Guía de gobernanza §2.A.3) ---
 # Archivos crudos de edición / IA: viven en Drive, nunca en Git (solo los optimizados en /public)
 raw-assets/
+# Materiales crudos entregados por el cliente (video master, fotos con EXIF/GPS). El manual de marca
+# está versionado en Manuales/MANUAL_MARCA_KUVAROS.md y los derivados optimizados en /public.
+/Marca/
 *.blend
 *.blend1
 *.mp4

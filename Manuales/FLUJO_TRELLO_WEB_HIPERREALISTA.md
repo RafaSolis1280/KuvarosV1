@@ -11,24 +11,24 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 20-11-2026 (criterios de aceptación) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 20-11-2026 (merge de `main` con DEV-08, ART-10, ART-12 y DEV-19) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
-> **Todo el stack ya está fusionado en `main`** (PR #3 a #12, último merge `ab344d8`). Las tarjetas de abajo tienen el código en `main`, pero su criterio de aceptación aún no está verificado del todo, así que siguen en revisión.
+> **Todo el trabajo está fusionado en `main`** (PR #3 a #16, último merge `db88ce1`). Las tarjetas de abajo tienen el código o los assets en `main`, pero su checklist de criterios aún no está completo, así que siguen en revisión.
 
 | Tarjeta | Estado (lista) | Responsable | Rama | PR / base | Falta para cerrar |
 | :--- | :--- | :-: | :--- | :--- | :--- |
-| DEV-04 · Repo, Next.js 16 y CLAUDE.md | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Conectar Vercel (Preview URL) |
+| DEV-04 · Repo, Next.js 16 y CLAUDE.md | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Conectar Vercel (Preview URL) con Git LFS activado |
 | DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Probar en navegador real: tier en consola y scroll sin doble RAF |
-| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Probar con los frames reales de ART-10 (video de la hamburguesa) |
+| DEV-08 · Tokens de diseño y fuentes (marca Kuvaro's) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` (PR #16) | — | ⏳ Fuente primaria real (ART-04); hoy Bree Serif provisional |
+| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Probar con los frames reales en dispositivos reales (los frames ya están en `main`) |
 | DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Probar en Android de gama media (artefactos de precisión) |
-| DEV-19 · Sección narrativa 1: ingredientes + packaging | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | ⏳ Copy y ficha técnica reales del cliente (hoy provisionales en `src/content/producto.ts`) |
-| DEV-37 · Packaging como video (100 % video, sin `.glb`) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Probar con el video real del packaging (ART-08/10) |
-| DOCS · Sincronización del estado y limpieza | 🔍 Revisión Interna / QA | DEV | `docs/sync-estado-repo-y-limpieza` | PR → `develop` (tras sincronizarla) | Esta sección, README y `.gitignore` |
-| DOCS · Criterios de aceptación | 🔍 Revisión Interna / QA | DEV | `docs/criterios-aceptacion` | PR → `docs/sync-estado-repo-y-limpieza` (luego `develop`) | Historia + criterios numerados en §5 y en Trello; §3.7 con umbrales comunes |
-
-**Siguiente en el sprint (sin bloqueo de arte):** DEV-15 (post-procesado), DEV-27 (prueba de tiers y fallbacks), DEV-29 (accesibilidad). DEV-08, DEV-12 y DEV-18 esperan branding y videos.
+| DEV-19 · Contenido real de la marca (Kuvaro's) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` (PR #13) | — | ⏳ DIR-05 valida el copy; DIR-01 define el canal de pedido (WhatsApp) |
+| DEV-37 · Packaging como video (100 % video, sin `.glb`) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` | — | Probar con el video real en dispositivos reales |
+| ART-10 · Export WebP desktop/mobile (video de marca) | 🔍 Revisión Interna / QA | DEV | fusionada en `main` (PR #15) | — | ⏳ Master del cliente ≥ 1600 px (hoy 1292 px) |
+| ART-12 · Pósters de fallback, OG y fotos de marca | 🔍 Revisión Interna / QA | DEV | fusionada en `main` (PR #14) | — | Póster de `packaging_reveal`; ⏳ cesión de derechos de las fotos (DIR-03) |
+| DOCS · Sincronización + criterios de aceptación | 🔍 Revisión Interna / QA | DEV | `docs/criterios-aceptacion` (incluye `docs/sync-estado-repo-y-limpieza`) | PR → `develop` (tras sincronizarla) | Revisión de otra persona |
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -54,14 +54,19 @@
 | 20-11-2026 | DOCS | **Criterios como checklist:** en Trello cada historia tiene el checklist «✔ Criterios de aceptación» (gates: «✔ Criterios de salida»), con los ítems ya cumplidos marcados; criterios breves o ambiguos reescritos como frases verificables (quién aprueba, dónde queda la evidencia, cómo se mide), sin cambiar el alcance. §5 usa el mismo checklist | `docs/criterios-aceptacion` | 🔍 PR abierto |
 | 20-11-2026 | DOCS | **Criterios de aceptación:** todas las historias de §5 con línea *Como… quiero… para…* y criterios numerados y verificables (✅/⏳ en las ya implementadas, sin cambiar su funcionalidad). Completados los que faltaban (DEV-37, ART-11, GATE-G3, DIR-11, DEV-36, DIR-12); DEV-14/15 reescritas sobre el shader de fondo; peso por video; nuevo §3.7 con umbrales. Mismo texto en las tarjetas de Trello | `docs/criterios-aceptacion` | 🔍 PR abierto |
 | 19-11-2026 | DOCS | Manual → **v2.1**: Fase 3 y `HeroArtifactMesh` marcados como opcionales, Anexo A #36-40 (import con efecto de `extend()`, sondeo antes de pedir frames, token `base` vs `text-base`, progreso por secuencia, script de frames) y **Anexo B** (decisiones del proyecto: 100 % video). Código de la Parte II corregido también en `CLAUDE.md`. Guía de GitHub: `git lfs track` con `*.webp`, `*.m4a`, `*.mp4`, `*.mov` | `docs/manuales-solo-video` | 🔍 PR abierto |
+| 20-11-2026 | DEV-08 | Tokens de marca desde `Marca/manual_integral_de_especificaciones_kuvaro_s.md` §6.3-6.4: `@theme` con surface `#303030`, ink `#DDD1B7`, accent `#DDA730` (+ `surface-deep`, `muted`, `on-accent` derivados, contraste AA verificado); `src/config/brand.ts` para shader y canvas 2D; League Spartan (secundaria oficial) y Bree Serif (display provisional) con `next/font/google` autoalojadas; paneles y titulares con los tokens | `feat/dev-08-tokens-marca-kuvaros` | 🔍 PR abierto |
+| 20-11-2026 | ART-10 | `video-to-frames.mjs`: `--start/--end` (un master → varias secuencias), `--frames native`, no agranda, quita el audio, informa el peso. Se exportó `Marca/Video.mp4` (1292 px, 24 fps): `hero_explode` 0-2.25 s → 54 frames; `packaging_reveal` 2.25-8.79 s → 157 frames; calidad 88; `totalFrames` actualizado en el manifiesto; README y `LICENCIAS.md` | `assets/art-10-frames-video-kuvaros` | 🔍 PR abierto |
+| 20-11-2026 | ART-12 | Póster de fallback y OG 1200×630 desde el frame de 1.25 s del video; fotos de `Marca/` a WebP 1000 px **sin EXIF** (los originales tenían GPS); nueva carpeta `public/photos/` en el contrato (README, `CLAUDE.md`) y en la caché `immutable` de `next.config.ts`; `LICENCIAS.md` | `assets/art-12-poster-og-fotos` | 🔍 PR abierto |
+| 20-11-2026 | DEV-19 | `src/content/producto.ts` con la marca real (voz del manual §7, PVU §3.2, packaging §8; sin cifras inventadas). 5 ingredientes = 5 capas del video (pan brioche, salsa de la casa, cheddar, doble smash, base) con `rango` y `ancla` ajustados a los 54 frames. `Wordmark` tipográfico, sección «Primer bocado» con las fotos (`next/image`), CTA a @Kuvaros_burger, metadatos + Open Graph. Ficha del packaging a la derecha en desktop; en pantallas verticales `ImageSequenceCanvas` muestra el 72 % central del master horizontal (antes recortaba la hamburguesa). Manual de marca versionado en `Manuales/MANUAL_MARCA_KUVAROS.md`; `/Marca/` fuera de Git. Probado en Chrome headless 1440×900 y 390×844: 0 errores, 0 404, 3 canvas (1 WebGL + 2 secuencias) | `feat/dev-19-contenido-marca-kuvaros` | 🔍 PR abierto |
+| 20-11-2026 | MERGE | PR #13 a #16 fusionados en **`main`** (DEV-08, ART-10, ART-12, DEV-19). Verificado en `main` (`db88ce1`): `npm run lint`, `typecheck` y `build` sin errores. Quedan en revisión hasta completar su checklist (ver §0.1) | `db88ce1` · `main` | ✅ En `main` |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
 - **G1 / G2 sin aprobar:** DIR-01…05 y ART-01…05 siguen en Backlog. DEV avanzó en paralelo con la base técnica, que no depende del arte (ruta crítica, §6). La paleta y las fuentes reales entran en DEV-08, después de ART-03 y ART-04.
 - **Vercel:** las Preview URLs aún no están conectadas (pendiente de DEV-04).
 - **DIR-03:** `LICENCIAS.md` creado como plantilla; falta completarlo.
-- **⏳ Esperando cliente:** branding (paleta, logo, fuentes → DEV-08) y ficha técnica del packaging + descripción de ingredientes (→ `src/content/producto.ts`).
-- **⏳ Assets (ART-08 / ART-10 / ART-12):** **dos videos hiperrealistas** (hamburguesa separándose y packaging) → frames WebP; pósters de fallback. Sin modelos 3D. Lista completa en el `README.md`.
+- **⏳ Esperando cliente (actualizado 20-11-2026):** ✅ recibidos manual de marca, video y 2 fotos (`Marca/`). Faltan: **logo vectorial** (SVG) y **nombre + archivo de la fuente primaria** (ART-04); **número de WhatsApp** o canal de pedido (DIR-01); validación del copy y de la ficha del packaging (DIR-05); **cesión de derechos** del video y las fotos (DIR-03); **video master ≥ 1600 px** (ideal: una versión vertical para móvil).
+- **Assets (actualizado 20-11-2026):** el cliente entregó un video master que se cortó en las dos secuencias (ART-10, en `main`); ART-08/09 (generación IA) quedan cubiertos por ese master salvo que DIR pida otro video. Póster y OG listos (ART-12). Falta: master ≥ 1600 px y póster de `packaging_reveal`. Lista completa en el `README.md`.
 - **Alcance reducido (cliente, 19-11-2026):** ART-13, ART-14, DEV-03 y DEV-11 descartadas (sin 3D). ART-08/09/10 cubren ahora los dos videos.
 - **`develop` desincronizada:** sigue en `f9fd483` porque los PR se fusionaron en `main`. **Desbloquea:** RafaSolis1280 abre y fusiona un PR `main` → `develop`. Desde ahí, los PR de trabajo van **solo a `develop`** (Guía de gobernanza §1).
 - **Ramas remotas ya fusionadas:** las 13 ramas de trabajo están 100 % en `main`. **Desbloquea:** RafaSolis1280 puede borrarlas desde GitHub (botón *Delete branch* de cada PR), o activar *Automatically delete head branches* en Settings.

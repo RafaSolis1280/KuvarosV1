@@ -12,6 +12,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import type { SequenceVariant } from "@/config/gpu-policy";
+import { BRAND_COLORS } from "@/config/brand";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,7 +37,7 @@ export default function ImageSequenceCanvas({
   sequenceFolder,
   totalFrames,
   scrollDistance = 2600,
-  accentColor = "#FFD645",
+  accentColor = BRAND_COLORS.amarilloMostaza,
   ariaLabel,
   children,
   id,
@@ -70,12 +71,12 @@ export default function ImageSequenceCanvas({
     const drawFallback = (i: number) => {
       const { width: w, height: h } = canvas;
       const p = i / Math.max(1, count - 1);
-      ctx.fillStyle = "#0A0A0A";
+      ctx.fillStyle = BRAND_COLORS.negroProfundo;
       ctx.fillRect(0, 0, w, h);
       // Capas apiladas que se separan con el progreso (placeholder de la hamburguesa desarmándose)
       for (let k = 0; k < 5; k++) {
         const off = (k - 2) * p * h * 0.12;
-        ctx.strokeStyle = k === 2 ? accentColor : "rgba(255,255,255,0.22)";
+        ctx.strokeStyle = k === 2 ? accentColor : "rgba(221,209,183,0.25)";
         ctx.lineWidth = k === 2 ? 3 : 1.5;
         ctx.beginPath();
         ctx.ellipse(w / 2, h / 2 + off, w * 0.16, h * 0.045, 0, 0, Math.PI * 2);
@@ -89,6 +90,17 @@ export default function ImageSequenceCanvas({
 
     const drawCover = (bmp: ImageBitmap) => {
       const { width: cw, height: ch } = canvas;
+      // Pantalla vertical con master horizontal (DEV-19): "cover" recortaría el producto por los lados.
+      // Se muestra el 72 % central del ancho y se rellena con el negro del video, con la imagen en la
+      // mitad superior para que las fichas (abajo en móvil) no la tapen.
+      if (cw / ch < 0.8 && bmp.width / bmp.height > 1) {
+        const s = cw / (bmp.width * 0.72);
+        const h = bmp.height * s;
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(bmp, (cw - bmp.width * s) / 2, Math.max(0, (ch - h) * 0.12), bmp.width * s, h);
+        return;
+      }
       const s = Math.max(cw / bmp.width, ch / bmp.height);
       ctx.drawImage(bmp, (cw - bmp.width * s) / 2, (ch - bmp.height * s) / 2, bmp.width * s, bmp.height * s);
     };
