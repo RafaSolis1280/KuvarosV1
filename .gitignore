@@ -52,7 +52,5 @@ raw-assets/
 *.mov
 *.psd
 
-# Generados por `postinstall` (scripts/copy-decoders.mjs)
-/public/draco/
-/public/basis/
+# Generado por `postinstall` (scripts/copy-decoders.mjs)
 /public/benchmarks/

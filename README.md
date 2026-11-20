@@ -18,7 +18,7 @@ Mientras faltan los archivos, **todo funciona con fallbacks procedurales** (anil
 
 ```bash
 git lfs install          # una sola vez por equipo
-npm install              # el postinstall copia Draco/Basis/benchmarks a /public
+npm install              # el postinstall copia los benchmarks de detect-gpu a /public
 npm run dev              # http://localhost:3000
 ```
 
