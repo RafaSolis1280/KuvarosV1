@@ -1,0 +1,37 @@
+/*
+ * DEV-24 · Cursor personalizado. CustomCursor pone data-cursor="custom" en <html> solo con ratón/trackpad
+ * y sin prefers-reduced-motion; sin ese atributo, todo queda con el cursor del sistema.
+ * Hoja global con selectores de atributo (los CSS modules no funcionan en este repo: ver README).
+ */
+html[data-cursor="custom"],
+html[data-cursor="custom"] * {
+  cursor: none;
+}
+
+/* En los campos de texto se ve el cursor del sistema (y el personalizado se oculta: data-state="text") */
+html[data-cursor="custom"] :is(input, textarea, select, [contenteditable="true"]) {
+  cursor: auto;
+}
+
+[data-custom-cursor] {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+[data-custom-cursor][data-visible="true"]:not([data-state="text"]) {
+  opacity: 1;
+}
+
+[data-custom-cursor] .cursor-ring {
+  transition:
+    scale 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+[data-custom-cursor][data-state="link"] .cursor-ring {
+  scale: var(--cursor-hover-scale);
+  background-color: rgb(221 167 48 / 0.15);
+  border-color: var(--color-accent);
+}
+[data-custom-cursor][data-pressed="true"] .cursor-ring {
+  scale: var(--cursor-press-scale);
+}

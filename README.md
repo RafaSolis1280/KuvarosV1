@@ -44,7 +44,7 @@ npm run dev              # http://localhost:3000
 | `src/components/ui/` | Piezas reutilizables: `CtaLink`, `Eyebrow`, `GlassPanel` | Estilos compartidos (afectan a todo el sitio) |
 | `src/components/layout/` | `SiteHeader` (cabecera fija con el CTA) + `StickyHeader`, `SiteFooter`, `SkipLink` | Navegación y accesibilidad global |
 | `src/components/seo/` | `JsonLd` (datos estructurados del negocio) | — |
-| `src/components/dom/` | Proveedor de scroll, overlays de las secuencias, `Wordmark` | — |
+| `src/components/dom/` | Proveedor de scroll, overlays de las secuencias, `Wordmark`, `HeroTitle` (titular cinético), `ContactForm`, `CustomCursor` | — |
 | `src/components/canvas/` | El único Canvas WebGL y el shader de fondo | — |
 | `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas, `timeline.ts`: beats → frame), `reveal.ts` (qué overlay está activo, exclusión y cascada), `DampedValues.ts` (fundidos en el tiempo), `math.ts`, `gsap.ts` (registra ScrollTrigger, SplitText y CustomEase una vez), `seo.ts` (metadatos, JSON-LD, sitemap y robots), `contact/` (validación compartida navegador/servidor, límite de envíos, envío), `color.ts`, `cx.ts` | — |
 | `src/hooks/` | `useSequenceProgress` (overlays sincronizados con un video, sin re-renders) | — |

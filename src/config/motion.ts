@@ -100,3 +100,18 @@ export const HERO_TITLE = {
   fromYPercent: 110,
   delay: 0.05,
 } as const;
+
+/**
+ * DEV-24 · Cursor personalizado (solo ratón/trackpad, nunca en táctil ni con prefers-reduced-motion).
+ * El punto sigue al puntero exacto; el anillo lo alcanza con damp() (inercia independiente de los FPS).
+ */
+export const CUSTOM_CURSOR = {
+  /** λ de damp() del anillo: más alto = lo alcanza antes */
+  ringLambda: 16,
+  /** Escala del anillo sobre enlaces y botones */
+  hoverScale: 1.6,
+  /** Escala del anillo al hacer clic */
+  pressScale: 0.85,
+  /** Por debajo de este movimiento (px) el anillo se da por quieto y no se reescribe el DOM */
+  restPx: 0.1,
+} as const;
