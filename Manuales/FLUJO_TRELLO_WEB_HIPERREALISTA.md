@@ -11,23 +11,22 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 20-11-2026 (reparto del equipo en §0.5; merge de `main` con DEV-08, ART-10, ART-12 y DEV-19) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 21-11-2026 (verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado; reparto del equipo en §0.5) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
-> **Todo el trabajo está fusionado en `main`** (PR #3 a #16, último merge `db88ce1`). Las tarjetas de abajo tienen el código o los assets en `main`, pero su checklist de criterios aún no está completo, así que siguen en revisión.
+> **Todo el trabajo está fusionado en `main`** (PR #3 a #17, último merge `2d442b7`). Las tarjetas de abajo tienen el código o los assets en `main`, pero su checklist de criterios aún no está completo, así que siguen en revisión.
 
 | Tarjeta | Estado (lista) | Responsable | Rama | PR / base | Falta para cerrar |
 | :--- | :--- | :-: | :--- | :--- | :--- |
 | DEV-04 · Repo, Next.js 16 y CLAUDE.md | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` | — | Conectar Vercel (Preview URL) con Git LFS activado |
-| DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar en navegador real: tier en consola y scroll sin doble RAF |
+| DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | ✅ Tier y bajada de tier comprobados en navegador (21-11). Falta: fluidez con la pestaña visible en desktop y en un móvil real |
 | DEV-08 · Tokens de diseño y fuentes (marca Kuvaro's) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #16) | — | ⏳ Fuente primaria real (ART-04); hoy Bree Serif provisional |
-| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar con los frames reales en dispositivos reales (los frames ya están en `main`) |
+| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | ✅ Frames reales sin 404 ni canvas en blanco; ventana medida = 2R+1 (21-11). Falta: «sin saltos» a FPS reales y en un móvil real |
 | DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar en Android de gama media (artefactos de precisión) |
-| DEV-19 · Contenido real de la marca (Kuvaro's) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #13) | — | ⏳ DIR-05 valida el copy; DIR-01 define el canal de pedido (WhatsApp) |
-| DEV-37 · Packaging como video (100 % video, sin `.glb`) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar con el video real en dispositivos reales |
+| DEV-19 · Contenido real de la marca (Kuvaro's) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #13) | — | ⏳ DIR-05: el cliente debe validar el copy y la ficha del packaging (criterio desmarcado el 21-11: aún no está validado); responsive según ART-05; Lighthouse |
 | ART-10 · Export WebP desktop/mobile (video de marca) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #15) | — | ⏳ Master del cliente ≥ 1600 px (hoy 1292 px) |
-| ART-12 · Pósters de fallback, OG y fotos de marca | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #14) | — | Póster de `packaging_reveal`; ⏳ cesión de derechos de las fotos (DIR-03) |
+| ART-12 · Pósters de fallback, OG y fotos de marca | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #14) | — | Póster de `packaging_reveal` (y usar `heroPoster` en algún componente); budget de DEV-01; ⏳ cesión de derechos de las fotos (DIR-03) |
 | DOCS · Sincronización + criterios de aceptación + reparto | 🔍 Revisión Interna / QA | Javier (fusiona Rafael) | `docs/criterios-aceptacion` (incluye `docs/sync-estado-repo-y-limpieza`) | PR → `develop` tras sincronizarla (o → `main`, como #3-#16, si Rafael lo prefiere antes) | Revisión y merge de Rafael |
 
 ### 0.2 Bitácora de trabajo realizado
@@ -60,6 +59,9 @@
 | 20-11-2026 | DEV-19 | `src/content/producto.ts` con la marca real (voz del manual §7, PVU §3.2, packaging §8; sin cifras inventadas). 5 ingredientes = 5 capas del video (pan brioche, salsa de la casa, cheddar, doble smash, base) con `rango` y `ancla` ajustados a los 54 frames. `Wordmark` tipográfico, sección «Primer bocado» con las fotos (`next/image`), CTA a @Kuvaros_burger, metadatos + Open Graph. Ficha del packaging a la derecha en desktop; en pantallas verticales `ImageSequenceCanvas` muestra el 72 % central del master horizontal (antes recortaba la hamburguesa). Manual de marca versionado en `Manuales/MANUAL_MARCA_KUVAROS.md`; `/Marca/` fuera de Git. Probado en Chrome headless 1440×900 y 390×844: 0 errores, 0 404, 3 canvas (1 WebGL + 2 secuencias) | `feat/dev-19-contenido-marca-kuvaros` | 🔍 PR abierto |
 | 20-11-2026 | MERGE | PR #13 a #16 fusionados en **`main`** (DEV-08, ART-10, ART-12, DEV-19). Verificado en `main` (`db88ce1`): `npm run lint`, `typecheck` y `build` sin errores. Quedan en revisión hasta completar su checklist (ver §0.1) | `db88ce1` · `main` | ✅ En `main` |
 | 20-11-2026 | DOCS | **Reparto del equipo** (§0.5) entre Rafael (experiencia, contenido, assets, rendimiento y repo) y Javier (interfaz DOM, SEO y QA), con propiedad de archivos para trabajar en paralelo sin conflictos, reglas de convivencia y dependencias con quién las provee. En Trello: el responsable es el miembro asignado de cada tarjeta; tarjetas del sprint en «1er spring» agrupadas por persona; tarjeta «📌 Reparto del equipo» | `docs/criterios-aceptacion` | 🔍 PR abierto |
+| 20-11-2026 | CHORE | Auditoría: se quitan 4 dependencias sin ningún import (`@react-three/postprocessing`, `postprocessing`, `maath`, `howler` + `@types/howler`; se reinstalan cuando se hagan DEV-15 o ART-15), 2 `.gitkeep` en carpetas con archivos, reglas LFS de `.glb/.hdr/.ktx2`, entradas de ignore de Draco/Basis y la sección de modelos 3D de `LICENCIAS.md` | `chore/limpieza-proyecto` | ✅ En `main` (PR #17) |
+| 20-11-2026 | MERGE | PR #17 (CHORE, Rafael) fusionado en **`main`** (`2d442b7`) | `2d442b7` · `main` | ✅ En `main` |
+| 21-11-2026 | QA | **Verificación de `main` `2d442b7` contra los criterios de Trello** (Javier, con Claude Code): `npm ci` + lint/typecheck/build OK; build de producción recorrido en el navegador: 0 errores, 0 404, 1 canvas WebGL + 2 de secuencia, callouts y specs por tramos, PerformanceMonitor T3→T2, ventana de ImageBitmaps medida = 2R+1, desktop y móvil emulado (375×812) sin overflow horizontal. **DEV-37 → Hecho.** Marcados: G4 (pesos, frames = manifiesto, fila en `LICENCIAS.md` por archivo), DIR-03 (fila por archivo), DEV-26 (0 `useState`; 2R+1 medido). **Desmarcados** por no cumplirse: DEV-19 «copy real del cliente» (pendiente DIR-05) y ART-12 «budget de DEV-01» (budget sin definir). Texto de DEV-19 corregido (5 ingredientes, no 6). §5 sincronizado con Trello. DEV-15/16: avisado que el PR #17 quitó sus dependencias | `docs/criterios-aceptacion` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -83,8 +85,8 @@ Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026
 | 1er spring | 🗓️ Sprint actual / 🔨 En progreso | 📌 Reparto del equipo + las 12 tarjetas del sprint por persona (§0.5) + Fase 0 y Fase 1 (DIR/ART), G1 y G2 |
 | 2do spring | 🗓️ Sprint siguiente | Assets y videos (ART-06…09, ART-11, ART-15), G3, G4 |
 | Blockers | 🚧 Bloqueado / ⏳ Esperando cliente | `develop` desincronizada, Vercel, branding/contenido/videos del cliente (3) |
-| reviews | 🔍 Revisión Interna / QA | DEV-04, 06, 08, 09, 10, 19, 37, ART-10, ART-12 y los 2 DOCS (11), con responsable de cierre |
-| completados 1er spring | ✅ Hecho | DEV-05, DEV-07 y 3 DOCS (5) |
+| reviews | 🔍 Revisión Interna / QA | DEV-04, 06, 08, 09, 10, 19, ART-10, ART-12 y los 2 DOCS (10), con responsable de cierre |
+| completados 1er spring | ✅ Hecho | DEV-05, DEV-07, DEV-37, CHORE (PR #17) y 3 DOCS (7) |
 | completados 2do spring | ✅ Hecho (sprint 2) | — |
 
 ### 0.5 Reparto del equipo (desde el 20-11-2026)
@@ -442,7 +444,7 @@ _Como dirección, quiero un registro de licencias para usar comercialmente cada 
 ✔ **Criterios de aceptación** (checklist en Trello):
 - [ ] `LICENCIAS.md` tiene una fila por asset con: nombre, origen o herramienta, tipo de licencia, enlace o comprobante y si permite uso comercial.
 - [ ] Para cada herramienta IA del plan se revisaron sus términos de uso comercial y se anotó el enlace en `LICENCIAS.md`.
-- [ ] Todos los archivos de `/public` tienen su fila en `LICENCIAS.md` (ninguno queda sin registrar).
+- [x] Todos los archivos de `/public` tienen su fila en `LICENCIAS.md` (ninguno queda sin registrar).
 - [ ] La tarjeta 📌 Guía enlaza a `LICENCIAS.md`.
 
 **GATE-G1 · Brief y alcance aprobados** — DIR + Cliente
@@ -626,10 +628,10 @@ Ref. M Fase 2 Paso 5 (corrección: **mismo fps**).
 _Como arte, quiero exportar los videos a secuencias WebP para que desarrollo los controle con el scroll._
 ✔ **Criterios de aceptación** (checklist en Trello):
 - [ ] Cada video está exportado con `npm run frames` en desktop (1600 px) y mobile (800 px) a 24 fps.
-- [ ] Desktop y mobile tienen el mismo nº de frames, igual a `totalFrames` de `ASSET_MANIFEST` (hoy 120); si cambia, DEV lo actualiza en el mismo PR.
-- [ ] Cada video pesa ≤ 8 MB en desktop y ≤ 4 MB en mobile.
-- [ ] Los frames se suben por PR desde una rama `assets/art-10-…` a `/public/sequences/{hero_explode,packaging_reveal}/{desktop,mobile}/`.
-- [ ] DEV confirma en el navegador que las dos secuencias cargan sin mostrar el fallback.
+- [x] Desktop y mobile tienen el mismo nº de frames, igual a `totalFrames` de `ASSET_MANIFEST` (hoy 54 en `hero_explode` y 157 en `packaging_reveal`); si cambia, DEV lo actualiza en el mismo PR.
+- [x] Cada video pesa ≤ 8 MB en desktop y ≤ 4 MB en mobile.
+- [x] Los frames se suben por PR desde una rama `assets/art-10-…` a `/public/sequences/{hero_explode,packaging_reveal}/{desktop,mobile}/`.
+- [x] DEV confirma en el navegador que las dos secuencias cargan sin mostrar el fallback.
 
 **ART-11 · Secuencias / imágenes de secciones secundarias** — ART · `IA-Video` `P1` · 12 h · G4 · ← G3
 *Una tarjeta por asset* (duplicar desde la plantilla).
@@ -646,7 +648,7 @@ _Como arte, quiero producir los assets de las secciones secundarias para complet
 _Como visitante sin WebGL o con un móvil de gama baja, quiero ver una imagen fija de calidad para entender el producto igual._
 ✔ **Criterios de aceptación** (checklist en Trello):
 - [ ] En `/public/fallback` están `hero_poster.webp` y un póster por secuencia.
-- [ ] En `/public` está `og-image.jpg` de 1200×630 px.
+- [x] En `/public` está `og-image.jpg` de 1200×630 px.
 - [ ] Los pósters usan el mismo fondo y LUT que los videos y su peso entra en el budget de DEV-01.
 
 ---
@@ -689,9 +691,9 @@ _Como visitante, quiero un sonido ambiental opcional para que la experiencia se 
 ✔ **Criterios de salida** (checklist en Trello):
 - [ ] ART-08, ART-09, ART-10 y ART-12 están en «completados» (y ART-15, si entra en el alcance).
 - [ ] Todos los archivos están en `/public` con los nombres del contrato.
-- [ ] Cada video pesa ≤ 8 MB en desktop y ≤ 4 MB en mobile.
-- [ ] `LICENCIAS.md` tiene una fila por cada archivo de `/public`.
-- [ ] DEV confirma que el nº de frames coincide con `ASSET_MANIFEST`.
+- [x] Cada video pesa ≤ 8 MB en desktop y ≤ 4 MB en mobile.
+- [x] `LICENCIAS.md` tiene una fila por cada archivo de `/public`.
+- [x] DEV confirma que el nº de frames coincide con `ASSET_MANIFEST`.
 
 ---
 
@@ -758,10 +760,10 @@ _Como desarrollo, quiero un único Canvas WebGL adaptado al dispositivo para no 
 
 _Como visitante, quiero ver la marca con sus colores y tipografías reales, sin saltos de texto al cargar._
 ✔ **Criterios de aceptación** (checklist en Trello):
-- [ ] La paleta de ART-03 está en el `@theme` de `globals.css` (el token de fondo se llama `surface`, no `base`).
+- [x] La paleta de ART-03 está en el `@theme` de `globals.css` (el token de fondo se llama `surface`, no `base`).
 - [ ] Las fuentes de ART-04 se cargan con `next/font/local`.
 - [ ] Lighthouse no muestra CLS causado por fuentes y, con red lenta simulada, no se ve el cambio de fuente al cargar.
-- [ ] `npm run lint`, `npm run typecheck` y `npm run build` terminan sin errores.
+- [x] `npm run lint`, `npm run typecheck` y `npm run build` terminan sin errores.
 
 ---
 
@@ -808,7 +810,7 @@ _Como visitante, quiero ver el packaging en un video hiperrealista con su ficha 
 - [x] Las especificaciones del packaging aparecen por tramos según avanza el video.
 - [x] El código y el manifiesto no usan `.glb`, HDRI ni Draco/KTX2.
 - [x] Con `/public` vacío se ve el fallback sin errores y no se piden frames antes de comprobar que existe el frame 1.
-- [ ] Con el video real (ART-08 / ART-10), se recorre la secuencia sin frames en blanco.
+- [x] Con el video real (ART-08 / ART-10), se recorre la secuencia sin frames en blanco.
 
 **DEV-12 · Integrar assets reales en la vertical slice** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← G4, DEV-09, DEV-37 (los dos videos)
 
@@ -956,9 +958,9 @@ Prompt P7. Ref. M Parte II §10.
 
 _Como desarrollo, quiero auditar la memoria y las fugas para que el sitio no se cuelgue ni se recargue en móviles._
 ✔ **Criterios de aceptación** (checklist en Trello):
-- [ ] Revisados todos los `useState` de `canvas/` y `sequence/`: ninguno se actualiza en cada frame, scroll o movimiento del puntero.
+- [x] Revisados todos los `useState` de `canvas/` y `sequence/`: ninguno se actualiza en cada frame, scroll o movimiento del puntero.
 - [ ] Tras recorrer la página de arriba a abajo 10 veces, la memoria JS vuelve a ±10 % del valor inicial.
-- [ ] Nunca hay más de 2R+1 frames (ImageBitmaps) en memoria por secuencia, siendo R el radio del tier.
+- [x] Nunca hay más de 2R+1 frames (ImageBitmaps) en memoria por secuencia, siendo R el radio del tier.
 - [ ] Al desmontar quedan 0 ScrollTriggers activos y se eliminan todos los listeners.
 - [ ] El informe con las capturas de memoria (heap y GPU) está adjunto a la tarjeta.
 

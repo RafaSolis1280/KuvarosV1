@@ -52,9 +52,5 @@ raw-assets/
 *.mov
 *.psd
 
-# Generados por `postinstall` (scripts/copy-decoders.mjs)
+# Generado por `postinstall` (scripts/copy-decoders.mjs)
 /public/benchmarks/
-# Legado (antes de DEV-37 se copiaban Draco/Basis). Si aún existen en tu copia local, bórralos:
-# ya no se usan y ESLint los analiza (11 errores falsos en `npm run lint`).
-/public/draco/
-/public/basis/
