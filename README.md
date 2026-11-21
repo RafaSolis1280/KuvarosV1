@@ -8,8 +8,7 @@ Landing inmersiva **100 % video hiperrealista** (sin modelos 3D) · Next.js 16 �
 | # | Sección | Qué pasa | Componente / tarjeta |
 | :-: | :--- | :--- | :--- |
 | 1 | **Hero** | Titular y propuesta de valor sobre un fondo animado sutil. El `<h1>` es el LCP. | `HeroSection` · DEV-18 |
-| 2 | **Video 1 · La hamburguesa** | La sección se fija (pin) y el scroll controla el video frame a frame: la hamburguesa se separa capa por capa. En ciertos tramos aparece la ficha de cada ingrediente. | `IngredientsSection` = `SequenceSection` (DEV-09) + `IngredientCallouts` (DEV-19) |
-| 3 | **Video 2 · El packaging** | Al terminar la hamburguesa entra el video del packaging, también controlado por el scroll, y la ficha técnica se va completando especificación por especificación. | `PackagingSection` = `SequenceSection` + `PackagingSpecs` (DEV-37) |
+| 2-3 | **La historia en video · hamburguesa → bolsa** | UNA sola sección fijada (DEV-40): la hamburguesa se separa capa por capa con la ficha de cada ingrediente (una a la vez), se vuelve a armar y entra a la bolsa mientras se completa la ficha del packaging; cierra con la bolsa y el logo solos. Arriba, el capítulo actual; abajo, una barra de progreso. El scroll se reparte por **beats** según lo que pasa en pantalla (`PRODUCT_STORY` en `config/sequences.ts`). | `ProductStorySection` = `SequenceSection` (DEV-09) + `IngredientCallouts` (DEV-19) + `PackagingSpecs` (DEV-37) + `StoryProgress` (DEV-40) |
 | 4 | **Primer bocado** | Fotos reales de la marca. | `ExperienceSection` · DEV-19 / ART-12 |
 | 5 | **Conversión** | Llamado a la acción (hoy Instagram; WhatsApp / delivery cuando DIR-01 lo defina). | `ContactSection` · DEV-25 |
 
@@ -39,14 +38,14 @@ npm run dev              # http://localhost:3000
 | Carpeta | Qué hay | Cuándo tocarla |
 | :--- | :--- | :--- |
 | `src/content/` | `producto.ts`: **todo el texto** del sitio (copy, SEO, CTA, textos de accesibilidad) · `types.ts`: su forma | Cambiar un texto, un enlace o una ficha |
-| `src/config/` | `gpu-policy.ts` (tiers y manifiesto de assets) · `sequences.ts` (videos de la página, recorrido de scroll, encuadre) · `motion.ts` (Lenis, suavizado, mezcla de frames y entrada de los videos, tramos de aparición) · `scene.ts` (Canvas WebGL) · `site.ts` (URL, idioma, anclas) · `brand.ts` (colores para canvas/shader) | Ajustar comportamiento sin tocar componentes |
+| `src/config/` | `gpu-policy.ts` (tiers y manifiesto de assets) · `sequences.ts` (`PRODUCT_STORY`: clips y beats de la historia, encuadre) · `motion.ts` (Lenis, suavizado — `DAMPING.overlays` es la duración de los fundidos —, mezcla de frames y entrada de los videos, puntos de aparición) · `scene.ts` (Canvas WebGL) · `site.ts` (URL, idioma, anclas) · `brand.ts` (colores para canvas/shader) | Ajustar comportamiento sin tocar componentes |
 | `src/components/sections/` | Una sección por archivo (Hero, Ingredientes, Packaging, Primer bocado, Contacto) | Cambiar la maqueta de una sección |
 | `src/components/sequence/` | `SequenceSection` (video fijado + bordes + overlays) e `ImageSequenceCanvas` | Agregar un video: entrada en `config/sequences.ts` + una sección con `SequenceSection` |
 | `src/components/ui/` | Piezas reutilizables: `CtaLink`, `Eyebrow`, `GlassPanel` | Estilos compartidos (afectan a todo el sitio) |
 | `src/components/layout/` | `SiteHeader`, `SkipLink` | Navegación y accesibilidad global |
 | `src/components/dom/` | Proveedor de scroll, overlays de las secuencias, `Wordmark` | — |
 | `src/components/canvas/` | El único Canvas WebGL y el shader de fondo | — |
-| `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas), `reveal.ts`, `math.ts`, `gsap.ts` (registra ScrollTrigger una vez), `seo.ts`, `color.ts`, `cx.ts` | — |
+| `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas, `timeline.ts`: beats → frame), `reveal.ts` (qué overlay está activo, exclusión y cascada), `DampedValues.ts` (fundidos en el tiempo), `math.ts`, `gsap.ts` (registra ScrollTrigger una vez), `seo.ts`, `color.ts`, `cx.ts` | — |
 | `src/hooks/` | `useSequenceProgress` (overlays sincronizados con un video, sin re-renders) | — |
 | `src/store/` | Store transiente (Zustand) | — |
 

@@ -9,12 +9,14 @@
 // DEV-38: la caché, el dibujo y las rutas viven en src/lib/sequence; la configuración en src/config.
 // DEV-39 (fluidez): mezcla de frames según la posición exacta del scroll, escalado de alta calidad y
 // entrada del video al aparecer en pantalla.
+// DEV-40 (historia continua): varios clips en una sola sección y ritmo por beats (lib/sequence/timeline).
 import { useEffect, useRef, type ReactNode } from "react";
 import { gsap } from "@/lib/gsap";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { FrameCache, loadImageBitmap } from "@/lib/sequence/FrameCache";
 import { configureContext, drawFallback, drawFrame } from "@/lib/sequence/draw";
-import { frameIndexForProgress, framePosition, frameUrl } from "@/lib/sequence/frames";
+import { splitFrame } from "@/lib/sequence/frames";
+import { createTimeline, storyFrameUrl } from "@/lib/sequence/timeline";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
 import { hexToRgba } from "@/lib/color";
 import { BRAND_COLORS } from "@/config/brand";
@@ -41,9 +43,9 @@ export default function ImageSequenceCanvas({
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Dependencias primitivas: el efecto no se reinicia si el objeto de configuración cambia de identidad
-  const { id: sequenceId, basePath, scrollDistance = SEQUENCE_PLAYBACK.defaultScrollDistance } = sequence;
-  const { desktop: framesDesktop, mobile: framesMobile } = sequence.totalFrames;
+  // El efecto depende del CONTENIDO de la configuración (clips y beats), no de la identidad del objeto
+  const configKey = JSON.stringify({ clips: sequence.clips, beats: sequence.beats });
+  const sequenceId = sequence.id;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -52,21 +54,24 @@ export default function ImageSequenceCanvas({
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    const totalFrames = { desktop: framesDesktop, mobile: framesMobile };
+    const { clips, beats } = JSON.parse(configKey) as Pick<SequenceConfig, "clips" | "beats">;
     const store = useExperienceStore;
     const getPolicy = () => store.getState().gpuPolicy;
 
     let variant = getPolicy().sequenceVariant;
+    let timeline = createTimeline(beats, clips, variant);
     let fallback = false;
     let probed = false; // no se piden frames hasta saber si existe el frame 1 (evita una ráfaga de 404)
     let drawn = -1;
     const playhead = { progress: 0 };
 
-    const urlFor = (i: number) => frameUrl(basePath, variant, i);
-    const currentIndex = () => frameIndexForProgress(playhead.progress, cache.count);
+    const urlFor = (i: number) => storyFrameUrl(clips, variant, i);
+    // Posición exacta en el video según el ritmo de los beats (DEV-40)
+    const position = () => timeline.frameAt(playhead.progress);
+    const currentIndex = () => Math.round(position());
 
     const cache: FrameCache = new FrameCache({
-      count: totalFrames[variant],
+      count: timeline.count,
       url: urlFor,
       radius: () => getPolicy().sequenceWindowRadius,
       center: () => currentIndex(),
@@ -98,7 +103,7 @@ export default function ImageSequenceCanvas({
       }
 
       // Posición continua: con mezcla, entre el frame `from` y el `to` se funden los dos (DEV-39)
-      const pos = framePosition(playhead.progress, cache.count);
+      const pos = splitFrame(position(), cache.count);
       const blend = SEQUENCE_PLAYBACK.frameBlending && pos.mix > 0;
       const key = blend ? Math.round(pos.exact * SEQUENCE_PLAYBACK.blendSteps) : i * SEQUENCE_PLAYBACK.blendSteps;
       if (key === drawn) return; // ya está en pantalla
@@ -149,7 +154,8 @@ export default function ImageSequenceCanvas({
     const unsubscribe = store.subscribe((s, prev) => {
       if (s.gpuPolicy !== prev.gpuPolicy) {
         variant = s.gpuPolicy.sequenceVariant;
-        cache.reset(totalFrames[variant], urlFor);
+        timeline = createTimeline(beats, clips, variant);
+        cache.reset(timeline.count, urlFor);
         drawn = -1;
         resize();
       }
@@ -162,43 +168,44 @@ export default function ImageSequenceCanvas({
       scrollTrigger: {
         trigger: container,
         start: SEQUENCE_PLAYBACK.start,
-        end: `+=${scrollDistance}`,
+        // El recorrido se mide en alturas de viewport (DEV-40): igual de largo en cualquier pantalla
+        end: () => `+=${Math.round(timeline.totalVh * window.innerHeight)}`,
+        invalidateOnRefresh: true,
         scrub: SEQUENCE_PLAYBACK.scrub,
         pin: true,
       },
     });
 
-    // Entrada del video al aparecer en pantalla (DEV-39): solo opacidad y escala del canvas, que la
-    // GPU compone sin repintar. Con reduced motion el video aparece tal cual.
-    const entrance = prefersReducedMotion()
-      ? null
-      : gsap.fromTo(
-          canvas,
-          { opacity: SEQUENCE_ENTRANCE.fromOpacity, scale: SEQUENCE_ENTRANCE.fromScale },
-          {
-            opacity: 1,
-            scale: 1,
-            ease: SEQUENCE_ENTRANCE.ease,
-            scrollTrigger: {
-              trigger: container,
-              start: SEQUENCE_ENTRANCE.start,
-              end: SEQUENCE_ENTRANCE.end,
-              scrub: true,
-            },
-          }
-        );
+    // Entrada del video al aparecer en pantalla (DEV-39): opacidad y escala del canvas, que la GPU
+    // compone sin repintar. Con reduced motion solo el fundido (no hay movimiento).
+    const reduced = prefersReducedMotion();
+    const entrance = gsap.fromTo(
+      canvas,
+      { opacity: SEQUENCE_ENTRANCE.fromOpacity, scale: reduced ? 1 : SEQUENCE_ENTRANCE.fromScale },
+      {
+        opacity: 1,
+        scale: 1,
+        ease: SEQUENCE_ENTRANCE.ease,
+        scrollTrigger: {
+          trigger: container,
+          start: SEQUENCE_ENTRANCE.start,
+          end: SEQUENCE_ENTRANCE.end,
+          scrub: true,
+        },
+      }
+    );
 
     return () => {
       alive = false;
       unsubscribe();
       window.removeEventListener("resize", resize);
-      entrance?.scrollTrigger?.kill();
-      entrance?.kill();
+      entrance.scrollTrigger?.kill();
+      entrance.kill();
       tween.scrollTrigger?.kill();
       tween.kill();
       cache.dispose();
     };
-  }, [sequenceId, basePath, framesDesktop, framesMobile, scrollDistance, accentColor]);
+  }, [sequenceId, configKey, accentColor]);
 
   return (
     <section ref={containerRef} id={sequence.anchorId} className="relative h-screen w-full overflow-hidden bg-surface">

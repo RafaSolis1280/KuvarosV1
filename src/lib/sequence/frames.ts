@@ -20,8 +20,13 @@ export function frameIndexForProgress(progress: number, count: number): number {
  * Ej.: 54 frames y progreso 0.5 → exact 26.5 → from 26, to 27, mix 0.5.
  */
 export function framePosition(progress: number, count: number): { exact: number; from: number; to: number; mix: number } {
+  return splitFrame(progress * Math.max(0, count - 1), count);
+}
+
+/** Igual que framePosition, pero a partir de una posición exacta en frames (p. ej. de la línea de tiempo) */
+export function splitFrame(position: number, count: number): { exact: number; from: number; to: number; mix: number } {
   const last = Math.max(0, count - 1);
-  const exact = Math.min(last, Math.max(0, progress * last));
+  const exact = Math.min(last, Math.max(0, position));
   const from = Math.floor(exact);
   const to = Math.min(last, from + 1);
   return { exact, from, to, mix: to === from ? 0 : exact - from };

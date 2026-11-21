@@ -37,8 +37,16 @@ export const PRODUCTO = {
   bajada:
     "Técnica precisa y el sabor que estabas esperando. Hechas al momento en nuestra cocina cerrada y entregadas con detalle premium en Zona Cercado.",
   indicacionScroll: "Desliza para verla capa por capa",
-  secuenciaAria:
-    "Video de la hamburguesa smash de Kuvaro's separándose en capas: pan brioche, salsa de la casa con carne, cheddar fundido, segundo medallón y base de pan",
+  /** La historia en video (DEV-40): un solo recorrido con dos capítulos. ⏳ DIR-05 valida los títulos. */
+  historia: {
+    secuenciaAria:
+      "Video de la hamburguesa smash de Kuvaro's separándose en capas: pan brioche, salsa de la casa con carne, cheddar fundido, segundo medallón y base de pan. Después, la hamburguesa y las papas entran en la bolsa de papel, que se cierra mostrando el logo Kuvaro's Smash Burguers",
+    /** `desde`/`hasta`: beats de config/sequences.ts que abarca cada capítulo */
+    capitulos: [
+      { numero: "01", titulo: "Capa por capa", desde: "separa", hasta: "se-arma" },
+      { numero: "02", titulo: "Directo a tu puerta", desde: "a-la-bolsa", hasta: "logo" },
+    ],
+  },
 
   ingredientes: [
     {
@@ -46,7 +54,6 @@ export const PRODUCTO = {
       nombre: "Pan brioche",
       descripcion: "Dorado, suave y brillante. Sostiene todo sin robarle protagonismo a la carne.",
       dato: "Brioche",
-      rango: [0.36, 0.48],
       ancla: { x: 4, y: 10 },
       lado: "izquierda",
     },
@@ -55,7 +62,6 @@ export const PRODUCTO = {
       nombre: "Salsa de la casa",
       descripcion: "Cremosa y con carácter. Cubre el primer medallón recién salido de la plancha.",
       dato: "Receta propia",
-      rango: [0.45, 0.57],
       ancla: { x: 68, y: 26 },
       lado: "derecha",
     },
@@ -64,7 +70,6 @@ export const PRODUCTO = {
       nombre: "Cheddar fundido",
       descripcion: "Se derrite sobre la carne caliente hasta caer por los bordes. Queso real, sin trucos.",
       dato: "Fundido real",
-      rango: [0.54, 0.66],
       ancla: { x: 4, y: 44 },
       lado: "izquierda",
     },
@@ -73,7 +78,6 @@ export const PRODUCTO = {
       nombre: "Doble smash",
       descripcion: "Carne aplastada contra la plancha bien caliente: costra crujiente por fuera, jugosa por dentro.",
       dato: "Costra Maillard",
-      rango: [0.63, 0.75],
       ancla: { x: 68, y: 56 },
       lado: "derecha",
     },
@@ -82,7 +86,6 @@ export const PRODUCTO = {
       nombre: "Base de pan",
       descripcion: "El orden de armado está pensado para el delivery: la base llega firme, sin humedecerse.",
       dato: "Armada para el viaje",
-      rango: [0.72, 0.86],
       ancla: { x: 4, y: 68 },
       lado: "izquierda",
     },
@@ -101,8 +104,6 @@ export const PRODUCTO = {
       { etiqueta: "Entrega objetivo", valor: "30 a 40 min puerta a puerta" },
     ] satisfies readonly Especificacion[],
     nota: "Ficha basada en el manual de marca. ⏳ Pendiente de confirmar con el cliente (DIR-05).",
-    secuenciaAria:
-      "Video de la hamburguesa y las papas de Kuvaro's entrando en la bolsa de papel, que se cierra mostrando el logo Kuvaro's Smash Burguers",
   },
 
   experiencia: {

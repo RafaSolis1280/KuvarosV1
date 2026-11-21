@@ -1,37 +1,62 @@
 "use client";
 
-// DEV-19 · Callouts de ingredientes sincronizados con el scroll de la secuencia (DEV-09).
-// Sin setState de React: useSequenceProgress escribe estilos directamente en los nodos (Hard Constraint 1).
+// DEV-19 · Fichas de ingredientes sincronizadas con el video (DEV-09).
+// DEV-40: cada ficha tiene su turno dentro del beat «ingredientes». El scroll elige la ficha activa y
+// el cambio es un fundido en el tiempo (~0.25 s, entra subiendo y sale hacia arriba), una sola a la vez.
+// Sin setState de React: useSequenceProgress escribe estilos en los nodos (Hard Constraint 1).
 // El texto está siempre en el DOM → legible sin WebGL y por lectores de pantalla (Hard Constraint 7).
-// DEV-38: la suscripción y la animación salen de useSequenceProgress y lib/reveal.
 import { useRef, type CSSProperties } from "react";
 import GlassPanel from "@/components/ui/GlassPanel";
 import Eyebrow from "@/components/ui/Eyebrow";
+import { useDampedValues } from "@/hooks/useDampedValues";
 import { useSequenceProgress } from "@/hooks/useSequenceProgress";
-import { applyReveal, windowVisibility } from "@/lib/reveal";
+import { useExperienceStore } from "@/store/useExperienceStore";
+import { activeSlot, applyStyle, exclusiveTargets, oneHot } from "@/lib/reveal";
 import { cx } from "@/lib/cx";
-import { REVEAL } from "@/config/motion";
+import { DAMPING, REVEAL } from "@/config/motion";
 import type { Ingrediente } from "@/content/types";
 
 interface Props {
-  /** Id de la secuencia que controla los callouts */
+  /** Id de la secuencia que controla las fichas */
   sequenceId: string;
   ingredientes: readonly Ingrediente[];
+  /** Tramo del scroll (0-1) en el que se presentan todas las fichas */
+  range: readonly [number, number];
   /** Nombre accesible de la lista */
   ariaLabel: string;
 }
 
-export default function IngredientCallouts({ sequenceId, ingredientes, ariaLabel }: Props) {
+export default function IngredientCallouts({ sequenceId, ingredientes, range, ariaLabel }: Props) {
   const refs = useRef<(HTMLLIElement | null)[]>([]);
+  const { enterOffsetPx, exitOffsetPx } = REVEAL.callouts;
 
-  useSequenceProgress(sequenceId, (progress, reducedMotion) => {
-    ingredientes.forEach((ing, i) => {
-      const el = refs.current[i];
-      if (!el) return;
-      const v = windowVisibility(progress, ing.rango, REVEAL.callouts.maxFade);
-      applyReveal(el, v, { axis: "y", offsetPx: REVEAL.callouts.offsetPx, reducedMotion });
-      el.dataset.active = v > 0.5 ? "true" : "false";
+  /** Lado de cada ficha respecto de la activa: +1 viene después (entra desde abajo), -1 ya pasó (sale hacia arriba) */
+  const sides = useRef<number[]>([]);
+
+  // Lo que se ve: la visibilidad de cada ficha, llevada a su objetivo en el tiempo. exclusiveTargets hace
+  // que la siguiente espere a que la anterior termine de irse (una sola a la vez)
+  const setTargets = useDampedValues(
+    DAMPING.overlays,
+    (values) => {
+      const { reducedMotion } = useExperienceStore.getState();
+      values.forEach((v, i) => {
+        const el = refs.current[i];
+        if (!el) return;
+        const offsetPx = (1 - v) * ((sides.current[i] ?? 1) < 0 ? exitOffsetPx : enterOffsetPx);
+        applyStyle(el, v, { axis: "y", offsetPx, reducedMotion });
+        el.dataset.active = v > 0.5 ? "true" : "false";
+      });
+    },
+    exclusiveTargets
+  );
+
+  // El scroll decide qué ficha está activa (su turno dentro del beat); el fundido lo hace el tiempo
+  useSequenceProgress(sequenceId, (progress) => {
+    const active = activeSlot(progress, range, ingredientes.length);
+    ingredientes.forEach((_, i) => {
+      if (i !== active) sides.current[i] = i < active ? -1 : 1;
     });
+    setTargets(oneHot(ingredientes.length, active));
   });
 
   return (
@@ -43,17 +68,17 @@ export default function IngredientCallouts({ sequenceId, ingredientes, ariaLabel
             refs.current[i] = el;
           }}
           data-active="false"
-          className="absolute inset-x-4 bottom-8 opacity-0 will-change-[opacity,transform] md:inset-x-auto md:bottom-auto md:left-[var(--x)] md:top-[var(--y)] md:w-[min(28vw,360px)]"
+          className="absolute inset-x-4 bottom-10 opacity-0 will-change-[opacity,transform] md:inset-x-auto md:bottom-auto md:left-[var(--x)] md:top-[var(--y)] md:w-[min(28vw,360px)]"
           style={{ "--x": `${ing.ancla.x}%`, "--y": `${ing.ancla.y}%` } as CSSProperties}
         >
           <GlassPanel
             className={cx(
-              "p-5",
+              "p-5 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.8)]",
               ing.lado === "derecha" ? "md:border-l-accent md:border-l-2" : "md:border-r-accent md:border-r-2"
             )}
           >
             <Eyebrow variant="mono-sm">
-              {String(i + 1).padStart(2, "0")} · {ing.dato}
+              {String(i + 1).padStart(2, "0")} / {String(ingredientes.length).padStart(2, "0")} · {ing.dato}
             </Eyebrow>
             <h3 className="font-display mt-2 text-xl uppercase tracking-tight md:text-2xl">{ing.nombre}</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted">{ing.descripcion}</p>

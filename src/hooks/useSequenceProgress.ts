@@ -2,8 +2,8 @@
 
 // DEV-38 · Suscripción al progreso de una secuencia (lo publica ImageSequenceCanvas en el store).
 // Para overlays que se animan con el scroll SIN re-renders de React (Hard Constraint 1): el callback
-// escribe estilos directamente en los nodos. Se llama una vez al montar y luego solo cuando el
-// progreso cambia.
+// escribe estilos directamente en los nodos (o fija objetivos de useDampedValues, DEV-40). Se llama una
+// vez al montar y luego solo cuando el progreso cambia.
 import { useEffect, useEffectEvent } from "react";
 import { useExperienceStore } from "@/store/useExperienceStore";
 

@@ -16,6 +16,11 @@ export const DAMPING = {
   pointer: 6,
   /** Deformación del fondo según la velocidad del scroll (DEV-10) */
   scrollVelocity: 8,
+  /**
+   * Overlays del video (fichas, ficha del packaging, capítulos): siguen al video con suavizado en el
+   * tiempo, así un tirón de la rueda no los hace aparecer de golpe (≈ 0.3 s para asentarse).
+   */
+  overlays: 10,
 } as const;
 
 /** Reproducción de las secuencias controladas por el scroll (DEV-09 · fluidez: DEV-39) */
@@ -27,8 +32,6 @@ export const SEQUENCE_PLAYBACK = {
   scrub: 0.6,
   /** La sección se fija cuando su borde superior toca el del viewport */
   start: "top top",
-  /** Recorrido de scroll (px) mientras la sección está fijada, si la secuencia no define el suyo */
-  defaultScrollDistance: 2600,
   /**
    * Mezcla de frames: entre dos frames del video se funden los dos según la posición exacta del scroll.
    * Con 54 frames en 3200 px, sin mezcla la imagen solo cambia cada ~60 px (efecto stop-motion).
@@ -53,24 +56,31 @@ export const SEQUENCE_ENTRANCE = {
   end: "top top",
 } as const;
 
-/** Cómo aparecen los overlays DOM sobre las secuencias (DEV-19 / DEV-37) */
+/**
+ * Cómo aparecen los overlays DOM sobre el video (DEV-40). Todas las transiciones usan una curva suave
+ * (smoothstep) y están ligadas al progreso del video. Con reduced motion se mantiene el fundido de
+ * opacidad (no es movimiento) y se quita el desplazamiento.
+ */
 export const REVEAL = {
+  // El scroll decide qué overlay está activo; el fundido dura lo que marca DAMPING.overlays (en tiempo,
+  // ~0.25 s), así ningún texto queda a medio aparecer donde el usuario deja de desplazarse.
   callouts: {
-    /** Ancho máximo (en progreso 0-1) de la rampa de entrada/salida de cada ficha */
-    maxFade: 0.04,
-    /** Desplazamiento vertical (px) con el que entra cada ficha */
-    offsetPx: 16,
+    /** La ficha entra subiendo desde aquí (px)… */
+    enterOffsetPx: 22,
+    /** …y sale subiendo hasta aquí (px): se lee como un movimiento continuo hacia arriba */
+    exitOffsetPx: -14,
   },
   specs: {
-    /** Tramo (0-1) en el que entra el panel del packaging */
-    panelEntry: [0.08, 0.2] as const,
-    /** Tramo (0-1) a lo largo del cual se suman las especificaciones */
-    rowsRange: [0.25, 0.8] as const,
-    /** Fracción del paso de cada fila que dura su fundido */
-    rowFadeShare: 0.8,
+    /** Punto del beat «a la bolsa» (0-1) en el que aparece el panel: cuando la bolsa ya está en cuadro */
+    panelEntryShare: 0.35,
+    /** Punto del beat «logo» (0-1) en el que el panel se va: el cierre es la bolsa con el logo sola */
+    panelExitShare: 0.15,
     /** Desplazamiento horizontal (px) del panel al entrar */
-    panelOffsetPx: 24,
+    panelOffsetPx: 28,
     /** Desplazamiento vertical (px) de cada fila al entrar */
-    rowOffsetPx: 10,
+    rowOffsetPx: 12,
+  },
+  chapters: {
+    offsetPx: 10,
   },
 } as const;

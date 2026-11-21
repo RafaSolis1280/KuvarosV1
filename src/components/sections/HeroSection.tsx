@@ -22,6 +22,12 @@ export default function HeroSection() {
         <span className="inline-block h-8 w-px bg-accent" />
         {indicacionScroll}
       </p>
+
+      {/* DEV-40: funde el fondo del hero con el de la historia en video (sin línea de corte entre ambos) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-b from-transparent to-surface"
+      />
     </section>
   );
 }

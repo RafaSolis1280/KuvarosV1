@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { SEQUENCE_FRAMING } from "@/config/sequences";
 import { computeFrameRect, configureContext, drawFrame } from "@/lib/sequence/draw";
 
 /** Contexto 2D falso que registra las llamadas */
@@ -58,14 +59,16 @@ describe("computeFrameRect", () => {
     expect(r.y).toBeCloseTo((1080 - r.height) / 2);
   });
 
-  it("en vertical muestra el 72 % central del ancho, sin recortar el producto, y lo sube", () => {
+  it("en vertical muestra la franja central del ancho y la ubica sobre el espacio de las fichas", () => {
     // Móvil 375×812 con dpr 1
+    const { portraitVisibleWidth, portraitTopOffset } = SEQUENCE_FRAMING;
     const r = computeFrameRect(375, 812, 1292, 696);
     expect(r.letterbox).toBe(true);
-    expect(r.width * 0.72).toBeCloseTo(375); // la franja visible ocupa todo el ancho
+    expect(r.width * portraitVisibleWidth).toBeCloseTo(375); // la franja visible ocupa todo el ancho
     expect(r.x).toBeCloseTo((375 - r.width) / 2);
-    expect(r.y).toBeCloseTo((812 - r.height) * 0.12);
-    expect(r.y + r.height).toBeLessThan(812); // queda sitio abajo para las fichas
+    expect(r.y).toBeCloseTo((812 - r.height) * portraitTopOffset);
+    expect(r.y).toBeGreaterThan(60); // deja libre el título del capítulo
+    expect(r.y + r.height).toBeLessThan(812 * 0.62); // y el tercio inferior para las fichas
   });
 
   it("un master vertical en viewport vertical vuelve a «cover»", () => {
