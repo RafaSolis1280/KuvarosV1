@@ -11,7 +11,7 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 21-11-2026 (DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 21-11-2026 (verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
@@ -22,7 +22,6 @@
 | DEV-04 · Repo, Next.js 16 y CLAUDE.md | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` | — | Conectar Vercel (Preview URL) con Git LFS activado |
 | DEV-06 · SmoothScrollProvider + detect-gpu | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | ✅ Tier y bajada de tier comprobados en navegador (21-11). Falta: fluidez con la pestaña visible en desktop y en un móvil real |
 | DEV-08 · Tokens de diseño y fuentes (marca Kuvaro's) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #16) | — | ⏳ Fuente primaria real (ART-04); hoy Bree Serif provisional |
-| DEV-09 · ImageSequenceCanvas (ventana deslizante) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | ✅ Frames reales sin 404 ni canvas en blanco; ventana medida = 2R+1 (21-11). Falta: «sin saltos» a FPS reales y en un móvil real |
 | DEV-10 · Shader de fondo (fluido) | 🔍 Revisión Interna / QA | Javier verifica | fusionada en `main` | — | Probar en Android de gama media (artefactos de precisión) |
 | DEV-19 · Contenido real de la marca (Kuvaro's) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #13) | — | ⏳ DIR-05: el cliente debe validar el copy y la ficha del packaging (criterio desmarcado el 21-11: aún no está validado); responsive según ART-05; Lighthouse |
 | ART-10 · Export WebP desktop/mobile (video de marca) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #15) | — | ⏳ Master del cliente ≥ 1600 px (hoy 1292 px) |
@@ -68,6 +67,7 @@
 | 21-11-2026 | DEV-38 | **Refactor sin cambios de comportamiento.** Configuración centralizada en `src/config` (`motion`: Lenis, damping, scrub y tramos de aparición; `sequences`: videos de la página, convención de frames y encuadre; `scene`: cámara y PerformanceMonitor; `site`: URL, idioma y anclas) y capas z en `globals.css` (`stack-*`). Componentes reutilizables: `ui/` (`CtaLink`, `Eyebrow`, `GlassPanel`), `layout/` (`SiteHeader`, `SkipLink`), `sections/` (una por sección) y `sequence/SequenceSection`; `page.tsx` solo compone. `ImageSequenceCanvas` dividido en `lib/sequence` (`FrameCache`, `draw`, `frames`); overlays con `hooks/useSequenceProgress` y `lib/reveal`; `lib/gsap` registra ScrollTrigger una vez; `tierFromGPU()` en `gpu-policy`; metadatos en `lib/seo`, fuentes en `app/fonts.ts`; URL de Instagram y textos de accesibilidad en `producto.ts`. **41 tests unitarios** (Vitest 3.2.7, `npm test`, también en CI). Verificado: lint/typecheck/test/build OK; huella del HTML del servidor idéntica salvo `z-[n]`→`stack-*` y el hash de la fuente; en navegador: callouts y specs por tramos, ventana de frames = 2R+1, móvil, fallback sin video (1 solo HEAD 404) | `chore/dev-38-refactor-modular` | 🔍 PR abierto |
 | 21-11-2026 | DEV-39 | **Fluidez de los videos.** Diagnóstico: el canvas solo dibujaba frames enteros (54 frames en 3200 px → la imagen cambiaba cada ~60 px: efecto stop-motion) y escalaba con la calidad por defecto. Cambios: **mezcla de frames** (`framePosition()` + `drawFrame(ctx, img, alpha)`: entre dos frames se funden los dos según la posición exacta), escalado `imageSmoothingQuality: "high"`, `scrub` 0.35 → 0.6, **entrada de cada video** al aparecer (opacidad 0 → 1 y escala 1.08 → 1 ligadas al scroll, solo opacidad/transform; desactivada con reduced motion), `prefersReducedMotion()` compartido. Medido en navegador (diferencia media de píxeles entre pasos de scroll): hamburguesa de `4.4, 0, 0, 0, 4.4…` a ~1.1 constante (salto máximo −73 %); bolsa de `0, 0.5, 0, 0…` a ~0.2 (−53 %). 49 tests; lint/typecheck/build OK; callouts sincronizados; ventana 2R+1 intacta | `feat/dev-39-fluidez-secuencias` | 🔍 PR abierto |
 | 21-11-2026 | DEV-40 | **Historia continua y fichas.** Probado con la rueda real (165 FPS, pestaña visible) antes y después. Antes: las fichas pasaban de opacidad 0 a 1 en **un frame**, dos secciones fijadas con un corte entre la hamburguesa y la bolsa, ~8000 px de scroll con tramos de video quieto, y fichas que podían quedar a medio fundir donde el usuario paraba. Cambios: **una sola sección** (`ProductStorySection`) con los dos clips unidos (el último frame de la hamburguesa y el primero de la bolsa coinciden) y el scroll repartido por **beats** (`createTimeline`): 7.25 alturas de pantalla, altura de página 10142 → 8073 px. **Fichas:** el scroll decide cuál está activa y el fundido es en el tiempo (`DampedValues`, ~0.25 s) con exclusión mutua (`exclusiveTargets`: la siguiente espera a que la anterior se vaya) y entrada/salida según el sentido del scroll. Ficha del packaging con filas en cascada (`cascadeTargets`) y salida en el beat final (plano de la bolsa con el logo solo). Títulos de capítulo + barra de progreso (`StoryProgress`). Diseño: degradado hero → video (sin línea de corte), encuadre vertical 72 % → 66 % centrado sobre las fichas, ficha del packaging compacta en móvil (descripción y nota en `sr-only`). Medido (rueda real, modo reducido y completo): cambio máximo de opacidad por frame **1.0 → 0.06**, **0** frames con dos fichas o dos títulos visibles, **0** reposos con un overlay a medio fundir (12/12), las 5 fichas llegan al 100 %. 66 tests; lint/typecheck/build OK | `feat/dev-40-historia-continua` | 🔍 PR abierto |
+| 21-11-2026 | QA | **Segunda verificación contra los criterios de Trello** (Javier, con Claude Code) sobre el código actual (`main` `2d442b7` + DEV-38/39/40), con el build de producción local y la pestaña visible. **DEV-09 → Hecho** (5/5): recorrido de los 211 frames reales en 240 pasos, 0 pasos en blanco, 0 sin avance, sin saltos aislados. Marcados: DEV-12 (scroll de principio a fin sin blancos ni saltos), DEV-26 (heap 8,2 → 8,6 MB tras 10 recorridos, +4,9 %; ScrollTriggers y listeners se limpian, comprobado con StrictMode), DEV-27 (reduced motion sin Lenis, shader quieto, scroll nativo; consola sin errores), DEV-29 (orden de Tab y foco visible; `aria-label` en el canvas y `aria-hidden` en WebGL), DEV-30 (todo el texto en el HTML). **No cumplidos y con hallazgo:** DEV-29 contraste (el texto `muted` del hero baja a ~3,2:1 sobre las vetas mostaza del shader) y DEV-30 metadata (título de 70 caracteres; canónica y `og:image` a `localhost` sin `NEXT_PUBLIC_SITE_URL`; sin sitemap, robots ni JSON-LD). Evidencia en el comentario de cada tarjeta | `docs/verificacion-criterios-21-11` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -91,8 +91,8 @@ Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026
 | 1er spring | 🗓️ Sprint actual / 🔨 En progreso | 📌 Reparto del equipo + las 12 tarjetas del sprint por persona (§0.5) + Fase 0 y Fase 1 (DIR/ART), G1 y G2 |
 | 2do spring | 🗓️ Sprint siguiente | Assets y videos (ART-06…09, ART-11, ART-15), G3, G4 |
 | Blockers | 🚧 Bloqueado / ⏳ Esperando cliente | `develop` desincronizada, Vercel, branding/contenido/videos del cliente (3) |
-| reviews | 🔍 Revisión Interna / QA | DEV-04, 06, 08, 09, 10, 19, ART-10, ART-12 y los 2 DOCS (10), con responsable de cierre |
-| completados 1er spring | ✅ Hecho | DEV-05, DEV-07, DEV-37, CHORE (PR #17) y 3 DOCS (7) |
+| reviews | 🔍 Revisión Interna / QA | DEV-04, 06, 08, 10, 19, 38, 39, 40, ART-10, ART-12 y los 2 DOCS (12), con responsable de cierre |
+| completados 1er spring | ✅ Hecho | DEV-05, DEV-07, DEV-09, DEV-37, CHORE (PR #17) y 3 DOCS (8) |
 | completados 2do spring | ✅ Hecho (sprint 2) | — |
 
 ### 0.5 Reparto del equipo (desde el 20-11-2026)
@@ -776,7 +776,7 @@ _Como visitante, quiero ver la marca con sus colores y tipografías reales, sin 
 ### FASE 5 · EXPERIENCIA INMERSIVA — Semanas 4-6 → **G5**
 
 **DEV-09 · ImageSequenceCanvas (ventana deslizante)** — DEV · `Dev-WebGL` `⚠` `P0` · 8 h · G5 · ← DEV-06
-> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-09-image-sequence`
+> 📍 **Estado:** ✅ Hecho · verificado el 21-11-2026 con los frames reales (211 en la historia continua), sin blancos ni saltos
 *PLANTILLA Componente WebGL.* Ref. M Parte II §7. Prompt P3.
 - [ ] Fallback solo si falta el frame 1
 - [ ] Dibuja el frame más cercano
@@ -789,7 +789,7 @@ _Como visitante, quiero ver el video de la hamburguesa avanzar y retroceder con 
 - [x] Solo se mantienen en memoria los frames cercanos al actual [f-R, f+R] (como máximo 2R+1).
 - [x] Al cambiar de tier se vacía la caché de frames.
 - [x] El canvas tiene `aria-label` que describe la animación.
-- [ ] Con los frames reales (ART-10), se recorre toda la secuencia sin frames en blanco ni saltos.
+- [x] Con los frames reales (ART-10), se recorre toda la secuencia sin frames en blanco ni saltos.
 
 **DEV-10 · Shader de fondo (fluido)** — DEV · `Dev-WebGL` `P1` · 6 h · G5 · ← DEV-07
 > 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-10-fluid-shader`
@@ -871,7 +871,7 @@ _Como cliente, quiero ver la vertical slice con los videos y textos definitivos 
 ✔ **Criterios de aceptación** (checklist en Trello):
 - [ ] Los dos videos reales cargan en la preview sin mostrar el fallback.
 - [ ] El copy definitivo de DIR-05 está cargado en `src/content/producto.ts`.
-- [ ] Se puede hacer scroll de principio a fin sin frames en blanco ni saltos.
+- [x] Se puede hacer scroll de principio a fin sin frames en blanco ni saltos.
 - [ ] El rendimiento en Lighthouse móvil no baja más de 5 puntos frente a `main`.
 - [ ] La URL de preview está enlazada en la tarjeta.
 
@@ -1012,9 +1012,9 @@ Prompt P7. Ref. M Parte II §10.
 _Como desarrollo, quiero auditar la memoria y las fugas para que el sitio no se cuelgue ni se recargue en móviles._
 ✔ **Criterios de aceptación** (checklist en Trello):
 - [x] Revisados todos los `useState` de `canvas/` y `sequence/`: ninguno se actualiza en cada frame, scroll o movimiento del puntero.
-- [ ] Tras recorrer la página de arriba a abajo 10 veces, la memoria JS vuelve a ±10 % del valor inicial.
+- [x] Tras recorrer la página de arriba a abajo 10 veces, la memoria JS vuelve a ±10 % del valor inicial.
 - [x] Nunca hay más de 2R+1 frames (ImageBitmaps) en memoria por secuencia, siendo R el radio del tier.
-- [ ] Al desmontar quedan 0 ScrollTriggers activos y se eliminan todos los listeners.
+- [x] Al desmontar quedan 0 ScrollTriggers activos y se eliminan todos los listeners.
 - [ ] El informe con las capturas de memoria (heap y GPU) está adjunto a la tarjeta.
 
 **DEV-27 · Prueba de tiers y fallbacks** — DEV · `Dev-WebGL` `P0` · 3 h · G6
@@ -1027,8 +1027,8 @@ _Como desarrollo, quiero comprobar cada tier y cada fallback para garantizar que
 - [ ] Hay un modo de desarrollo para forzar T1, T2 y T3, que no está activo en producción.
 - [ ] Los 5 escenarios están documentados con captura: T3, T2, T1, sin WebGL y con reduced motion.
 - [ ] Sin WebGL: no hay canvas WebGL, la página se recorre completa y el CTA funciona.
-- [ ] Con reduced motion: no se crea Lenis, el shader queda quieto y las secuencias avanzan solo con el scroll nativo.
-- [ ] La consola no muestra errores, salvo los 404 esperados de assets aún no entregados.
+- [x] Con reduced motion: no se crea Lenis, el shader queda quieto y las secuencias avanzan solo con el scroll nativo.
+- [x] La consola no muestra errores, salvo los 404 esperados de assets aún no entregados.
 
 **DEV-28 · Core Web Vitals y bundle** — DEV · `Dev-WebGL` `P0` · 4 h · G6
 - [ ] Lighthouse móvil: LCP < 2.5 s, CLS < 0.1, INP < 200 ms
@@ -1067,8 +1067,8 @@ Prompt P8.
 
 _Como visitante que navega con teclado o lector de pantalla, quiero usar todo el sitio para llegar al producto y al CTA._
 ✔ **Criterios de aceptación** (checklist en Trello):
-- [ ] Con Tab se recorre todo el sitio: el enlace «Saltar al contenido» es lo primero, el foco se ve en cada control y el orden es lógico.
-- [ ] Los botones de icono y los canvas de las secuencias tienen `aria-label`, y la capa WebGL tiene `aria-hidden`.
+- [x] Con Tab se recorre todo el sitio: el enlace «Saltar al contenido» es lo primero, el foco se ve en cada control y el orden es lógico.
+- [x] Los botones de icono y los canvas de las secuencias tienen `aria-label`, y la capa WebGL tiene `aria-hidden`.
 - [ ] El contraste es ≥ 4.5:1 en texto normal y ≥ 3:1 en texto grande.
 - [ ] Lighthouse accesibilidad ≥ 95 (informe adjunto).
 - [ ] La prueba se repite con el diseño definitivo antes de G6.
@@ -1106,7 +1106,7 @@ _Como marca, quiero que el sitio aparezca en buscadores y se comparta bien en re
 - [ ] La `metadata` es real: título ≤ 60 caracteres, descripción ≤ 155, imagen Open Graph (`og-image.jpg`) y URL canónica.
 - [ ] `/sitemap.xml` y `/robots.txt` existen y son válidos (generados con `sitemap.ts` y `robots.ts`).
 - [ ] Los datos estructurados (JSON-LD) del negocio pasan Rich Results Test sin errores.
-- [ ] Todo el texto está en el HTML de la página (nada existe solo dentro de un canvas).
+- [x] Todo el texto está en el HTML de la página (nada existe solo dentro de un canvas).
 
 **DEV-31 · CMS headless (si está en alcance)** — DEV · `SEO/Negocio` `P1` · 10 h · G7
 
