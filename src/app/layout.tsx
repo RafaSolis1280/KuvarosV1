@@ -2,6 +2,7 @@ import "./globals.css";
 import SmoothScrollProvider from "@/components/dom/SmoothScrollProvider";
 import GlobalCanvasLoader from "@/components/canvas/GlobalCanvasLoader";
 import SkipLink from "@/components/layout/SkipLink";
+import SiteHeader from "@/components/layout/SiteHeader";
 import { fontVariables } from "./fonts";
 import { createSiteMetadata } from "@/lib/seo";
 import { MAIN_CONTENT_ID, SITE } from "@/config/site";
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="selection:bg-accent selection:text-on-accent">
         <SkipLink />
         <SmoothScrollProvider>
+          <SiteHeader />
           <GlobalCanvasLoader />
           <main id={MAIN_CONTENT_ID} className="relative stack-content">
             {children}

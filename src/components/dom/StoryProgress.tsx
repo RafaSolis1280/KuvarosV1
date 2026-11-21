@@ -56,7 +56,8 @@ export default function StoryProgress({ sequenceId, chapters }: Props) {
 
   return (
     <>
-      <div className="absolute inset-x-0 top-6 flex justify-center md:top-8" aria-hidden="true">
+      {/* Debajo de la cabecera fija (DEV-17) */}
+      <div className="absolute inset-x-0 top-[calc(var(--spacing-nav)+0.75rem)] flex justify-center" aria-hidden="true">
         <div className="relative h-5 w-full">
           {chapters.map((chapter, i) => (
             <p

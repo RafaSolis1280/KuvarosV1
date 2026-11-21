@@ -20,6 +20,9 @@
   /* Tipografías: las variables las declara next/font en layout.tsx */
   --font-display: var(--font-kuvaros-display), "Georgia", serif;
   --font-sans: var(--font-kuvaros-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* DEV-17 · Altura de la cabecera fija: genera `h-nav`, `pt-nav`, `top-nav`… para dejarle sitio al contenido */
+  --spacing-nav: 4.5rem;
 }
 
 /*
@@ -34,6 +37,9 @@
 }
 @utility stack-section {
   z-index: 15; /* Secciones con fondo propio que tapan el canvas (videos, fotos, conversión) */
+}
+@utility stack-nav {
+  z-index: 50; /* Cabecera fija con el CTA (DEV-17): por encima de las secuencias fijadas */
 }
 @utility stack-top {
   z-index: 100; /* Elementos que deben quedar por encima de todo (enlace «Saltar al contenido») */
