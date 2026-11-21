@@ -1,0 +1,30 @@
+/*
+ * DEV-18 · Estado inicial del titular del hero ANTES de que corra JavaScript.
+ * - Con movimiento permitido, el titular espera oculto a que SplitText lo divida (así no aparece,
+ *   desaparece y vuelve a entrar). Si el JS nunca llega, una animación de 0 s con retardo lo muestra
+ *   igual a los 2.5 s (fill-mode both: oculto antes del retardo, visible después).
+ * - Con prefers-reduced-motion no se oculta nunca.
+ * HeroTitle pone data-split="true" al dividir el texto: desde ahí manda GSAP.
+ * Hoja global con selector de atributo (no CSS module: next.config.ts pasa todo *.css por el loader de
+ * Tailwind y los módulos pierden el hash de sus clases).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-hero-title]:not([data-split]) {
+    animation: hero-title-failsafe 0s linear 2.5s both;
+  }
+}
+
+@keyframes hero-title-failsafe {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Las máscaras de línea recortan (overflow: clip): se agrandan para no cortar descendentes («j») ni tildes */
+[data-hero-title] .hero-title-line-mask {
+  padding-block: 0.1em 0.2em;
+  margin-block: -0.1em -0.2em;
+}

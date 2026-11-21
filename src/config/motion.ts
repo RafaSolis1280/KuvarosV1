@@ -84,3 +84,19 @@ export const REVEAL = {
     offsetPx: 10,
   },
 } as const;
+
+/**
+ * DEV-18 · Entrada del titular del hero (tipografía cinética con SplitText). Las letras suben desde
+ * debajo de su línea (máscara por línea), una tras otra. Solo transform: no mueve el layout (CLS 0).
+ * Con prefers-reduced-motion el titular aparece quieto.
+ */
+export const HERO_TITLE = {
+  /** Curva de entrada del Manual (cubic-bezier(0.16, 1, 0.3, 1)): arranca rápida y se asienta suave */
+  ease: "0.16,1,0.3,1",
+  duration: 1.1,
+  /** Segundos entre letra y letra */
+  stagger: 0.025,
+  /** Las letras parten un 110 % por debajo de su línea (ocultas por la máscara) */
+  fromYPercent: 110,
+  delay: 0.05,
+} as const;
