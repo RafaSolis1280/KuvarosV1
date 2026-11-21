@@ -11,6 +11,7 @@ import { Component, type ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { useExperienceStore } from "@/store/useExperienceStore";
+import { CANVAS_CAMERA, PERFORMANCE_GUARD } from "@/config/scene";
 import BackgroundShaderQuad from "./BackgroundShaderQuad";
 
 /**
@@ -44,7 +45,7 @@ export default function GlobalCanvas() {
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-[1] h-dvh w-screen overflow-hidden"
+      className="pointer-events-none fixed inset-0 stack-canvas h-dvh w-screen overflow-hidden"
       aria-hidden="true"
       data-testid="global-canvas"
     >
@@ -55,13 +56,13 @@ export default function GlobalCanvas() {
           // `antialias` solo se lee al crear el contexto: un cambio de tier en vivo no lo aplica
           // hasta recargar. Es aceptable: recrear el Canvas violaría Single-Canvas.
           gl={{ powerPreference: "high-performance", antialias: gpuPolicy.antialias, stencil: false }}
-          camera={{ position: [0, 0, 4.2], fov: 42 }}
+          camera={CANVAS_CAMERA}
         >
-          {/* FPS reales: degrada un tier por caída; tras 3 oscilaciones fija Tier 1 (sin cascada). */}
+          {/* FPS reales: degrada un tier por caída; tras N oscilaciones fija el tier de respaldo (sin cascada). */}
           <PerformanceMonitor
-            flipflops={3}
+            flipflops={PERFORMANCE_GUARD.flipflops}
             onDecline={() => useExperienceStore.getState().downgradeGPUTier()}
-            onFallback={() => useExperienceStore.getState().setGPUTier(1)}
+            onFallback={() => useExperienceStore.getState().setGPUTier(PERFORMANCE_GUARD.fallbackTier)}
           />
 
           {/* DEV-10 · Fondo fluido */}

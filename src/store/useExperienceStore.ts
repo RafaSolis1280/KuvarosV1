@@ -1,7 +1,7 @@
 // DEV-05 · Ref: Manual v2 Parte II §5. Store transiente: los campos de scroll/puntero se leen
 // SIEMPRE con useExperienceStore.getState() dentro de useFrame/RAF, nunca con el hook (Hard Constraint 1).
 import { create } from "zustand";
-import { type GPUTierLevel, type GPUStrictParameter, GPU_STRICT_POLICIES } from "@/config/gpu-policy";
+import { type GPUTierLevel, type GPUStrictParameter, GPU_STRICT_POLICIES, DEFAULT_TIER } from "@/config/gpu-policy";
 
 interface ExperienceState {
   // Hardware y accesibilidad (cambian rara vez → pueden leerse con hooks)
@@ -30,10 +30,12 @@ interface ExperienceState {
   setReducedMotion: (v: boolean) => void;
   setCanvasPaused: (paused: boolean) => void;
   setPreloadProgress: (progress: number) => void;
+  /** Escritura transiente del progreso de una secuencia; no notifica si el valor no cambió */
+  setSequenceProgress: (sequenceId: string, progress: number) => void;
 }
 
 export const useExperienceStore = create<ExperienceState>((set, get) => ({
-  gpuPolicy: GPU_STRICT_POLICIES[2], // Tier 2 seguro hasta que detect-gpu resuelva
+  gpuPolicy: GPU_STRICT_POLICIES[DEFAULT_TIER], // tier seguro hasta que detect-gpu resuelva
   webglAvailable: true,
   reducedMotion: false,
   isCanvasPaused: false,
@@ -59,4 +61,9 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   setReducedMotion: (v) => set({ reducedMotion: v }),
   setCanvasPaused: (paused) => set({ isCanvasPaused: paused }),
   setPreloadProgress: (progress) => set({ preloadProgress: progress, isPreloaded: progress >= 100 }),
+  setSequenceProgress: (sequenceId, progress) => {
+    const current = get().sequenceProgress;
+    if (current[sequenceId] === progress) return;
+    set({ sequenceProgress: { ...current, [sequenceId]: progress } });
+  },
 }));

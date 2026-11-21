@@ -22,6 +22,23 @@
   --font-sans: var(--font-kuvaros-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/*
+ * DEV-38 · Capas de apilamiento (z-index) del sitio, de abajo hacia arriba. Usar estas utilidades
+ * en lugar de z-[n] sueltos, para que el orden se lea y se cambie en un solo lugar.
+ */
+@utility stack-canvas {
+  z-index: 1; /* Canvas WebGL fijo del fondo (Single-Canvas) */
+}
+@utility stack-content {
+  z-index: 10; /* <main> con todo el contenido */
+}
+@utility stack-section {
+  z-index: 15; /* Secciones con fondo propio que tapan el canvas (videos, fotos, conversión) */
+}
+@utility stack-top {
+  z-index: 100; /* Elementos que deben quedar por encima de todo (enlace «Saltar al contenido») */
+}
+
 html {
   background-color: var(--color-surface);
   color: var(--color-ink);

@@ -1,49 +1,46 @@
 "use client";
 
-// DEV-09 · Ref: Manual v2 Parte II §7 (Prompt P3). Motor 2D con ventana deslizante de ImageBitmap.
-// - Solo [f-R, f+R] decodificados (R = gpuPolicy.sequenceWindowRadius); el resto se cierra con close().
+// DEV-09 · Ref: Manual v2 Parte II §7 (Prompt P3). Secuencia de frames controlada por el scroll.
+// - Solo [f-R, f+R] decodificados (R = gpuPolicy.sequenceWindowRadius): FrameCache.
 // - Fallback procedural SOLO si falta el frame 1 (Hard Constraint 4).
 // - Flush de caché al cambiar de tier/variante.
-// - El progreso se publica en el store transiente (`sequenceProgress[sequenceId]`) para que los
-//   overlays (ingredientes, specs del packaging) se sincronicen sin setState de React (Hard Constraint 1).
-
+// - El progreso se publica en el store transiente (`sequenceProgress[id]`) para que los overlays
+//   se sincronicen sin setState de React (Hard Constraint 1).
+// DEV-38: la caché, el dibujo y las rutas viven en src/lib/sequence; la configuración en src/config.
 import { useEffect, useRef, type ReactNode } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from "@/lib/gsap";
 import { useExperienceStore } from "@/store/useExperienceStore";
-import type { SequenceVariant } from "@/config/gpu-policy";
+import { FrameCache, loadImageBitmap } from "@/lib/sequence/FrameCache";
+import { drawFallback, drawFrame } from "@/lib/sequence/draw";
+import { frameIndexForProgress, frameUrl } from "@/lib/sequence/frames";
+import { hexToRgba } from "@/lib/color";
 import { BRAND_COLORS } from "@/config/brand";
-
-gsap.registerPlugin(ScrollTrigger);
+import { SEQUENCE_PLAYBACK } from "@/config/motion";
+import type { SequenceConfig } from "@/config/sequences";
 
 interface Props {
-  /** Id de la secuencia: clave de su progreso en el store (`sequenceProgress[sequenceId]`) */
-  sequenceId: string;
-  /** p. ej. "/sequences/hero_explode" */
-  sequenceFolder: string;
-  /** Conteo por variante. Pasar una referencia estable (constante del manifiesto). */
-  totalFrames: Readonly<Record<SequenceVariant, number>>;
-  scrollDistance?: number;
-  accentColor?: string;
+  sequence: SequenceConfig;
   /** Descripción accesible de la animación */
   ariaLabel: string;
-  /** Capa DOM que se pinnea junto con el canvas (callouts, títulos…) */
+  accentColor?: string;
+  /** Capa DOM que se fija junto con el canvas (callouts, títulos…) */
   children?: ReactNode;
-  id?: string;
 }
 
+const FALLBACK_RING = hexToRgba(BRAND_COLORS.beigeClaro, 0.25);
+
 export default function ImageSequenceCanvas({
-  sequenceId,
-  sequenceFolder,
-  totalFrames,
-  scrollDistance = 2600,
-  accentColor = BRAND_COLORS.amarilloMostaza,
+  sequence,
   ariaLabel,
+  accentColor = BRAND_COLORS.amarilloMostaza,
   children,
-  id,
 }: Props) {
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Dependencias primitivas: el efecto no se reinicia si el objeto de configuración cambia de identidad
+  const { id: sequenceId, basePath, scrollDistance = SEQUENCE_PLAYBACK.defaultScrollDistance } = sequence;
+  const { desktop: framesDesktop, mobile: framesMobile } = sequence.totalFrames;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -52,146 +49,63 @@ export default function ImageSequenceCanvas({
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    const getPolicy = () => useExperienceStore.getState().gpuPolicy;
-    let variant = getPolicy().sequenceVariant;
-    let count = totalFrames[variant];
+    const totalFrames = { desktop: framesDesktop, mobile: framesMobile };
+    const store = useExperienceStore;
+    const getPolicy = () => store.getState().gpuPolicy;
 
-    let bitmaps: (ImageBitmap | null)[] = new Array(count).fill(null);
-    let loading: boolean[] = new Array(count).fill(false);
-    let generation = 0; // invalida cargas en vuelo al cambiar de variante o desmontar
+    let variant = getPolicy().sequenceVariant;
     let fallback = false;
     let probed = false; // no se piden frames hasta saber si existe el frame 1 (evita una ráfaga de 404)
     let drawn = -1;
     const playhead = { progress: 0 };
 
-    const frameUrl = (i: number) =>
-      `${sequenceFolder}/${variant}/frame_${String(i + 1).padStart(4, "0")}.webp`;
-    const currentIndex = () => Math.round(playhead.progress * (count - 1));
+    const urlFor = (i: number) => frameUrl(basePath, variant, i);
+    const currentIndex = () => frameIndexForProgress(playhead.progress, cache.count);
 
-    const drawFallback = (i: number) => {
-      const { width: w, height: h } = canvas;
-      const p = i / Math.max(1, count - 1);
-      ctx.fillStyle = BRAND_COLORS.negroProfundo;
-      ctx.fillRect(0, 0, w, h);
-      // Capas apiladas que se separan con el progreso (placeholder de la hamburguesa desarmándose)
-      for (let k = 0; k < 5; k++) {
-        const off = (k - 2) * p * h * 0.12;
-        ctx.strokeStyle = k === 2 ? accentColor : "rgba(221,209,183,0.25)";
-        ctx.lineWidth = k === 2 ? 3 : 1.5;
-        ctx.beginPath();
-        ctx.ellipse(w / 2, h / 2 + off, w * 0.16, h * 0.045, 0, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.fillStyle = accentColor;
-      ctx.font = `bold ${Math.max(14, Math.floor(w * 0.012))}px monospace`;
-      ctx.textAlign = "center";
-      ctx.fillText(`[FALLBACK] ${sequenceId.toUpperCase()} · FRAME ${i + 1}/${count}`, w / 2, h * 0.88);
-    };
-
-    const drawCover = (bmp: ImageBitmap) => {
-      const { width: cw, height: ch } = canvas;
-      // Pantalla vertical con master horizontal (DEV-19): "cover" recortaría el producto por los lados.
-      // Se muestra el 72 % central del ancho y se rellena con el negro del video, con la imagen en la
-      // mitad superior para que las fichas (abajo en móvil) no la tapen.
-      if (cw / ch < 0.8 && bmp.width / bmp.height > 1) {
-        const s = cw / (bmp.width * 0.72);
-        const h = bmp.height * s;
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, cw, ch);
-        ctx.drawImage(bmp, (cw - bmp.width * s) / 2, Math.max(0, (ch - h) * 0.12), bmp.width * s, h);
-        return;
-      }
-      const s = Math.max(cw / bmp.width, ch / bmp.height);
-      ctx.drawImage(bmp, (cw - bmp.width * s) / 2, (ch - bmp.height * s) / 2, bmp.width * s, bmp.height * s);
-    };
-
-    /** Bitmap decodificado más cercano al índice pedido (evita canvas en blanco durante el decode) */
-    const nearestLoaded = (i: number): number => {
-      for (let d = 0; d < count; d++) {
-        if (bitmaps[i - d]) return i - d;
-        if (bitmaps[i + d]) return i + d;
-      }
-      return -1;
-    };
-
-    const syncWindow = (center: number) => {
-      if (fallback || !probed) return;
-      const R = getPolicy().sequenceWindowRadius;
-      const min = Math.max(0, center - R);
-      const max = Math.min(count - 1, center + R);
-
-      for (let i = 0; i < count; i++) {
-        if ((i < min || i > max) && bitmaps[i]) {
-          bitmaps[i]!.close();
-          bitmaps[i] = null;
+    const cache: FrameCache = new FrameCache({
+      count: totalFrames[variant],
+      url: urlFor,
+      radius: () => getPolicy().sequenceWindowRadius,
+      center: () => currentIndex(),
+      load: loadImageBitmap,
+      // Si llega el frame que se está mostrando (o uno vecino), se redibuja
+      onReady: (i) => {
+        if (Math.abs(i - currentIndex()) <= 1) {
+          drawn = -1;
+          render();
         }
-      }
+      },
+    });
 
-      for (let i = min; i <= max; i++) {
-        if (bitmaps[i] || loading[i]) continue;
-        loading[i] = true;
-        const gen = generation;
-        fetch(frameUrl(i))
-          .then((r) => {
-            if (!r.ok) throw new Error(String(r.status));
-            return r.blob();
-          })
-          .then((b) => createImageBitmap(b))
-          .then((bmp) => {
-            const c = currentIndex();
-            if (gen !== generation || Math.abs(i - c) > getPolicy().sequenceWindowRadius) {
-              bmp.close();
-              return;
-            }
-            bitmaps[i] = bmp;
-            if (Math.abs(i - c) <= 1) {
-              drawn = -1;
-              render();
-            }
-          })
-          .catch(() => {
-            /* frame aislado faltante: se usa el más cercano */
-          })
-          .finally(() => {
-            if (gen === generation) loading[i] = false;
-          });
-      }
+    const fallbackStyle = {
+      background: BRAND_COLORS.negroProfundo,
+      accent: accentColor,
+      ring: FALLBACK_RING,
+      label: sequenceId,
     };
 
     const render = () => {
-      // Escritura transiente (sin setState de React): solo cuando cambia el progreso
-      const prog = useExperienceStore.getState().sequenceProgress;
-      if (prog[sequenceId] !== playhead.progress) {
-        useExperienceStore.setState({ sequenceProgress: { ...prog, [sequenceId]: playhead.progress } });
-      }
+      store.getState().setSequenceProgress(sequenceId, playhead.progress);
       const i = currentIndex();
-      syncWindow(i);
+      if (!fallback && probed) cache.sync(i);
       if (fallback) {
-        drawFallback(i);
+        drawFallback(ctx, i, cache.count, fallbackStyle);
         drawn = i;
         return;
       }
       if (i === drawn) return;
-      const n = bitmaps[i] ? i : nearestLoaded(i);
-      if (n >= 0) {
-        drawCover(bitmaps[n]!);
+      // Mientras se decodifica el frame pedido, se muestra el más cercano (nunca un canvas en blanco)
+      const n = cache.get(i) ? i : cache.nearestLoaded(i);
+      const frame = n >= 0 ? cache.get(n) : null;
+      if (frame) {
+        drawFrame(ctx, frame);
         if (n === i) drawn = i;
       }
     };
 
-    const resetCache = () => {
-      generation++;
-      bitmaps.forEach((b) => b?.close());
-      variant = getPolicy().sequenceVariant;
-      count = totalFrames[variant];
-      bitmaps = new Array(count).fill(null);
-      loading = new Array(count).fill(false);
-      drawn = -1;
-    };
-
     // Fallback SOLO si el primer frame no existe
     let alive = true;
-    fetch(frameUrl(0), { method: "HEAD" })
+    fetch(urlFor(0), { method: "HEAD" })
       .then((r) => {
         if (!r.ok) fallback = true;
       })
@@ -216,9 +130,11 @@ export default function ImageSequenceCanvas({
     window.addEventListener("resize", resize);
 
     // Al cambiar de tier/variante se vacía la caché y se recarga la ventana
-    const unsubscribe = useExperienceStore.subscribe((s, prev) => {
+    const unsubscribe = store.subscribe((s, prev) => {
       if (s.gpuPolicy !== prev.gpuPolicy) {
-        resetCache();
+        variant = s.gpuPolicy.sequenceVariant;
+        cache.reset(totalFrames[variant], urlFor);
+        drawn = -1;
         resize();
       }
     });
@@ -229,9 +145,9 @@ export default function ImageSequenceCanvas({
       onUpdate: render,
       scrollTrigger: {
         trigger: container,
-        start: "top top",
+        start: SEQUENCE_PLAYBACK.start,
         end: `+=${scrollDistance}`,
-        scrub: 0.35,
+        scrub: SEQUENCE_PLAYBACK.scrub,
         pin: true,
       },
     });
@@ -242,14 +158,12 @@ export default function ImageSequenceCanvas({
       window.removeEventListener("resize", resize);
       tween.scrollTrigger?.kill();
       tween.kill();
-      generation++;
-      bitmaps.forEach((b) => b?.close());
-      bitmaps = [];
+      cache.dispose();
     };
-  }, [sequenceId, sequenceFolder, totalFrames, scrollDistance, accentColor]);
+  }, [sequenceId, basePath, framesDesktop, framesMobile, scrollDistance, accentColor]);
 
   return (
-    <section ref={containerRef} id={id} className="relative h-screen w-full overflow-hidden bg-surface">
+    <section ref={containerRef} id={sequence.anchorId} className="relative h-screen w-full overflow-hidden bg-surface">
       <canvas ref={canvasRef} className="block h-full w-full" role="img" aria-label={ariaLabel} />
       {children ? <div className="pointer-events-none absolute inset-0">{children}</div> : null}
     </section>

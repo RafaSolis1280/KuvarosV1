@@ -1,50 +1,41 @@
 "use client";
 
 // DEV-19 · Callouts de ingredientes sincronizados con el scroll de la secuencia (DEV-09).
-// Sin setState de React: se suscribe al store transiente (`sequenceProgress[sequenceId]`) y escribe estilos
-// directamente en los nodos (Hard Constraint 1). El texto está siempre en el DOM → legible sin
-// WebGL y por lectores de pantalla (Hard Constraint 7).
-import { useEffect, useRef } from "react";
-import { useExperienceStore } from "@/store/useExperienceStore";
-import { clamp } from "@/lib/math";
-import type { Ingrediente } from "@/content/producto";
+// Sin setState de React: useSequenceProgress escribe estilos directamente en los nodos (Hard Constraint 1).
+// El texto está siempre en el DOM → legible sin WebGL y por lectores de pantalla (Hard Constraint 7).
+// DEV-38: la suscripción y la animación salen de useSequenceProgress y lib/reveal.
+import { useRef, type CSSProperties } from "react";
+import GlassPanel from "@/components/ui/GlassPanel";
+import Eyebrow from "@/components/ui/Eyebrow";
+import { useSequenceProgress } from "@/hooks/useSequenceProgress";
+import { applyReveal, windowVisibility } from "@/lib/reveal";
+import { cx } from "@/lib/cx";
+import { REVEAL } from "@/config/motion";
+import type { Ingrediente } from "@/content/types";
 
 interface Props {
   /** Id de la secuencia que controla los callouts */
   sequenceId: string;
   ingredientes: readonly Ingrediente[];
+  /** Nombre accesible de la lista */
+  ariaLabel: string;
 }
 
-/** Opacidad 0-1 con rampas suaves de entrada/salida dentro del tramo [a, b] */
-function visibilidad(p: number, [a, b]: readonly [number, number]): number {
-  const fade = Math.min(0.04, (b - a) / 3);
-  return clamp(Math.min((p - a) / fade, (b - p) / fade), 0, 1);
-}
-
-export default function IngredientCallouts({ sequenceId, ingredientes }: Props) {
+export default function IngredientCallouts({ sequenceId, ingredientes, ariaLabel }: Props) {
   const refs = useRef<(HTMLLIElement | null)[]>([]);
 
-  useEffect(() => {
-    let last = -1;
-    const apply = (p: number) => {
-      if (p === last) return;
-      last = p;
-      const reduced = useExperienceStore.getState().reducedMotion;
-      ingredientes.forEach((ing, i) => {
-        const el = refs.current[i];
-        if (!el) return;
-        const v = visibilidad(p, ing.rango);
-        el.style.opacity = String(reduced ? (v > 0.5 ? 1 : 0) : v);
-        el.style.transform = reduced ? "none" : `translate3d(0, ${(1 - v) * 16}px, 0)`;
-        el.dataset.active = v > 0.5 ? "true" : "false";
-      });
-    };
-    apply(useExperienceStore.getState().sequenceProgress[sequenceId] ?? 0);
-    return useExperienceStore.subscribe((s) => apply(s.sequenceProgress[sequenceId] ?? 0));
-  }, [sequenceId, ingredientes]);
+  useSequenceProgress(sequenceId, (progress, reducedMotion) => {
+    ingredientes.forEach((ing, i) => {
+      const el = refs.current[i];
+      if (!el) return;
+      const v = windowVisibility(progress, ing.rango, REVEAL.callouts.maxFade);
+      applyReveal(el, v, { axis: "y", offsetPx: REVEAL.callouts.offsetPx, reducedMotion });
+      el.dataset.active = v > 0.5 ? "true" : "false";
+    });
+  });
 
   return (
-    <ol className="relative h-full w-full" aria-label="Ingredientes">
+    <ol className="relative h-full w-full" aria-label={ariaLabel}>
       {ingredientes.map((ing, i) => (
         <li
           key={ing.id}
@@ -53,19 +44,20 @@ export default function IngredientCallouts({ sequenceId, ingredientes }: Props) 
           }}
           data-active="false"
           className="absolute inset-x-4 bottom-8 opacity-0 will-change-[opacity,transform] md:inset-x-auto md:bottom-auto md:left-[var(--x)] md:top-[var(--y)] md:w-[min(28vw,360px)]"
-          style={{ "--x": `${ing.ancla.x}%`, "--y": `${ing.ancla.y}%` } as React.CSSProperties}
+          style={{ "--x": `${ing.ancla.x}%`, "--y": `${ing.ancla.y}%` } as CSSProperties}
         >
-          <div
-            className={`rounded-2xl border border-ink/10 bg-surface-deep/75 p-5 backdrop-blur-md ${
+          <GlassPanel
+            className={cx(
+              "p-5",
               ing.lado === "derecha" ? "md:border-l-accent md:border-l-2" : "md:border-r-accent md:border-r-2"
-            }`}
+            )}
           >
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
+            <Eyebrow variant="mono-sm">
               {String(i + 1).padStart(2, "0")} · {ing.dato}
-            </p>
+            </Eyebrow>
             <h3 className="font-display mt-2 text-xl uppercase tracking-tight md:text-2xl">{ing.nombre}</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted">{ing.descripcion}</p>
-          </div>
+          </GlassPanel>
         </li>
       ))}
     </ol>

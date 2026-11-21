@@ -22,6 +22,26 @@ export const GPU_STRICT_POLICIES: Record<GPUTierLevel, GPUStrictParameter> = {
   1: { tier: 1, dpr: [1, 1],   maxSequenceVRAM_MB: 32,  sequenceWindowRadius: 8,  sequenceVariant: "mobile",  maxParticles: 500,  enablePostProcessing: false, antialias: false },
 };
 
+/** Tier seguro mientras detect-gpu no responde (o si falla) */
+export const DEFAULT_TIER: GPUTierLevel = 2;
+
+/** Lo que importa del resultado de detect-gpu (tier 0 = sin WebGL o GPU en lista negra) */
+export interface GPUDetection {
+  tier: number;
+  isMobile?: boolean;
+}
+
+/**
+ * Traduce el resultado de detect-gpu a la política del sitio (DEV-06):
+ * tier 0 → sin WebGL (fallback estático, política T1) · tier 1 → T1 · tier 2 o móvil → T2 · resto → T3.
+ */
+export function tierFromGPU({ tier, isMobile }: GPUDetection): { tier: GPUTierLevel; webglAvailable: boolean } {
+  if (tier <= 0) return { tier: 1, webglAvailable: false };
+  if (tier === 1) return { tier: 1, webglAvailable: true };
+  if (tier === 2 || isMobile) return { tier: 2, webglAvailable: true };
+  return { tier: 3, webglAvailable: true };
+}
+
 export const ASSET_MANIFEST = {
   benchmarksURL: "/benchmarks",
   heroPoster: "/fallback/hero_poster.webp",

@@ -3,41 +3,27 @@
 // el empaque real (bolsa "Kuvaro's · Smash Burguers", @Kuvaros_burger) y lo que se ve en Marca/Video.mp4.
 // ⏳ DIR-05: el cliente debe validar el copy. No se inventaron cifras (gramajes, precios, tiempos reales):
 //    lo que el manual da como objetivo se presenta como objetivo.
+// DEV-38: los tipos están en src/content/types.ts; aquí solo hay datos.
+import type { Especificacion, Foto, Ingrediente } from "@/content/types";
+import { CONTACT_SECTION_ID } from "@/config/site";
 
-export interface Ingrediente {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  /** Dato corto destacado (peso, origen, maduración…) */
-  dato: string;
-  /**
-   * Tramo del scroll de la secuencia (0-1) en el que se muestra el callout.
-   * Video actual (54 frames): armada 0-0.22 · se separa 0.22-0.4 · capas quietas 0.4-0.85 · se vuelve a juntar 0.85-1.
-   */
-  rango: readonly [number, number];
-  /** Posición del callout en desktop (% del viewport). Ajustada al encuadre del video (hamburguesa al centro). */
-  ancla: { x: number; y: number };
-  lado: "izquierda" | "derecha";
-}
+export type { Especificacion, Foto, Ingrediente } from "@/content/types";
 
-export interface Especificacion {
-  etiqueta: string;
-  valor: string;
-}
-
-export interface Foto {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-}
+/** Canal de pedido provisional (el Instagram del empaque) hasta que DIR-01 defina el definitivo */
+const INSTAGRAM = { usuario: "@Kuvaros_burger", url: "https://www.instagram.com/kuvaros_burger/" } as const;
 
 export const PRODUCTO = {
   marca: "Kuvaro's",
   /** Wordmark: la "a" va en mostaza, como en el logotipo (donde es el ícono de la hamburguesa) */
   wordmark: { antes: "Kuv", acento: "a", despues: "ro's" },
   bajadaMarca: "Smash Burguers",
-  instagram: { usuario: "@Kuvaros_burger", url: "https://www.instagram.com/kuvaros_burger/" },
+  instagram: INSTAGRAM,
+
+  /** Textos de accesibilidad que no se ven en pantalla */
+  accesibilidad: {
+    saltarAlContenido: "Saltar al contenido",
+    listaIngredientes: "Ingredientes",
+  },
 
   seo: {
     titulo: "Kuvaro's Smash Burguers | Hamburguesas smash a domicilio en Cochabamba",
@@ -144,8 +130,8 @@ export const PRODUCTO = {
     texto: "Tu pedido va directo a la plancha. Escríbenos y preparamos cada detalle para que llegue perfecto a tu puerta.",
     // ⏳ DIR-01: canal de pedido definitivo (WhatsApp Business / app de delivery). Por ahora, el Instagram del empaque.
     boton: "Pedir por Instagram",
-    href: "https://www.instagram.com/kuvaros_burger/",
+    href: INSTAGRAM.url,
     botonHeader: "Pedir ahora",
-    hrefHeader: "#contacto",
+    hrefHeader: `#${CONTACT_SECTION_ID}`,
   },
 } as const;
