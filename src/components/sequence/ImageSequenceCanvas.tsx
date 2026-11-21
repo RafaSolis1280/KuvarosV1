@@ -7,15 +7,18 @@
 // - El progreso se publica en el store transiente (`sequenceProgress[id]`) para que los overlays
 //   se sincronicen sin setState de React (Hard Constraint 1).
 // DEV-38: la caché, el dibujo y las rutas viven en src/lib/sequence; la configuración en src/config.
+// DEV-39 (fluidez): mezcla de frames según la posición exacta del scroll, escalado de alta calidad y
+// entrada del video al aparecer en pantalla.
 import { useEffect, useRef, type ReactNode } from "react";
 import { gsap } from "@/lib/gsap";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { FrameCache, loadImageBitmap } from "@/lib/sequence/FrameCache";
-import { drawFallback, drawFrame } from "@/lib/sequence/draw";
-import { frameIndexForProgress, frameUrl } from "@/lib/sequence/frames";
+import { configureContext, drawFallback, drawFrame } from "@/lib/sequence/draw";
+import { frameIndexForProgress, framePosition, frameUrl } from "@/lib/sequence/frames";
+import { prefersReducedMotion } from "@/lib/reducedMotion";
 import { hexToRgba } from "@/lib/color";
 import { BRAND_COLORS } from "@/config/brand";
-import { SEQUENCE_PLAYBACK } from "@/config/motion";
+import { SEQUENCE_ENTRANCE, SEQUENCE_PLAYBACK } from "@/config/motion";
 import type { SequenceConfig } from "@/config/sequences";
 
 interface Props {
@@ -93,14 +96,26 @@ export default function ImageSequenceCanvas({
         drawn = i;
         return;
       }
-      if (i === drawn) return;
+
+      // Posición continua: con mezcla, entre el frame `from` y el `to` se funden los dos (DEV-39)
+      const pos = framePosition(playhead.progress, cache.count);
+      const blend = SEQUENCE_PLAYBACK.frameBlending && pos.mix > 0;
+      const key = blend ? Math.round(pos.exact * SEQUENCE_PLAYBACK.blendSteps) : i * SEQUENCE_PLAYBACK.blendSteps;
+      if (key === drawn) return; // ya está en pantalla
+
+      const baseIndex = blend ? pos.from : i;
       // Mientras se decodifica el frame pedido, se muestra el más cercano (nunca un canvas en blanco)
-      const n = cache.get(i) ? i : cache.nearestLoaded(i);
-      const frame = n >= 0 ? cache.get(n) : null;
-      if (frame) {
-        drawFrame(ctx, frame);
-        if (n === i) drawn = i;
+      const n = cache.get(baseIndex) ? baseIndex : cache.nearestLoaded(baseIndex);
+      const base = n >= 0 ? cache.get(n) : null;
+      if (!base) return;
+      drawFrame(ctx, base);
+      let complete = n === baseIndex;
+      if (blend) {
+        const next = cache.get(pos.to);
+        if (next) drawFrame(ctx, next, pos.mix);
+        else complete = false; // se completa cuando llegue (onReady)
       }
+      if (complete) drawn = key;
     };
 
     // Fallback SOLO si el primer frame no existe
@@ -123,6 +138,7 @@ export default function ImageSequenceCanvas({
       const dpr = Math.min(window.devicePixelRatio || 1, getPolicy().dpr[1]);
       canvas.width = Math.round(container.clientWidth * dpr);
       canvas.height = Math.round(container.clientHeight * dpr);
+      configureContext(ctx); // cambiar el tamaño reinicia el estado del contexto
       drawn = -1;
       render();
     };
@@ -152,10 +168,32 @@ export default function ImageSequenceCanvas({
       },
     });
 
+    // Entrada del video al aparecer en pantalla (DEV-39): solo opacidad y escala del canvas, que la
+    // GPU compone sin repintar. Con reduced motion el video aparece tal cual.
+    const entrance = prefersReducedMotion()
+      ? null
+      : gsap.fromTo(
+          canvas,
+          { opacity: SEQUENCE_ENTRANCE.fromOpacity, scale: SEQUENCE_ENTRANCE.fromScale },
+          {
+            opacity: 1,
+            scale: 1,
+            ease: SEQUENCE_ENTRANCE.ease,
+            scrollTrigger: {
+              trigger: container,
+              start: SEQUENCE_ENTRANCE.start,
+              end: SEQUENCE_ENTRANCE.end,
+              scrub: true,
+            },
+          }
+        );
+
     return () => {
       alive = false;
       unsubscribe();
       window.removeEventListener("resize", resize);
+      entrance?.scrollTrigger?.kill();
+      entrance?.kill();
       tween.scrollTrigger?.kill();
       tween.kill();
       cache.dispose();
@@ -164,7 +202,12 @@ export default function ImageSequenceCanvas({
 
   return (
     <section ref={containerRef} id={sequence.anchorId} className="relative h-screen w-full overflow-hidden bg-surface">
-      <canvas ref={canvasRef} className="block h-full w-full" role="img" aria-label={ariaLabel} />
+      <canvas
+        ref={canvasRef}
+        className="block h-full w-full will-change-[opacity,transform]"
+        role="img"
+        aria-label={ariaLabel}
+      />
       {children ? <div className="pointer-events-none absolute inset-0">{children}</div> : null}
     </section>
   );

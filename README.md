@@ -39,7 +39,7 @@ npm run dev              # http://localhost:3000
 | Carpeta | Qué hay | Cuándo tocarla |
 | :--- | :--- | :--- |
 | `src/content/` | `producto.ts`: **todo el texto** del sitio (copy, SEO, CTA, textos de accesibilidad) · `types.ts`: su forma | Cambiar un texto, un enlace o una ficha |
-| `src/config/` | `gpu-policy.ts` (tiers y manifiesto de assets) · `sequences.ts` (videos de la página, recorrido de scroll, encuadre) · `motion.ts` (Lenis, suavizado, tramos de aparición) · `scene.ts` (Canvas WebGL) · `site.ts` (URL, idioma, anclas) · `brand.ts` (colores para canvas/shader) | Ajustar comportamiento sin tocar componentes |
+| `src/config/` | `gpu-policy.ts` (tiers y manifiesto de assets) · `sequences.ts` (videos de la página, recorrido de scroll, encuadre) · `motion.ts` (Lenis, suavizado, mezcla de frames y entrada de los videos, tramos de aparición) · `scene.ts` (Canvas WebGL) · `site.ts` (URL, idioma, anclas) · `brand.ts` (colores para canvas/shader) | Ajustar comportamiento sin tocar componentes |
 | `src/components/sections/` | Una sección por archivo (Hero, Ingredientes, Packaging, Primer bocado, Contacto) | Cambiar la maqueta de una sección |
 | `src/components/sequence/` | `SequenceSection` (video fijado + bordes + overlays) e `ImageSequenceCanvas` | Agregar un video: entrada en `config/sequences.ts` + una sección con `SequenceSection` |
 | `src/components/ui/` | Piezas reutilizables: `CtaLink`, `Eyebrow`, `GlassPanel` | Estilos compartidos (afectan a todo el sitio) |

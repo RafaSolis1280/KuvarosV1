@@ -51,4 +51,9 @@ export const SEQUENCE_FRAMING = {
   portraitTopOffset: 0.12,
   /** Color de relleno: el fondo negro puro del video */
   letterboxColor: "#000",
+  /**
+   * Calidad del escalado al dibujar: los frames (1292 px) se amplían hasta el ancho del viewport × dpr.
+   * "high" evita el aspecto pixelado/serrado del escalado por defecto ("low").
+   */
+  smoothingQuality: "high" as ImageSmoothingQuality,
 } as const;

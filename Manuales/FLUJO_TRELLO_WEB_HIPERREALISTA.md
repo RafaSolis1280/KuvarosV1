@@ -11,7 +11,7 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 21-11-2026 (DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 21-11-2026 (DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
@@ -29,6 +29,7 @@
 | ART-12 · Pósters de fallback, OG y fotos de marca | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #14) | — | Póster de `packaging_reveal` (y usar `heroPoster` en algún componente); budget de DEV-01; ⏳ cesión de derechos de las fotos (DIR-03) |
 | DOCS · Sincronización + criterios de aceptación + reparto | 🔍 Revisión Interna / QA | Javier (fusiona Rafael) | `docs/criterios-aceptacion` (incluye `docs/sync-estado-repo-y-limpieza`) | PR → `develop` tras sincronizarla (o → `main`, como #3-#16, si Rafael lo prefiere antes) | Revisión y merge de Rafael |
 | DEV-38 · Refactor: arquitectura modular, componentes reutilizables y configuración centralizada | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `chore/dev-38-refactor-modular` (apilada sobre `docs/criterios-aceptacion`) | PR → `docs/criterios-aceptacion` (o a `main` cuando esta se fusione) | Revisión y aprobación de Rafael |
+| DEV-39 · Fluidez y calidad visual de los videos (hamburguesa y bolsa) | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-39-fluidez-secuencias` (apilada sobre `chore/dev-38-refactor-modular`) | PR → `chore/dev-38-refactor-modular` (o a `main` cuando se fusionen las anteriores) | Prueba a FPS reales con la pestaña visible y en un móvil real; revisión de Rafael |
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -64,6 +65,7 @@
 | 20-11-2026 | MERGE | PR #17 (CHORE, Rafael) fusionado en **`main`** (`2d442b7`) | `2d442b7` · `main` | ✅ En `main` |
 | 21-11-2026 | QA | **Verificación de `main` `2d442b7` contra los criterios de Trello** (Javier, con Claude Code): `npm ci` + lint/typecheck/build OK; build de producción recorrido en el navegador: 0 errores, 0 404, 1 canvas WebGL + 2 de secuencia, callouts y specs por tramos, PerformanceMonitor T3→T2, ventana de ImageBitmaps medida = 2R+1, desktop y móvil emulado (375×812) sin overflow horizontal. **DEV-37 → Hecho.** Marcados: G4 (pesos, frames = manifiesto, fila en `LICENCIAS.md` por archivo), DIR-03 (fila por archivo), DEV-26 (0 `useState`; 2R+1 medido). **Desmarcados** por no cumplirse: DEV-19 «copy real del cliente» (pendiente DIR-05) y ART-12 «budget de DEV-01» (budget sin definir). Texto de DEV-19 corregido (5 ingredientes, no 6). §5 sincronizado con Trello. DEV-15/16: avisado que el PR #17 quitó sus dependencias | `docs/criterios-aceptacion` | 🔍 PR abierto |
 | 21-11-2026 | DEV-38 | **Refactor sin cambios de comportamiento.** Configuración centralizada en `src/config` (`motion`: Lenis, damping, scrub y tramos de aparición; `sequences`: videos de la página, convención de frames y encuadre; `scene`: cámara y PerformanceMonitor; `site`: URL, idioma y anclas) y capas z en `globals.css` (`stack-*`). Componentes reutilizables: `ui/` (`CtaLink`, `Eyebrow`, `GlassPanel`), `layout/` (`SiteHeader`, `SkipLink`), `sections/` (una por sección) y `sequence/SequenceSection`; `page.tsx` solo compone. `ImageSequenceCanvas` dividido en `lib/sequence` (`FrameCache`, `draw`, `frames`); overlays con `hooks/useSequenceProgress` y `lib/reveal`; `lib/gsap` registra ScrollTrigger una vez; `tierFromGPU()` en `gpu-policy`; metadatos en `lib/seo`, fuentes en `app/fonts.ts`; URL de Instagram y textos de accesibilidad en `producto.ts`. **41 tests unitarios** (Vitest 3.2.7, `npm test`, también en CI). Verificado: lint/typecheck/test/build OK; huella del HTML del servidor idéntica salvo `z-[n]`→`stack-*` y el hash de la fuente; en navegador: callouts y specs por tramos, ventana de frames = 2R+1, móvil, fallback sin video (1 solo HEAD 404) | `chore/dev-38-refactor-modular` | 🔍 PR abierto |
+| 21-11-2026 | DEV-39 | **Fluidez de los videos.** Diagnóstico: el canvas solo dibujaba frames enteros (54 frames en 3200 px → la imagen cambiaba cada ~60 px: efecto stop-motion) y escalaba con la calidad por defecto. Cambios: **mezcla de frames** (`framePosition()` + `drawFrame(ctx, img, alpha)`: entre dos frames se funden los dos según la posición exacta), escalado `imageSmoothingQuality: "high"`, `scrub` 0.35 → 0.6, **entrada de cada video** al aparecer (opacidad 0 → 1 y escala 1.08 → 1 ligadas al scroll, solo opacidad/transform; desactivada con reduced motion), `prefersReducedMotion()` compartido. Medido en navegador (diferencia media de píxeles entre pasos de scroll): hamburguesa de `4.4, 0, 0, 0, 4.4…` a ~1.1 constante (salto máximo −73 %); bolsa de `0, 0.5, 0, 0…` a ~0.2 (−53 %). 49 tests; lint/typecheck/build OK; callouts sincronizados; ventana 2R+1 intacta | `feat/dev-39-fluidez-secuencias` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -828,6 +830,21 @@ _Como equipo, queremos un código sin valores fijos dispersos, con componentes r
 - [x] Recorrido en el navegador sin regresiones: 0 errores y 0 404; callouts y especificaciones aparecen por tramos; ventana de frames = 2R+1; desktop y móvil.
 - [x] El FLUJO §0 (bitácora y reparto de archivos) y el README describen la nueva estructura.
 - [ ] Rafael revisa y aprueba el PR.
+
+**DEV-39 · Fluidez y calidad visual de los videos (hamburguesa y bolsa)** — DEV · `Dev-WebGL` `P1` · G6 · ← DEV-38
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `feat/dev-39-fluidez-secuencias`
+Mezcla de frames según la posición exacta del scroll, escalado de alta calidad, scrub con más inercia y entrada de cada video al aparecer.
+
+_Como visitante, quiero que la hamburguesa aparezca y se meta en la bolsa con un movimiento continuo y suave, para que la experiencia se sienta profesional y no a saltos._
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] Entre dos frames del video la imagen avanza de forma continua (mezcla de frames): medido en el navegador, ningún paso de scroll queda sin cambio y el salto máximo baja al menos un 50 % en los dos videos.
+- [x] Los frames se escalan con calidad alta (`imageSmoothingQuality: "high"`) también después de redimensionar.
+- [x] Cada video entra al aparecer en pantalla (opacidad y escala ligadas al scroll, solo propiedades que compone la GPU) y queda en su tamaño real al fijarse.
+- [x] Con `prefers-reduced-motion` no hay animación de entrada y el video se ve completo.
+- [x] Los callouts y la ficha del packaging siguen sincronizados con el video, y la ventana de frames sigue siendo 2R+1.
+- [x] `npm run lint`, `typecheck`, `test` (con tests de la mezcla) y `build` sin errores.
+- [ ] Con la pestaña visible: ≥ 55 FPS de media en desktop y ≥ 50 en un Android de gama media durante los dos videos.
+- [ ] Otra persona lo prueba y aprueba el PR.
 
 **DEV-12 · Integrar assets reales en la vertical slice** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← G4, DEV-09, DEV-37 (los dos videos)
 

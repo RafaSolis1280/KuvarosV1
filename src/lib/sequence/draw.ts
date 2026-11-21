@@ -45,15 +45,36 @@ export function computeFrameRect(
   };
 }
 
-/** Dibuja un frame con el encuadre de `computeFrameRect` */
-export function drawFrame(ctx: CanvasRenderingContext2D, image: ImageBitmap): void {
+/**
+ * Prepara el contexto para dibujar frames: escalado de alta calidad (DEV-39).
+ * Hay que llamarlo después de cada cambio de tamaño del canvas, porque eso reinicia su estado.
+ */
+export function configureContext(ctx: CanvasRenderingContext2D): void {
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = SEQUENCE_FRAMING.smoothingQuality;
+}
+
+/**
+ * Dibuja un frame con el encuadre de `computeFrameRect`.
+ * Con `alpha` < 1 se funde sobre lo que ya hay (mezcla con el frame anterior, DEV-39): en ese caso
+ * no se repinta el fondo, porque taparía el frame de abajo (las franjas negras son iguales en los dos).
+ */
+export function drawFrame(ctx: CanvasRenderingContext2D, image: ImageBitmap, alpha = 1): void {
   const { width: cw, height: ch } = ctx.canvas;
   const r = computeFrameRect(cw, ch, image.width, image.height);
-  if (r.letterbox) {
-    ctx.fillStyle = SEQUENCE_FRAMING.letterboxColor;
-    ctx.fillRect(0, 0, cw, ch);
+  if (alpha >= 1) {
+    if (r.letterbox) {
+      ctx.fillStyle = SEQUENCE_FRAMING.letterboxColor;
+      ctx.fillRect(0, 0, cw, ch);
+    }
+    ctx.drawImage(image, r.x, r.y, r.width, r.height);
+    return;
   }
+  if (alpha <= 0) return;
+  const previous = ctx.globalAlpha;
+  ctx.globalAlpha = alpha;
   ctx.drawImage(image, r.x, r.y, r.width, r.height);
+  ctx.globalAlpha = previous;
 }
 
 export interface FallbackStyle {

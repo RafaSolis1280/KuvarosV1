@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import { getGPUTier } from "detect-gpu";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/reducedMotion";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { ASSET_MANIFEST, DEFAULT_TIER, tierFromGPU } from "@/config/gpu-policy";
 import { SMOOTH_SCROLL } from "@/config/motion";
@@ -81,7 +82,7 @@ function pauseWhenHidden(): Cleanup {
 export default function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Accesibilidad: eje independiente del rendimiento
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reducedMotion = prefersReducedMotion();
     useExperienceStore.getState().setReducedMotion(reducedMotion);
 
     detectGPUTier();
