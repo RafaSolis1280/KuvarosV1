@@ -13,6 +13,11 @@ const SIZES = {
   lg: "px-8 py-4 text-sm focus-visible:outline-offset-4 focus-visible:outline-accent",
 } as const;
 
+/** Clases del CTA, para reutilizar el mismo estilo en un <button> (formulario de contacto, DEV-25) */
+export function ctaClassName(size: keyof typeof SIZES = "sm", className?: string): string {
+  return cx(BASE, SIZES[size], className);
+}
+
 interface Props {
   href: string;
   children: ReactNode;
@@ -26,7 +31,7 @@ export default function CtaLink({ href, children, size = "sm", external = false,
   return (
     <a
       href={href}
-      className={cx(BASE, SIZES[size], className)}
+      className={ctaClassName(size, className)}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >
       {children}

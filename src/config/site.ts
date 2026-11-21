@@ -43,3 +43,21 @@ export const MAIN_CONTENT_ID = "contenido";
 export const HERO_SECTION_ID = "inicio";
 /** `id` de la sección de conversión: destino del CTA de la cabecera */
 export const CONTACT_SECTION_ID = "contacto";
+
+/** DEV-25 · Formulario de contacto: límites de los campos, del envío y antispam */
+export const CONTACT = {
+  endpoint: "/api/contacto",
+  fields: {
+    nombre: { min: 2, max: 80 },
+    email: { max: 254 },
+    telefono: { minDigits: 7, max: 20 },
+    mensaje: { min: 10, max: 1000 },
+  },
+  /** Campo trampa invisible: si llega con texto, el envío es de un bot y se descarta en silencio */
+  honeypot: "sitio_web",
+  /** Envíos permitidos por IP en la ventana (el resto recibe 429) */
+  rateLimit: { max: 3, windowMs: 10 * 60 * 1000 },
+  /** Tamaño máximo del cuerpo de la petición */
+  maxBodyBytes: 8 * 1024,
+} as const;
+

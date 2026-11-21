@@ -3,6 +3,7 @@ import SmoothScrollProvider from "@/components/dom/SmoothScrollProvider";
 import GlobalCanvasLoader from "@/components/canvas/GlobalCanvasLoader";
 import SkipLink from "@/components/layout/SkipLink";
 import SiteHeader from "@/components/layout/SiteHeader";
+import SiteFooter from "@/components/layout/SiteFooter";
 import JsonLd from "@/components/seo/JsonLd";
 import { fontVariables } from "./fonts";
 import { createSiteMetadata } from "@/lib/seo";
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main id={MAIN_CONTENT_ID} className="relative stack-content">
             {children}
           </main>
+          <SiteFooter />
         </SmoothScrollProvider>
       </body>
     </html>

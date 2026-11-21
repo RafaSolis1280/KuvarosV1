@@ -42,11 +42,11 @@ npm run dev              # http://localhost:3000
 | `src/components/sections/` | Una sección por archivo (Hero, Ingredientes, Packaging, Primer bocado, Contacto) | Cambiar la maqueta de una sección |
 | `src/components/sequence/` | `SequenceSection` (video fijado + bordes + overlays) e `ImageSequenceCanvas` | Agregar un video: entrada en `config/sequences.ts` + una sección con `SequenceSection` |
 | `src/components/ui/` | Piezas reutilizables: `CtaLink`, `Eyebrow`, `GlassPanel` | Estilos compartidos (afectan a todo el sitio) |
-| `src/components/layout/` | `SiteHeader` (cabecera fija con el CTA) + `StickyHeader`, `SkipLink` | Navegación y accesibilidad global |
+| `src/components/layout/` | `SiteHeader` (cabecera fija con el CTA) + `StickyHeader`, `SiteFooter`, `SkipLink` | Navegación y accesibilidad global |
 | `src/components/seo/` | `JsonLd` (datos estructurados del negocio) | — |
 | `src/components/dom/` | Proveedor de scroll, overlays de las secuencias, `Wordmark` | — |
 | `src/components/canvas/` | El único Canvas WebGL y el shader de fondo | — |
-| `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas, `timeline.ts`: beats → frame), `reveal.ts` (qué overlay está activo, exclusión y cascada), `DampedValues.ts` (fundidos en el tiempo), `math.ts`, `gsap.ts` (registra ScrollTrigger, SplitText y CustomEase una vez), `seo.ts` (metadatos, JSON-LD, sitemap y robots), `color.ts`, `cx.ts` | — |
+| `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas, `timeline.ts`: beats → frame), `reveal.ts` (qué overlay está activo, exclusión y cascada), `DampedValues.ts` (fundidos en el tiempo), `math.ts`, `gsap.ts` (registra ScrollTrigger, SplitText y CustomEase una vez), `seo.ts` (metadatos, JSON-LD, sitemap y robots), `contact/` (validación compartida navegador/servidor, límite de envíos, envío), `color.ts`, `cx.ts` | — |
 | `src/hooks/` | `useSequenceProgress` (overlays sincronizados con un video, sin re-renders) | — |
 | `src/store/` | Store transiente (Zustand) | — |
 
@@ -55,6 +55,10 @@ Las capas de apilamiento (`z-index`) están definidas una sola vez en `src/app/g
 **Variables de entorno (Vercel).** La URL pública (canónica, Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD) se resuelve
 en `src/config/site.ts`: `NEXT_PUBLIC_SITE_URL` (dominio oficial, DEV-34) → `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_URL`
 (las dos últimas las define Vercel solo, así que las Preview URLs ya salen bien) → `http://localhost:3000`.
+El formulario de contacto (DEV-25) envía por `src/lib/contact/delivery.ts` según `CONTACTO_ENVIO`: sin definir, en desarrollo
+el envío se simula (log del servidor) y en producción **el formulario no se muestra** (queda el CTA a Instagram);
+`CONTACTO_ENVIO=simulado` lo activa en una Preview para probarlo. El servicio real (email o WhatsApp) y su clave los
+define Rafael en Vercel: se agrega un caso en `getContactDelivery` (las claves nunca van al repo).
 
 **CSS.** `next.config.ts` pasa todo `*.css` por el loader de Tailwind, así que los CSS modules **no** funcionan (pierden el
 hash de sus clases): para estilos propios de un componente, usar una hoja global con un selector de atributo
