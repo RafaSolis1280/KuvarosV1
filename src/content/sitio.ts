@@ -8,4 +8,20 @@ export const SITIO = {
     /** Nombre accesible del logo, que lleva al inicio de la página */
     inicio: "Kuvaro's Smash Burguers: volver al inicio",
   },
+
+  /**
+   * DEV-30 · Datos del negocio para los datos estructurados (JSON-LD). Solo lo que el manual de marca y el
+   * empaque confirman: cocina cerrada, 100 % delivery, Zona Cercado de Cochabamba.
+   * ⏳ DIR-01: teléfono / WhatsApp, horario y rango de precios (se agregan aquí cuando el cliente los dé).
+   */
+  negocio: {
+    cocina: ["Hamburguesas", "Smash burgers"],
+    zonaDeEntrega: "Zona Cercado, Cochabamba",
+    ciudad: "Cochabamba",
+    region: "Cochabamba",
+    /** ISO 3166-1 alfa-2 */
+    pais: "BO",
+    /** Sin salón: no hay reservas */
+    aceptaReservas: false,
+  },
 } as const;

@@ -26,7 +26,8 @@ export const PRODUCTO = {
   },
 
   seo: {
-    titulo: "Kuvaro's Smash Burguers | Hamburguesas smash a domicilio en Cochabamba",
+    // DEV-30: ≤ 60 caracteres (lo que muestra Google sin cortar); la descripción, ≤ 155
+    titulo: "Kuvaro's Smash Burguers | Hamburguesas smash en Cochabamba",
     descripcion:
       "Hamburguesas smash premium hechas al momento en cocina cerrada y entregadas a domicilio en Zona Cercado, Cochabamba. Sin atajos: pide la tuya en Kuvaro's.",
     ogAlt: "Hamburguesa smash de Kuvaro's separada en capas: pan brioche, salsa, doble carne y cheddar fundido",

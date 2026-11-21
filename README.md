@@ -37,19 +37,28 @@ npm run dev              # http://localhost:3000
 
 | Carpeta | Qué hay | Cuándo tocarla |
 | :--- | :--- | :--- |
-| `src/content/` | `producto.ts`: **todo el texto** del sitio (copy, SEO, CTA, textos de accesibilidad) · `types.ts`: su forma | Cambiar un texto, un enlace o una ficha |
+| `src/content/` | `producto.ts`: **todo el texto del producto** (copy, SEO, CTA, textos de accesibilidad) · `sitio.ts`: textos del sitio (navegación, footer, formulario) y datos del negocio para el JSON-LD · `types.ts`: su forma | Cambiar un texto, un enlace o una ficha |
 | `src/config/` | `gpu-policy.ts` (tiers y manifiesto de assets) · `sequences.ts` (`PRODUCT_STORY`: clips y beats de la historia, encuadre) · `motion.ts` (Lenis, suavizado — `DAMPING.overlays` es la duración de los fundidos —, mezcla de frames y entrada de los videos, puntos de aparición) · `scene.ts` (Canvas WebGL) · `site.ts` (URL, idioma, anclas) · `brand.ts` (colores para canvas/shader) | Ajustar comportamiento sin tocar componentes |
 | `src/components/sections/` | Una sección por archivo (Hero, Ingredientes, Packaging, Primer bocado, Contacto) | Cambiar la maqueta de una sección |
 | `src/components/sequence/` | `SequenceSection` (video fijado + bordes + overlays) e `ImageSequenceCanvas` | Agregar un video: entrada en `config/sequences.ts` + una sección con `SequenceSection` |
 | `src/components/ui/` | Piezas reutilizables: `CtaLink`, `Eyebrow`, `GlassPanel` | Estilos compartidos (afectan a todo el sitio) |
-| `src/components/layout/` | `SiteHeader`, `SkipLink` | Navegación y accesibilidad global |
+| `src/components/layout/` | `SiteHeader` (cabecera fija con el CTA) + `StickyHeader`, `SkipLink` | Navegación y accesibilidad global |
+| `src/components/seo/` | `JsonLd` (datos estructurados del negocio) | — |
 | `src/components/dom/` | Proveedor de scroll, overlays de las secuencias, `Wordmark` | — |
 | `src/components/canvas/` | El único Canvas WebGL y el shader de fondo | — |
-| `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas, `timeline.ts`: beats → frame), `reveal.ts` (qué overlay está activo, exclusión y cascada), `DampedValues.ts` (fundidos en el tiempo), `math.ts`, `gsap.ts` (registra ScrollTrigger una vez), `seo.ts`, `color.ts`, `cx.ts` | — |
+| `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas, `timeline.ts`: beats → frame), `reveal.ts` (qué overlay está activo, exclusión y cascada), `DampedValues.ts` (fundidos en el tiempo), `math.ts`, `gsap.ts` (registra ScrollTrigger, SplitText y CustomEase una vez), `seo.ts` (metadatos, JSON-LD, sitemap y robots), `color.ts`, `cx.ts` | — |
 | `src/hooks/` | `useSequenceProgress` (overlays sincronizados con un video, sin re-renders) | — |
 | `src/store/` | Store transiente (Zustand) | — |
 
-Las capas de apilamiento (`z-index`) están definidas una sola vez en `src/app/globals.css` como utilidades `stack-canvas`, `stack-content`, `stack-section` y `stack-top`: no usar `z-[n]` sueltos. Los tests viven junto a cada módulo (`*.test.ts`).
+Las capas de apilamiento (`z-index`) están definidas una sola vez en `src/app/globals.css` como utilidades `stack-canvas`, `stack-content`, `stack-section`, `stack-nav` y `stack-top`: no usar `z-[n]` sueltos. Los tests viven junto a cada módulo (`*.test.ts`).
+
+**Variables de entorno (Vercel).** La URL pública (canónica, Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD) se resuelve
+en `src/config/site.ts`: `NEXT_PUBLIC_SITE_URL` (dominio oficial, DEV-34) → `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_URL`
+(las dos últimas las define Vercel solo, así que las Preview URLs ya salen bien) → `http://localhost:3000`.
+
+**CSS.** `next.config.ts` pasa todo `*.css` por el loader de Tailwind, así que los CSS modules **no** funcionan (pierden el
+hash de sus clases): para estilos propios de un componente, usar una hoja global con un selector de atributo
+(ej. `src/components/dom/HeroTitle.css` con `[data-hero-title]`).
 
 ---
 
