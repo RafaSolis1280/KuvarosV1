@@ -23,6 +23,10 @@
   secuencias de frames controladas por el scroll con `ImageSequenceCanvas`. `HeroArtifactMesh` (§8) no existe en este repo.
 - El único `<Canvas>` WebGL se mantiene solo para el shader de fondo (DEV-10).
 - Todo el texto del sitio vive en `src/content/producto.ts`.
+- **Estructura (DEV-38):** `page.tsx` solo compone secciones de `src/components/sections/`; los parámetros (scroll, secuencias,
+  aparición de fichas, Canvas, sitio) viven en `src/config/`; la lógica sin React en `src/lib/` (con tests `*.test.ts`);
+  piezas de UI reutilizables en `src/components/ui/`; capas z con las utilidades `stack-*` de `globals.css`.
+  Importar GSAP desde `@/lib/gsap`. Protocolo §10: también `npm test`. Detalle en el `README.md` («Arquitectura del código»).
 - Contrato `/public` efectivo: `sequences/hero_explode/{desktop,mobile}`, `sequences/packaging_reveal/{desktop,mobile}`,
   `fallback/`, `photos/` (fotos de marca en WebP, ART-12), `fonts/`, `audio/`, `benchmarks/` (generado), `og-image.jpg`.
   Detalle en el `README.md`.

@@ -9,6 +9,7 @@
 ## Verificación (Protocolo §10)
 - [ ] `npm run lint` sin errores
 - [ ] `npm run typecheck` sin errores
+- [ ] `npm test` sin errores (tests de los módulos tocados actualizados)
 - [ ] `npm run build` sin errores
 - [ ] Probado en la Preview URL (desktop T3 / móvil T2 si aplica)
 

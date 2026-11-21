@@ -11,7 +11,7 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 21-11-2026 (verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado; reparto del equipo en §0.5) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 21-11-2026 (DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
@@ -28,6 +28,7 @@
 | ART-10 · Export WebP desktop/mobile (video de marca) | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #15) | — | ⏳ Master del cliente ≥ 1600 px (hoy 1292 px) |
 | ART-12 · Pósters de fallback, OG y fotos de marca | 🔍 Revisión Interna / QA | Rafael | fusionada en `main` (PR #14) | — | Póster de `packaging_reveal` (y usar `heroPoster` en algún componente); budget de DEV-01; ⏳ cesión de derechos de las fotos (DIR-03) |
 | DOCS · Sincronización + criterios de aceptación + reparto | 🔍 Revisión Interna / QA | Javier (fusiona Rafael) | `docs/criterios-aceptacion` (incluye `docs/sync-estado-repo-y-limpieza`) | PR → `develop` tras sincronizarla (o → `main`, como #3-#16, si Rafael lo prefiere antes) | Revisión y merge de Rafael |
+| DEV-38 · Refactor: arquitectura modular, componentes reutilizables y configuración centralizada | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `chore/dev-38-refactor-modular` (apilada sobre `docs/criterios-aceptacion`) | PR → `docs/criterios-aceptacion` (o a `main` cuando esta se fusione) | Revisión y aprobación de Rafael |
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -62,6 +63,7 @@
 | 20-11-2026 | CHORE | Auditoría: se quitan 4 dependencias sin ningún import (`@react-three/postprocessing`, `postprocessing`, `maath`, `howler` + `@types/howler`; se reinstalan cuando se hagan DEV-15 o ART-15), 2 `.gitkeep` en carpetas con archivos, reglas LFS de `.glb/.hdr/.ktx2`, entradas de ignore de Draco/Basis y la sección de modelos 3D de `LICENCIAS.md` | `chore/limpieza-proyecto` | ✅ En `main` (PR #17) |
 | 20-11-2026 | MERGE | PR #17 (CHORE, Rafael) fusionado en **`main`** (`2d442b7`) | `2d442b7` · `main` | ✅ En `main` |
 | 21-11-2026 | QA | **Verificación de `main` `2d442b7` contra los criterios de Trello** (Javier, con Claude Code): `npm ci` + lint/typecheck/build OK; build de producción recorrido en el navegador: 0 errores, 0 404, 1 canvas WebGL + 2 de secuencia, callouts y specs por tramos, PerformanceMonitor T3→T2, ventana de ImageBitmaps medida = 2R+1, desktop y móvil emulado (375×812) sin overflow horizontal. **DEV-37 → Hecho.** Marcados: G4 (pesos, frames = manifiesto, fila en `LICENCIAS.md` por archivo), DIR-03 (fila por archivo), DEV-26 (0 `useState`; 2R+1 medido). **Desmarcados** por no cumplirse: DEV-19 «copy real del cliente» (pendiente DIR-05) y ART-12 «budget de DEV-01» (budget sin definir). Texto de DEV-19 corregido (5 ingredientes, no 6). §5 sincronizado con Trello. DEV-15/16: avisado que el PR #17 quitó sus dependencias | `docs/criterios-aceptacion` | 🔍 PR abierto |
+| 21-11-2026 | DEV-38 | **Refactor sin cambios de comportamiento.** Configuración centralizada en `src/config` (`motion`: Lenis, damping, scrub y tramos de aparición; `sequences`: videos de la página, convención de frames y encuadre; `scene`: cámara y PerformanceMonitor; `site`: URL, idioma y anclas) y capas z en `globals.css` (`stack-*`). Componentes reutilizables: `ui/` (`CtaLink`, `Eyebrow`, `GlassPanel`), `layout/` (`SiteHeader`, `SkipLink`), `sections/` (una por sección) y `sequence/SequenceSection`; `page.tsx` solo compone. `ImageSequenceCanvas` dividido en `lib/sequence` (`FrameCache`, `draw`, `frames`); overlays con `hooks/useSequenceProgress` y `lib/reveal`; `lib/gsap` registra ScrollTrigger una vez; `tierFromGPU()` en `gpu-policy`; metadatos en `lib/seo`, fuentes en `app/fonts.ts`; URL de Instagram y textos de accesibilidad en `producto.ts`. **41 tests unitarios** (Vitest 3.2.7, `npm test`, también en CI). Verificado: lint/typecheck/test/build OK; huella del HTML del servidor idéntica salvo `z-[n]`→`stack-*` y el hash de la fuente; en navegador: callouts y specs por tramos, ventana de frames = 2R+1, móvil, fallback sin video (1 solo HEAD 404) | `chore/dev-38-refactor-modular` | 🔍 PR abierto |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -95,16 +97,16 @@ Tablero **"Kuvaros web"** (https://trello.com/b/1HQyExTM), cargado el 20-11-2026
 
 | Persona | Área | Archivos que le pertenecen | Sprint (en orden) | Después |
 | :--- | :--- | :--- | :--- | :--- |
-| **Rafael** | Experiencia, contenido, assets, rendimiento y repo | `src/components/canvas/**`, `src/components/sequence/**`, `IngredientCallouts`, `PackagingSpecs`, `Wordmark`, `Preloader` (nuevo), `SmoothScrollProvider.tsx`, `src/lib/dev-overrides.ts` (nuevo), `src/content/producto.ts`, `src/config/**`, `src/store/**`, `src/lib/math.ts`, `globals.css`, `next.config.ts`, `package.json` + lockfile (único que añade dependencias este sprint), `public/**`, `scripts/**`, fuentes en `layout.tsx`, secciones 2-4 de `page.tsx` | DEV-12 → DEV-15 → DEV-13 → DEV-27 → DEV-28 → DEV-34; cerrar DEV-04, DEV-08, DEV-19, ART-10, ART-12; corregir `BUG-XX`; desbloquear los Blockers | DEV-14, DEV-16, DEV-23 |
-| **Javier** | Interfaz DOM, SEO y QA | `SiteHeader`, `ContactSection`, `HeroTitle`, `SiteFooter`, `ContactForm`, `CustomCursor` (nuevos), `src/components/analytics/**`, `src/app/api/contacto/route.ts`, `src/content/sitio.ts` (nuevo), `src/app/sitemap.ts`, `src/app/robots.ts`, `src/components/seo/JsonLd.tsx`, secciones 1 y 5 de `page.tsx`, bloque `metadata` de `layout.tsx`, informes en `Manuales/qa/` | DEV-17 (PR 0: extraer header y Conversión a componentes sin cambiar el aspecto) → DEV-18 → DEV-30 → DEV-25 → DEV-29 → DEV-26; verificar DEV-06, 09, 10 y 37 en dispositivos reales | DEV-20, DEV-24, DEV-33 |
+| **Rafael** | Experiencia, contenido, assets, rendimiento y repo | `src/components/canvas/**`, `src/components/sequence/**` (`ImageSequenceCanvas`, `SequenceSection`, `SequenceEdges`), `src/components/sections/{IngredientsSection,PackagingSection,ExperienceSection}.tsx`, `IngredientCallouts`, `PackagingSpecs`, `Wordmark`, `Preloader` (nuevo), `SmoothScrollProvider.tsx`, `src/hooks/**`, `src/lib/{sequence/**,reveal,gsap,color,math}.ts`, `src/lib/dev-overrides.ts` (nuevo), `src/content/producto.ts`, `src/config/{gpu-policy,brand,motion,sequences,scene}.ts`, `src/store/**`, `globals.css`, `src/app/fonts.ts`, `next.config.ts`, `package.json` + lockfile (único que añade dependencias este sprint), `vitest.config.ts`, `public/**`, `scripts/**` | DEV-12 → DEV-15 → DEV-13 → DEV-27 → DEV-28 → DEV-34; cerrar DEV-04, DEV-08, DEV-19, ART-10, ART-12; corregir `BUG-XX`; desbloquear los Blockers | DEV-14, DEV-16, DEV-23 |
+| **Javier** | Interfaz DOM, SEO y QA | `src/components/layout/**` (`SiteHeader`, `SkipLink`; nuevo: `SiteFooter`), `src/components/sections/{HeroSection,ContactSection}.tsx`, `src/components/ui/**` (`CtaLink`, `Eyebrow`, `GlassPanel`: compartidos, todo cambio lo revisa el otro), `HeroTitle`, `ContactForm`, `CustomCursor` (nuevos), `src/components/analytics/**`, `src/app/api/contacto/route.ts`, `src/content/sitio.ts` (nuevo), `src/config/site.ts`, `src/lib/seo.ts`, `src/app/sitemap.ts`, `src/app/robots.ts`, `src/components/seo/JsonLd.tsx`, informes en `Manuales/qa/` | DEV-38 (refactor, en revisión; incluye el PR 0 de DEV-17) → DEV-17 → DEV-18 → DEV-30 → DEV-25 → DEV-29 → DEV-26; verificar DEV-06, 09, 10 y 37 en dispositivos reales | DEV-20, DEV-24, DEV-33 |
 
 **Reglas de convivencia**
 1. Una rama = una tarjeta; nunca push a `main` ni a `develop`.
-2. `layout.tsx` es compartido: cada uno añade solo su línea (Rafael: fuentes y `<Preloader />`; Javier: `metadata`, `<JsonLd />`, cursor y analítica).
-3. `page.tsx`: Javier solo las secciones 1 y 5, Rafael solo las 2 a 4. Tras el PR 0 de Javier, cada uno trabaja en sus componentes.
+2. `layout.tsx` es compartido y solo monta piezas: cada uno añade su línea (Rafael: `<Preloader />`; Javier: `<JsonLd />`, cursor y analítica). Las fuentes se cambian en `src/app/fonts.ts` (Rafael) y los metadatos en `src/lib/seo.ts` (Javier).
+3. `page.tsx` solo compone secciones (DEV-38): cada uno trabaja en sus componentes de `src/components/sections/` y solo toca `page.tsx` para agregar o reordenar una sección.
 4. Textos del producto en `producto.ts` (Rafael); textos del sitio (nav, footer, formulario, legales, cookies) en `sitio.ts` (Javier).
 5. §0 de este archivo: cada uno edita solo sus filas.
-6. Antes de abrir un PR: `git merge origin/develop` (u `origin/main` mientras `develop` siga desincronizada), y `npm run lint`, `typecheck` y `build`.
+6. Antes de abrir un PR: `git merge origin/develop` (u `origin/main` mientras `develop` siga desincronizada), y `npm run lint`, `typecheck`, `test` y `build`. Cada uno mantiene los tests de sus módulos (`*.test.ts` junto al archivo).
 7. Revisión cruzada: el PR de uno lo aprueba el otro (Javier verifica el código de Rafael y viceversa).
 
 **Dependencias: qué falta y quién lo da**
@@ -801,7 +803,7 @@ Ref. M Parte II §8. Prompt P5.
 ✔ Fallback procedural sin `.glb`; con el `.glb`, dispose verificado al desmontar.
 
 **DEV-37 · Packaging como video (proyecto 100 % video, sin `.glb`)** — DEV · `Dev-WebGL` `P0` · G5 · ← DEV-09 · reemplaza a DEV-11
-> 📍 **Estado:** 🔍 Revisión Interna / QA · código fusionado en `main` · falta probar con el video real del packaging
+> 📍 **Estado:** ✅ Hecho · verificado el 21-11-2026 con el video real (157 frames) en desktop y móvil emulado
 Segunda secuencia `packaging_reveal` con `PackagingSpecs` (ficha técnica que aparece por tramos). Fuera del manifiesto: `.glb`, HDRI y Draco/Basis.
 
 _Como visitante, quiero ver el packaging en un video hiperrealista con su ficha técnica para conocer el envase._
@@ -811,6 +813,21 @@ _Como visitante, quiero ver el packaging en un video hiperrealista con su ficha 
 - [x] El código y el manifiesto no usan `.glb`, HDRI ni Draco/KTX2.
 - [x] Con `/public` vacío se ve el fallback sin errores y no se piden frames antes de comprobar que existe el frame 1.
 - [x] Con el video real (ART-08 / ART-10), se recorre la secuencia sin frames en blanco.
+
+**DEV-38 · Refactor: arquitectura modular, componentes reutilizables y configuración centralizada** — DEV · `Dev-UI` `P1` · G5 · sin cambios de comportamiento
+> 📍 **Estado:** 🔍 Revisión Interna / QA · rama `chore/dev-38-refactor-modular` · falta la revisión de Rafael
+Configuración en `src/config`, componentes en `ui/`, `layout/`, `sections/` y `sequence/`, lógica de secuencias en `src/lib/sequence` y tests unitarios con Vitest.
+
+_Como equipo, queremos un código sin valores fijos dispersos, con componentes reutilizables y módulos pequeños, para que el proyecto pueda crecer sin volverse difícil de mantener._
+✔ **Criterios de aceptación** (checklist en Trello):
+- [x] Sin regresiones visibles: el HTML que genera el servidor tiene los mismos textos, enlaces y atributos de accesibilidad que antes del refactor (comparación adjunta).
+- [x] Ningún componente tiene textos de contenido ni parámetros de animación, scroll o reproducción escritos dentro: viven en `src/content` y `src/config`.
+- [x] Botones de CTA, eyebrows, paneles y secciones de video son componentes reutilizables (sin estilos duplicados), y `page.tsx` solo compone secciones.
+- [x] `ImageSequenceCanvas` queda separado en módulos (caché de frames, dibujo, rutas) con tests unitarios, y los overlays comparten un hook de progreso.
+- [x] `npm run lint`, `typecheck`, `test` y `build` terminan sin errores, y el CI ejecuta los tests.
+- [x] Recorrido en el navegador sin regresiones: 0 errores y 0 404; callouts y especificaciones aparecen por tramos; ventana de frames = 2R+1; desktop y móvil.
+- [x] El FLUJO §0 (bitácora y reparto de archivos) y el README describen la nueva estructura.
+- [ ] Rafael revisa y aprueba el PR.
 
 **DEV-12 · Integrar assets reales en la vertical slice** — DEV · `Dev-WebGL` `P0` · 4 h · G5 · ← G4, DEV-09, DEV-37 (los dos videos)
 
