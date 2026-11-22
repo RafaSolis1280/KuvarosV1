@@ -7,8 +7,11 @@
 //   y leídos del store transiente con getState() (Hard Constraints 1 y 3).
 // - Con prefers-reduced-motion quedan quietas: tiempo congelado y sin parallax.
 // - Al desmontar (o al cambiar la cantidad) se liberan la geometría y el material (Hard Constraint 6).
+// - Su shader se compila en paralelo (compileAsync, KHR_parallel_shader_compile) y las partículas se
+//   muestran cuando está listo: compilarlo en el primer frame lo frenaba ~250 ms con la CPU de un móvil y
+//   retrasaba la carga crítica del preloader (DEV-13), que espera el primer frame del fondo.
 import { useEffect, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import type * as THREE from "three";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { damp } from "@/lib/math";
@@ -19,6 +22,7 @@ export default function ParticleField() {
   // La política cambia pocas veces por sesión: OK leerla con el hook
   const count = useExperienceStore((s) => s.gpuPolicy.maxParticles);
   const pointsRef = useRef<THREE.Points>(null);
+  const { gl, camera, scene } = useThree();
   const systemRef = useRef<ParticleSystem | null>(null);
   const time = useRef(0);
 
@@ -30,11 +34,17 @@ export default function ParticleField() {
     points.geometry = system.geometry;
     points.material = system.material;
     systemRef.current = system;
+    let alive = true;
+    points.visible = false;
+    void gl.compileAsync(points, camera, scene).then(() => {
+      if (alive) points.visible = true;
+    });
     return () => {
+      alive = false;
       systemRef.current = null;
       system.dispose();
     };
-  }, [count]);
+  }, [count, gl, camera, scene]);
 
   useFrame((state, delta) => {
     const system = systemRef.current;
