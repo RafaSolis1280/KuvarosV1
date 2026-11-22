@@ -31,6 +31,11 @@ npm run dev              # http://localhost:3000
 | `npm test` | Tests unitarios (Vitest): lógica de secuencias, aparición de fichas, configuración y contenido |
 | `npm run frames -- <video> [--out carpeta]` | Convierte un video master en las secuencias WebP desktop/mobile (requiere ffmpeg) |
 
+**Probar cada tier (DEV-27, solo en `npm run dev`):** `/?tier=1`, `/?tier=2` o `/?tier=3` fijan la política de GPU
+(y apagan el PerformanceMonitor para que no la cambie); `/?nowebgl` simula un navegador sin WebGL (camino real:
+detect-gpu → tier 0 → sin Canvas). En el build de producción la URL no cambia nada. Informe y capturas en
+`Manuales/qa/DEV-27.md`; el script `Manuales/qa/scripts/tiers.cjs` repite la prueba.
+
 ## 🧱 Arquitectura del código
 
 `src/app/page.tsx` solo **compone secciones**. Cada cosa tiene un lugar único:

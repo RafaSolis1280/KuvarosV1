@@ -4,6 +4,7 @@
 // Hard Constraints: cero setState de React en scroll/pointer; sin Lenis con prefers-reduced-motion.
 // DEV-38: cada responsabilidad es una función que devuelve su limpieza; parámetros en config/.
 // BUG-01: un enlace directo a una sección (/#contacto) se vuelve a alinear cuando ya existen los pins.
+// DEV-27: en desarrollo, ?tier=1|2|3 y ?nowebgl fuerzan la política (lib/dev-overrides).
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { getGPUTier } from "detect-gpu";
@@ -12,6 +13,7 @@ import { prefersReducedMotion } from "@/lib/reducedMotion";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { ASSET_MANIFEST, DEFAULT_TIER, tierFromGPU } from "@/config/gpu-policy";
 import { anchorScrollTop, hashTargetId } from "@/lib/hashTarget";
+import { disableWebGL, readDevOverrides } from "@/lib/dev-overrides";
 import { ANCHOR_ON_LOAD, SMOOTH_SCROLL } from "@/config/motion";
 
 type Cleanup = () => void;
@@ -31,6 +33,23 @@ function detectGPUTier(): void {
       if (isDev) console.warn(`[GPU] detect-gpu falló → Tier ${DEFAULT_TIER}`, err);
       store.setGPUTier(DEFAULT_TIER);
     });
+}
+
+/**
+ * Fija la política de GPU: la detectada, o la del override de desarrollo (DEV-27). Con `?nowebgl` se
+ * bloquea WebGL y se deja correr la detección real, que llega sola al fallback sin Canvas.
+ */
+function applyGPUPolicy(): Cleanup {
+  const overrides = readDevOverrides();
+  if (!overrides) {
+    detectGPUTier();
+    return () => {};
+  }
+  console.info(`[DEV-27] override de desarrollo: tier=${overrides.tier ?? "detectado"} nowebgl=${overrides.noWebGL}`);
+  const restoreWebGL = overrides.noWebGL ? disableWebGL() : null;
+  if (overrides.tier) useExperienceStore.getState().pinGPUTier(overrides.tier);
+  if (overrides.noWebGL || !overrides.tier) detectGPUTier();
+  return () => restoreWebGL?.();
 }
 
 /** Lenis movido por gsap.ticker; publica scroll y velocidad en el store transiente */
@@ -129,9 +148,9 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
     const reducedMotion = prefersReducedMotion();
     useExperienceStore.getState().setReducedMotion(reducedMotion);
 
-    detectGPUTier();
     const lenis = reducedMotion ? null : new Lenis({ autoRaf: false, ...SMOOTH_SCROLL });
     const cleanups: Cleanup[] = [
+      applyGPUPolicy(),
       lenis ? startSmoothScroll(lenis) : trackNativeScroll(),
       keepHashTarget(lenis),
       trackPointer(),

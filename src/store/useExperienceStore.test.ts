@@ -28,4 +28,14 @@ describe("useExperienceStore", () => {
     expect(useExperienceStore.getState().gpuPolicy).toBe(GPU_STRICT_POLICIES[1]);
     warn.mockRestore();
   });
+
+  it("pinGPUTier fija el tier: ni setGPUTier ni downgradeGPUTier lo cambian (DEV-27)", () => {
+    const { pinGPUTier, setGPUTier, downgradeGPUTier } = useExperienceStore.getState();
+    pinGPUTier(3);
+    setGPUTier(1);
+    downgradeGPUTier();
+    expect(useExperienceStore.getState().gpuPolicy).toBe(GPU_STRICT_POLICIES[3]);
+    expect(useExperienceStore.getState().tierPinned).toBe(true);
+    useExperienceStore.setState({ tierPinned: false });
+  });
 });

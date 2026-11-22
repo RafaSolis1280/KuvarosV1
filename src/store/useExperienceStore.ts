@@ -6,6 +6,8 @@ import { type GPUTierLevel, type GPUStrictParameter, GPU_STRICT_POLICIES, DEFAUL
 interface ExperienceState {
   // Hardware y accesibilidad (cambian rara vez → pueden leerse con hooks)
   gpuPolicy: GPUStrictParameter;
+  /** DEV-27: tier fijado a mano (override de desarrollo); ni detect-gpu ni los FPS lo cambian */
+  tierPinned: boolean;
   webglAvailable: boolean;
   reducedMotion: boolean;
   isCanvasPaused: boolean;
@@ -25,6 +27,8 @@ interface ExperienceState {
   pointerNDC: { x: number; y: number };
 
   setGPUTier: (tier: GPUTierLevel) => void;
+  /** DEV-27: fija el tier y lo bloquea (setGPUTier y downgradeGPUTier dejan de cambiarlo) */
+  pinGPUTier: (tier: GPUTierLevel) => void;
   downgradeGPUTier: () => void;
   setWebGLAvailable: (ok: boolean) => void;
   setReducedMotion: (v: boolean) => void;
@@ -36,6 +40,7 @@ interface ExperienceState {
 
 export const useExperienceStore = create<ExperienceState>((set, get) => ({
   gpuPolicy: GPU_STRICT_POLICIES[DEFAULT_TIER], // tier seguro hasta que detect-gpu resuelva
+  tierPinned: false,
   webglAvailable: true,
   reducedMotion: false,
   isCanvasPaused: false,
@@ -48,8 +53,12 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   sequenceProgress: {},
   pointerNDC: { x: 0, y: 0 },
 
-  setGPUTier: (tier) => set({ gpuPolicy: GPU_STRICT_POLICIES[tier] }),
+  setGPUTier: (tier) => {
+    if (!get().tierPinned) set({ gpuPolicy: GPU_STRICT_POLICIES[tier] });
+  },
+  pinGPUTier: (tier) => set({ gpuPolicy: GPU_STRICT_POLICIES[tier], tierPinned: true }),
   downgradeGPUTier: () => {
+    if (get().tierPinned) return;
     const current = get().gpuPolicy.tier;
     if (current > 1) {
       const next = (current - 1) as GPUTierLevel;

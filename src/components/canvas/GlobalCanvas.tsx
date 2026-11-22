@@ -40,6 +40,7 @@ export default function GlobalCanvas() {
   const gpuPolicy = useExperienceStore((s) => s.gpuPolicy);
   const isCanvasPaused = useExperienceStore((s) => s.isCanvasPaused);
   const webglAvailable = useExperienceStore((s) => s.webglAvailable);
+  const tierPinned = useExperienceStore((s) => s.tierPinned); // DEV-27: tier forzado en desarrollo
 
   if (!webglAvailable) return null; // Tier 0: no se monta el Canvas; el DOM muestra el póster
 
@@ -59,11 +60,14 @@ export default function GlobalCanvas() {
           camera={CANVAS_CAMERA}
         >
           {/* FPS reales: degrada un tier por caída; tras N oscilaciones fija el tier de respaldo (sin cascada). */}
-          <PerformanceMonitor
-            flipflops={PERFORMANCE_GUARD.flipflops}
-            onDecline={() => useExperienceStore.getState().downgradeGPUTier()}
-            onFallback={() => useExperienceStore.getState().setGPUTier(PERFORMANCE_GUARD.fallbackTier)}
-          />
+          {/* Con un tier forzado (DEV-27) no se mide: la prueba debe ver ese tier, no el que dejen los FPS */}
+          {!tierPinned && (
+            <PerformanceMonitor
+              flipflops={PERFORMANCE_GUARD.flipflops}
+              onDecline={() => useExperienceStore.getState().downgradeGPUTier()}
+              onFallback={() => useExperienceStore.getState().setGPUTier(PERFORMANCE_GUARD.fallbackTier)}
+            />
+          )}
 
           {/* DEV-10 · Fondo fluido */}
           <BackgroundShaderQuad />
