@@ -9,6 +9,10 @@ interface ExperienceState {
   /** DEV-27: tier fijado a mano (override de desarrollo); ni detect-gpu ni los FPS lo cambian */
   tierPinned: boolean;
   webglAvailable: boolean;
+  /** DEV-13: detect-gpu ya decidió el tier (o falló, o hay override): se sabe qué variante de frames pedir */
+  gpuReady: boolean;
+  /** DEV-13: el fondo WebGL ya dibujó su primer frame (shader compilado) */
+  canvasReady: boolean;
   reducedMotion: boolean;
   isCanvasPaused: boolean;
   preloadProgress: number;
@@ -33,6 +37,8 @@ interface ExperienceState {
   pinGPUTier: (tier: GPUTierLevel) => void;
   downgradeGPUTier: () => void;
   setWebGLAvailable: (ok: boolean) => void;
+  setGpuReady: () => void;
+  setCanvasReady: () => void;
   setReducedMotion: (v: boolean) => void;
   setCanvasPaused: (paused: boolean) => void;
   setPreloadProgress: (progress: number) => void;
@@ -46,6 +52,8 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   gpuPolicy: GPU_STRICT_POLICIES[DEFAULT_TIER], // tier seguro hasta que detect-gpu resuelva
   tierPinned: false,
   webglAvailable: true,
+  gpuReady: false,
+  canvasReady: false,
   reducedMotion: false,
   isCanvasPaused: false,
   preloadProgress: 0,
@@ -72,6 +80,12 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
     }
   },
   setWebGLAvailable: (ok) => set({ webglAvailable: ok }),
+  setGpuReady: () => {
+    if (!get().gpuReady) set({ gpuReady: true });
+  },
+  setCanvasReady: () => {
+    if (!get().canvasReady) set({ canvasReady: true });
+  },
   setReducedMotion: (v) => set({ reducedMotion: v }),
   setCanvasPaused: (paused) => set({ isCanvasPaused: paused }),
   setPreloadProgress: (progress) => set({ preloadProgress: progress, isPreloaded: progress >= 100 }),

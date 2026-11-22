@@ -37,9 +37,16 @@ export default function BackgroundShaderQuad() {
 
   useEffect(() => () => geometry.dispose(), [geometry]);
 
+  // DEV-13: el primer frame dibujado = shader compilado. Se avisa una sola vez (no es una escritura por frame).
+  const announced = useRef(false);
+
   useFrame((state, delta) => {
     const m = mat.current;
     if (!m) return;
+    if (!announced.current) {
+      announced.current = true;
+      useExperienceStore.getState().setCanvasReady();
+    }
     const { pointerNDC, scrollVelocity, reducedMotion } = useExperienceStore.getState();
     const motion = reducedMotion ? 0 : 1;
     smoothed.current.set(

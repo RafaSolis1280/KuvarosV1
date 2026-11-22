@@ -2,6 +2,7 @@
 // Solo [f-R, f+R] quedan decodificados como ImageBitmap; el resto se libera con close() (Hard Constraint 6).
 // No conoce React, el DOM ni GSAP: recibe el cargador y los callbacks, así se puede testear.
 import { windowBounds } from "@/lib/sequence/frames";
+import { fetchFrame } from "@/lib/sequence/prefetch";
 
 /** Lo mínimo que la caché necesita de un frame decodificado (ImageBitmap lo cumple) */
 export interface DecodedFrame {
@@ -23,11 +24,14 @@ export interface FrameCacheOptions<T extends DecodedFrame> {
   onReady?: (index: number) => void;
 }
 
-/** Cargador por defecto: fetch + createImageBitmap (decodifica fuera del hilo principal) */
+/**
+ * Cargador por defecto: descarga + createImageBitmap (decodifica fuera del hilo principal).
+ * DEV-13: la descarga es compartida con el preloader (lib/sequence/prefetch): un frame nunca viaja dos veces.
+ */
 export async function loadImageBitmap(url: string): Promise<ImageBitmap> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(String(res.status));
-  return createImageBitmap(await res.blob());
+  const blob = await fetchFrame(url, "high");
+  if (!blob) throw new Error(`frame no disponible: ${url}`);
+  return createImageBitmap(blob);
 }
 
 export class FrameCache<T extends DecodedFrame = ImageBitmap> {

@@ -81,6 +81,10 @@ export default function SoundController({ sources }: { sources: string[] }) {
       }, SOUND.fadeSeconds * 1000 + 100);
     };
 
+    // Sin gesto no se puede arrancar el audio: si alguien lo marcó antes de que este control existiera
+    // (p. ej. «Entrar con sonido» del preloader mientras se cargaba), se deja apagado y visible como tal.
+    if (store.getState().soundOn) store.getState().setSoundOn(false);
+
     const unsubscribe = store.subscribe((s, prev) => {
       if (s.soundOn !== prev.soundOn) (s.soundOn ? start : stop)();
     });

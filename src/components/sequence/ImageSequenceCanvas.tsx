@@ -13,6 +13,8 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { gsap } from "@/lib/gsap";
 import { useExperienceStore } from "@/store/useExperienceStore";
+import { waitForStore } from "@/store/waitFor";
+import { PRELOAD } from "@/config/preload";
 import { FrameCache, loadImageBitmap } from "@/lib/sequence/FrameCache";
 import { configureContext, drawFallback, drawFrame } from "@/lib/sequence/draw";
 import { splitFrame } from "@/lib/sequence/frames";
@@ -123,9 +125,12 @@ export default function ImageSequenceCanvas({
       if (complete) drawn = key;
     };
 
-    // Fallback SOLO si el primer frame no existe
+    // Fallback SOLO si el primer frame no existe.
+    // DEV-13: antes se espera a saber el tier (variante desktop/mobile, máx. PRELOAD.gpuWaitMs): así no se
+    // descargan frames de una variante que se descartaría al resolver detect-gpu.
     let alive = true;
-    fetch(urlFor(0), { method: "HEAD" })
+    waitForStore(store, (s) => s.gpuReady, PRELOAD.gpuWaitMs)
+      .then(() => fetch(urlFor(0), { method: "HEAD" }))
       .then((r) => {
         if (!r.ok) fallback = true;
       })

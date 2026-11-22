@@ -25,6 +25,15 @@ export const SITIO = {
     aceptaReservas: false,
   },
 
+  /** DEV-13 · Panel del preloader (abajo, sobre el hero; no tapa el titular) */
+  preloader: {
+    ariaLabel: "Carga de la experiencia",
+    preparando: "Preparando la experiencia",
+    listo: "Todo listo",
+    entrarConSonido: "Entrar con sonido",
+    saltar: "Saltar",
+  },
+
   /** DEV-16 · Control del sonido ambiente (cabecera) */
   sonido: {
     /** Nombre accesible fijo: el estado lo anuncia aria-pressed («activado» / «no activado») */

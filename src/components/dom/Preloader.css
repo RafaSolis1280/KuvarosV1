@@ -1,0 +1,37 @@
+/*
+ * DEV-13 · Transiciones del panel del preloader. Los estados (data-state, sin re-renders):
+ * waiting (hasta que cargan las fuentes: así no cambia de alto ya visible) → loading → ready → hidden.
+ * Qué estado oculta el panel va en clases de Tailwind en Preloader.tsx (CSS principal): esta hoja llega
+ * con el chunk diferido y, si llegara tarde, solo faltaría la animación.
+ * Hoja global con selector de atributo (no CSS module: next.config.ts pasa todo *.css por el loader de
+ * Tailwind y los módulos pierden el hash de sus clases).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* La entrada arranca al pasar de waiting a loading. backwards: no fija valores al terminar, así el
+     estado hidden puede cambiarlos */
+  [data-preloader]:not([data-state="waiting"]) {
+    animation: preloader-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  [data-preloader] {
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0s linear 0s;
+  }
+
+  [data-preloader][data-state="hidden"] {
+    transform: translateY(12px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0s linear 0.35s;
+  }
+}
+
+@keyframes preloader-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}

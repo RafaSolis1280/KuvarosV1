@@ -32,7 +32,9 @@ function detectGPUTier(): void {
     .catch((err) => {
       if (isDev) console.warn(`[GPU] detect-gpu falló → Tier ${DEFAULT_TIER}`, err);
       store.setGPUTier(DEFAULT_TIER);
-    });
+    })
+    // DEV-13: ya se sabe qué variante de frames pedir (el preloader y la secuencia la esperan)
+    .finally(() => store.setGpuReady());
 }
 
 /**
@@ -49,6 +51,7 @@ function applyGPUPolicy(): Cleanup {
   const restoreWebGL = overrides.noWebGL ? disableWebGL() : null;
   if (overrides.tier) useExperienceStore.getState().pinGPUTier(overrides.tier);
   if (overrides.noWebGL || !overrides.tier) detectGPUTier();
+  else useExperienceStore.getState().setGpuReady();
   return () => restoreWebGL?.();
 }
 

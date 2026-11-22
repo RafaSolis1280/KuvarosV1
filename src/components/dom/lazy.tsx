@@ -10,6 +10,8 @@
 //
 //   - SoundController (DEV-16): solo existe si hay audio en /public/audio. Es un botón a la derecha
 //     de la cabecera: aparecer tras la hidratación no mueve nada (CLS 0).
+//   - Preloader (DEV-13): panel fijo (no mueve el layout); llega justo después de hidratar.
 import dynamic from "next/dynamic";
 
 export const LazySoundController = dynamic(() => import("./SoundController"), { ssr: false });
+export const LazyPreloader = dynamic(() => import("./Preloader"), { ssr: false });

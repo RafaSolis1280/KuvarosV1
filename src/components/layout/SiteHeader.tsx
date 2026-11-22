@@ -9,14 +9,13 @@ import CtaLink from "@/components/ui/CtaLink";
 import { PRODUCTO } from "@/content/producto";
 import { SITIO } from "@/content/sitio";
 import { LazySoundController } from "@/components/dom/lazy";
-import { availableAudio } from "@/lib/audio/availability";
+import { ambientAudio } from "@/lib/audio/availability";
 import { HERO_SECTION_ID } from "@/config/site";
-import { ASSET_MANIFEST } from "@/config/gpu-policy";
 
 export default function SiteHeader() {
   const { cta } = PRODUCTO;
   const { nav } = SITIO;
-  const audio = availableAudio(ASSET_MANIFEST.audio.ambient);
+  const audio = ambientAudio();
   return (
     <StickyHeader>
       <nav aria-label={nav.ariaLabel} className="flex h-full items-center justify-between">

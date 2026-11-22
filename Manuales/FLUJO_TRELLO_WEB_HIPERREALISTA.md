@@ -11,7 +11,7 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 22-11-2026 (BUG-02: CLS del titular; DEV-16: control de sonido opt-in; DEV-01: Performance Budget y matriz de dispositivos (propuesta); DEV-34: cabeceras de seguridad y caché; DEV-28: Core Web Vitals y bundle; DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 22-11-2026 (DEV-13: preloader por prioridades; BUG-02: CLS del titular; DEV-16: control de sonido opt-in; DEV-01: Performance Budget y matriz de dispositivos (propuesta); DEV-34: cabeceras de seguridad y caché; DEV-28: Core Web Vitals y bundle; DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
@@ -45,6 +45,7 @@
 | DEV-01 · Performance Budget y matriz de dispositivos | 🔍 Revisión Interna / QA | Javier (valida DIR) | `docs/dev-01-budget-dispositivos` (apilada sobre `feat/dev-34-cabeceras-seguridad`) | PR → `feat/dev-34-cabeceras-seguridad` (o a `main` cuando se fusionen las anteriores) | Criterios 3/4. ⏳ DIR valida el budget con un comentario. Revisar los valores cuando haya analítica (DIR-01 / DEV-33) |
 | DEV-16 · SoundController | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-16-sound-controller` (apilada sobre `docs/dev-01-budget-dispositivos`) | PR → `docs/dev-01-budget-dispositivos` (o a `main` cuando se fusionen las anteriores) | Criterios 4/5. ⏳ Audio real (ART-15) y probarlo en un iPhone real (`.m4a`). Revisión de Rafael: toca el store y añade `config/sound.ts` |
 | BUG-02 · El titular del hero mueve el layout al animarse (CLS) | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `fix/bug-02-cls-titular` (apilada sobre `feat/dev-16-sound-controller`) | PR → `feat/dev-16-sound-controller` (o a `main` cuando se fusionen las anteriores) | Criterios 3/3. Falta que otra persona lo verifique (fusión del PR) |
+| DEV-13 · Preloader por prioridades | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-13-preloader` (apilada sobre `fix/bug-02-cls-titular`) | PR → `fix/bug-02-cls-titular` (o a `main` cuando se fusionen las anteriores) | Criterios 5/5 (la carga crítica cumple en desktop y 4G; en Slow 4G tarda 3.6 s, documentado). Falta: probar en un Android real; revisión de Rafael (toca `ImageSequenceCanvas`, `FrameCache`, el store y `BackgroundShaderQuad`) |
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -98,6 +99,7 @@
 | 22-11-2026 | DEV-01 | **Performance Budget y matriz de QA** (propuesta; sin analítica del cliente rigen los valores del Manual, Fase 0). Fuente única `src/config/budget.ts` con test de peso por video y `npm run budget` (gzip real del JS inicial, sale con error si se pasa). Estado medido: JS inicial 246 KB gzip (≤ 250 móvil, margen 3.6 KB → todo lo nuevo con dynamic import), peso crítico 1.5 / 0.7 MB, total 5.6 / 3.4 MB, videos 1.4+3.9 / 0.9+2.4 MB, LCP 0.9 s, CLS 0, INP 80-120 ms. Matriz de 6 dispositivos concretos. Tabla en la tarjeta 📌 Guía y en §3.7. De paso, corregido el informe de DEV-28 (el analizador sobreestima: 292 → 246 KB gzip reales) y adjuntada la captura del treemap | `docs/dev-01-budget-dispositivos` | 🔍 PR pendiente |
 | 22-11-2026 | DEV-16 | **Sonido ambiente opt-in con Web Audio** (sin `howler`): `SoundController` (botón en la cabecera con `aria-pressed`), motor `lib/audio/AmbientSound` que se descarga en el primer clic, low-pass 400 → 2 500 Hz según la velocidad del scroll (damp en gsap.ticker), suspensión con la pestaña oculta y limpieza al desmontar. El audio se detecta en el build (`lib/audio/availability`): sin archivos no hay botón ni peticiones. Probado con un tono temporal (no subido) en dev y producción con `sonido.cjs`: 0 contextos antes de pulsar, 2 500 Hz con scroll rápido, 400 en reposo, suspendido con la pestaña oculta, 404 → el botón desaparece sin errores; CLS 0 (hueco reservado). Hallazgo: `dynamic()` con SSR en Next 16.4.6 escribe un preload a un chunk inexistente → `lazy.tsx` solo con `ssr: false`. JS inicial 246.8 KB gzip. Informe `Manuales/qa/DEV-16.md` | `feat/dev-16-sound-controller` | 🔍 PR pendiente |
 | 22-11-2026 | BUG-02 | **CLS del titular del hero** (encontrado al medir DEV-16 con la API de Layout Shift): al dividirse con SplitText el `<h1>` crecía 0.1em por salto de línea (≈ 9.6 px en desktop) y volvía a encoger al terminar la animación (CLS ≈ 0.005), porque los márgenes negativos de las máscaras colapsan entre líneas. Arreglo en `HeroTitle.css`: el descuento entero (-0.3em) abajo, la primera y la última línea compensan su lado, y `flow-root` en el h1. Verificado: CLS 0 (0 desplazamientos) en 1440, 768 y 375 px; alto, posición del h1 y de la bajada idénticos dividido o no (con y sin reduced motion) | `fix/bug-02-cls-titular` | 🔍 PR pendiente |
+| 22-11-2026 | DEV-13 | **Preloader por prioridades, sin barrera** (Paso 22). Carga crítica: fuentes + 15 primeros frames de la historia en la variante del tier (ahora la secuencia espera a detect-gpu: en desktop ya no baja frames mobile) + primer frame del shader; en red lenta, 8 frames y sin esperar al shader. Resto en segundo plano en idle, prioridad baja, 2 a la vez, al caché HTTP sin decodificar; descarga compartida con la ventana deslizante (0 duplicados). Panel abajo con progreso, «Saltar» y «Entrar con sonido» (DEV-16), por data-atributos. Medido: crítica 0.51 s desktop / 1.61 s Fast 4G / 3.63 s Slow 4G; primer scroll sin frames > 50 ms (desktop y 4G); botones con ratón y teclado; Lighthouse ×3 = 100, LCP 0.9 s, CLS 0, TBT 80-90 ms; 0 desplazamientos de layout. Informe `Manuales/qa/DEV-13.md` | `feat/dev-13-preloader` | 🔍 PR pendiente |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -917,11 +919,11 @@ Ref. M Fase 8 Paso 22.
 
 _Como visitante, quiero que la primera interacción sea fluida para no ver tirones ni pantallas vacías al empezar._
 ✔ **Criterios de aceptación** (checklist en Trello):
-- [ ] La carga crítica (fuentes, primeros 15-20 frames de cada secuencia y compilación del shader) termina en menos de 2.5 s.
-- [ ] El resto de los frames se carga en segundo plano sin bloquear el scroll.
-- [ ] Los botones «Entrar con sonido» y «Saltar» funcionan con ratón y con teclado.
-- [ ] El `<h1>` ya está en el HTML que envía el servidor (visible antes de que cargue JavaScript).
-- [ ] El primer scroll no tiene tirones (captura de Performance adjunta).
+- [x] La carga crítica (fuentes, primeros 15-20 frames de cada secuencia y compilación del shader) termina en menos de 2.5 s.
+- [x] El resto de los frames se carga en segundo plano sin bloquear el scroll.
+- [x] Los botones «Entrar con sonido» y «Saltar» funcionan con ratón y con teclado.
+- [x] El `<h1>` ya está en el HTML que envía el servidor (visible antes de que cargue JavaScript).
+- [x] El primer scroll no tiene tirones (captura de Performance adjunta).
 
 **GATE-G5 · Vertical slice** — DIR + Cliente
 

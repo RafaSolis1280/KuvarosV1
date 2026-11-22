@@ -6,6 +6,8 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import JsonLd from "@/components/seo/JsonLd";
 import CustomCursorLoader from "@/components/dom/CustomCursorLoader";
+import { LazyPreloader } from "@/components/dom/lazy";
+import { ambientAudio } from "@/lib/audio/availability";
 import { fontVariables } from "./fonts";
 import { createSiteMetadata } from "@/lib/seo";
 import { MAIN_CONTENT_ID, SITE } from "@/config/site";
@@ -23,7 +25,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SmoothScrollProvider>
           <SiteHeader />
           <GlobalCanvasLoader />
-          <main id={MAIN_CONTENT_ID} className="relative stack-content">
+          <LazyPreloader soundAvailable={ambientAudio().length > 0} />
+          {/* tabIndex -1: destino de «Saltar al contenido» y del foco al cerrar el preloader (DEV-13) */}
+          <main id={MAIN_CONTENT_ID} tabIndex={-1} className="relative stack-content outline-none">
             {children}
           </main>
           <SiteFooter />
