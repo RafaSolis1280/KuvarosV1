@@ -25,6 +25,14 @@ export const SITIO = {
     aceptaReservas: false,
   },
 
+  /** DEV-16 · Control del sonido ambiente (cabecera) */
+  sonido: {
+    /** Nombre accesible fijo: el estado lo anuncia aria-pressed («activado» / «no activado») */
+    ariaLabel: "Sonido ambiente",
+    activar: "Activar sonido",
+    silenciar: "Silenciar",
+  },
+
   /** DEV-25 · Formulario de contacto (sección de conversión) */
   contacto: {
     titulo: "O escríbenos aquí",

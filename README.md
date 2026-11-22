@@ -113,7 +113,7 @@ hash de sus clases): para estilos propios de un componente, usar una hoja global
 | B7 | Póster de fallback (equipos de gama baja / sin JavaScript) | `public/fallback/hero_poster.webp` | 1600 px, la hamburguesa armada | ART-12 | P1 |
 | B8 | Imagen para compartir en redes (OG) | `public/og-image.jpg` | 1200 × 630 px, < 300 KB | ART-12 | P1 |
 | B8b | Fotos de marca (lifestyle / producto real) | `public/photos/<nombre>.webp` | 1000 px de ancho, WebP, **sin EXIF/GPS** | ART-12 | P1 |
-| B9 | Sonido ambiente (opcional) | `public/audio/ambient_drone.webm` + `.m4a` | Loop sin cortes, < 400 KB | ART-15 | P2 |
+| B9 | Sonido ambiente (opcional) | `public/audio/ambient_drone.webm` + `.m4a` | Loop sin cortes, < 400 KB. El control de sonido (DEV-16) ya está hecho: al copiar los archivos aparece solo el botón en la cabecera | ART-15 | P2 |
 | B10 | Sonido de hover (opcional) | `public/audio/ui_hover_tick.webm` + `.m4a` | < 80 ms | ART-15 | P2 |
 
 > **No se necesitan** modelos 3D (`.glb`), HDRI ni texturas: el proyecto es solo video (decisión del cliente, DEV-37).

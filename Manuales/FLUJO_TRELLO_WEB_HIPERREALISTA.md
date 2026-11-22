@@ -11,7 +11,7 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 22-11-2026 (DEV-01: Performance Budget y matriz de dispositivos (propuesta); DEV-34: cabeceras de seguridad y caché; DEV-28: Core Web Vitals y bundle; DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 22-11-2026 (DEV-16: control de sonido opt-in; DEV-01: Performance Budget y matriz de dispositivos (propuesta); DEV-34: cabeceras de seguridad y caché; DEV-28: Core Web Vitals y bundle; DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
@@ -43,6 +43,7 @@
 | DEV-28 · Core Web Vitals y bundle | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-28-cwv-bundle` (apilada sobre `feat/dev-15-postprocesado`) | PR → `feat/dev-15-postprocesado` (o a `main` cuando se fusionen las anteriores) | Criterios 4/4 (el budget de JS de DEV-01 se marcó el 22-11: 246 KB gzip ≤ 250). Falta repetir en la Preview URL y en un Android real; revisión de Rafael |
 | DEV-34 · Dominio, SSL, cabeceras y caché | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-34-cabeceras-seguridad` (apilada sobre `feat/dev-28-cwv-bundle`) | PR → `feat/dev-28-cwv-bundle` (o a `main` cuando se fusionen las anteriores) | Criterios 1/3. ⏳ Dominio + SSL (cliente vía Rafael) y nota de securityheaders.com con la URL pública (Vercel). Revisión de Rafael: toca `next.config.ts` |
 | DEV-01 · Performance Budget y matriz de dispositivos | 🔍 Revisión Interna / QA | Javier (valida DIR) | `docs/dev-01-budget-dispositivos` (apilada sobre `feat/dev-34-cabeceras-seguridad`) | PR → `feat/dev-34-cabeceras-seguridad` (o a `main` cuando se fusionen las anteriores) | Criterios 3/4. ⏳ DIR valida el budget con un comentario. Revisar los valores cuando haya analítica (DIR-01 / DEV-33) |
+| DEV-16 · SoundController | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-16-sound-controller` (apilada sobre `docs/dev-01-budget-dispositivos`) | PR → `docs/dev-01-budget-dispositivos` (o a `main` cuando se fusionen las anteriores) | Criterios 4/5. ⏳ Audio real (ART-15) y probarlo en un iPhone real (`.m4a`). Revisión de Rafael: toca el store y añade `config/sound.ts` |
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -94,6 +95,7 @@
 | 22-11-2026 | DEV-28 | **Core Web Vitals y bundle.** Lighthouse móvil ×3: rendimiento 99-100, LCP 0.9 s (el `<h1>` SSR), CLS 0, TBT 80-90 ms. INP de laboratorio (nuevo `inp.cjs`, móvil con CPU ×4 e interacciones reales): 80-88 ms sin formulario y 104-120 ms con el formulario simulado. Bundle con el analizador integrado de Next 16 (`npm run analyze`, sin dependencias) y `bundle-inicial.py`: 292 KB comprimidos de JS inicial (212 framework, 51 GSAP, 16 del sitio); el Canvas WebGL (238 KB) ya era diferido y ahora el cursor personalizado solo se descarga con ratón (`CustomCursorLoader`). Las secciones (1-1.5 KB) no se dividen: lo pesado son los frames, ya por ventana. Informe `Manuales/qa/DEV-28.md` con el HTML de Lighthouse | `feat/dev-28-cwv-bundle` | 🔍 PR pendiente |
 | 22-11-2026 | DEV-34 | **Cabeceras de seguridad y caché** (`src/config/http-headers.ts`, 7 tests, aplicadas en `next.config.ts`): CSP sin nonce para mantener la página estática (solo el propio origen; `unsafe-eval`/`ws:` solo en dev; `upgrade-insecure-requests` solo en Vercel), HSTS 2 años sin preload, nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy y COOP. Caché: `benchmarks` deja de ser `immutable` (se copia de detect-gpu con el mismo nombre en cada install) y un test obliga a clasificar cada carpeta de `/public`. Verificado con `csp.cjs`: 0 violaciones de CSP y 0 errores en producción (SwiftShader, GPU real y reduced motion; recorrido, CTA y formulario con 200) y en `npm run dev`. Informe `Manuales/qa/DEV-34.md` | `feat/dev-34-cabeceras-seguridad` | 🔍 PR pendiente |
 | 22-11-2026 | DEV-01 | **Performance Budget y matriz de QA** (propuesta; sin analítica del cliente rigen los valores del Manual, Fase 0). Fuente única `src/config/budget.ts` con test de peso por video y `npm run budget` (gzip real del JS inicial, sale con error si se pasa). Estado medido: JS inicial 246 KB gzip (≤ 250 móvil, margen 3.6 KB → todo lo nuevo con dynamic import), peso crítico 1.5 / 0.7 MB, total 5.6 / 3.4 MB, videos 1.4+3.9 / 0.9+2.4 MB, LCP 0.9 s, CLS 0, INP 80-120 ms. Matriz de 6 dispositivos concretos. Tabla en la tarjeta 📌 Guía y en §3.7. De paso, corregido el informe de DEV-28 (el analizador sobreestima: 292 → 246 KB gzip reales) y adjuntada la captura del treemap | `docs/dev-01-budget-dispositivos` | 🔍 PR pendiente |
+| 22-11-2026 | DEV-16 | **Sonido ambiente opt-in con Web Audio** (sin `howler`): `SoundController` (botón en la cabecera con `aria-pressed`), motor `lib/audio/AmbientSound` que se descarga en el primer clic, low-pass 400 → 2 500 Hz según la velocidad del scroll (damp en gsap.ticker), suspensión con la pestaña oculta y limpieza al desmontar. El audio se detecta en el build (`lib/audio/availability`): sin archivos no hay botón ni peticiones. Probado con un tono temporal (no subido) en dev y producción con `sonido.cjs`: 0 contextos antes de pulsar, 2 500 Hz con scroll rápido, 400 en reposo, suspendido con la pestaña oculta, 404 → el botón desaparece sin errores; CLS 0 (hueco reservado). Hallazgo: `dynamic()` con SSR en Next 16.4.6 escribe un preload a un chunk inexistente → `lazy.tsx` solo con `ssr: false`. JS inicial 246.8 KB gzip. Informe `Manuales/qa/DEV-16.md` | `feat/dev-16-sound-controller` | 🔍 PR pendiente |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -956,11 +958,11 @@ Ref. M Fase 5 Paso 16.
 
 _Como visitante, quiero activar el sonido cuando yo decida para disfrutar una experiencia inmersiva sin sorpresas._
 ✔ **Criterios de aceptación** (checklist en Trello):
-- [ ] No suena nada hasta que el usuario lo activa con un clic o toque.
-- [ ] Un filtro low-pass se abre de 400 a 2 500 Hz según la velocidad del scroll.
-- [ ] Hay un botón de silencio visible, con `aria-label` y estado (activado/desactivado), y el audio se pausa al ocultar la pestaña.
+- [x] No suena nada hasta que el usuario lo activa con un clic o toque.
+- [x] Un filtro low-pass se abre de 400 a 2 500 Hz según la velocidad del scroll.
+- [x] Hay un botón de silencio visible, con `aria-label` y estado (activado/desactivado), y el audio se pausa al ocultar la pestaña.
 - [ ] En iOS Safari suena el archivo `.m4a` (probado en un iPhone real).
-- [ ] Si faltan los archivos de audio, la página funciona sin errores.
+- [x] Si faltan los archivos de audio, la página funciona sin errores.
 
 ---
 

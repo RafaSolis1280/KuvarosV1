@@ -2,16 +2,21 @@
 // scroll y por encima de las secuencias fijadas (capa `stack-nav`). Desde cualquier punto: CTA → sección
 // de conversión → canal de pedido (2 clics).
 // El logo va sin «Smash Burguers»: en 11 px y color muted no llega a 4.5:1 sobre el video.
+// DEV-16: el control de sonido aparece junto al CTA solo si el audio existe en /public (se decide en el build).
 import StickyHeader from "@/components/layout/StickyHeader";
 import Wordmark from "@/components/dom/Wordmark";
 import CtaLink from "@/components/ui/CtaLink";
 import { PRODUCTO } from "@/content/producto";
 import { SITIO } from "@/content/sitio";
+import { LazySoundController } from "@/components/dom/lazy";
+import { availableAudio } from "@/lib/audio/availability";
 import { HERO_SECTION_ID } from "@/config/site";
+import { ASSET_MANIFEST } from "@/config/gpu-policy";
 
 export default function SiteHeader() {
   const { cta } = PRODUCTO;
   const { nav } = SITIO;
+  const audio = availableAudio(ASSET_MANIFEST.audio.ambient);
   return (
     <StickyHeader>
       <nav aria-label={nav.ariaLabel} className="flex h-full items-center justify-between">
@@ -23,7 +28,15 @@ export default function SiteHeader() {
         >
           <Wordmark size="sm" conBajada={false} />
         </a>
-        <CtaLink href={cta.hrefHeader}>{cta.botonHeader}</CtaLink>
+        <div className="flex items-center gap-3">
+          {/* El hueco del botón viene en el HTML (el servidor sabe si hay audio): al hidratar no se mueve nada */}
+          {audio.length > 0 ? (
+            <span className="inline-flex h-9 w-9">
+              <LazySoundController sources={audio} />
+            </span>
+          ) : null}
+          <CtaLink href={cta.hrefHeader}>{cta.botonHeader}</CtaLink>
+        </div>
       </nav>
     </StickyHeader>
   );

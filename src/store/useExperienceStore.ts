@@ -13,6 +13,8 @@ interface ExperienceState {
   isCanvasPaused: boolean;
   preloadProgress: number;
   isPreloaded: boolean;
+  /** DEV-16: el visitante activó el sonido (solo cambia con un clic/toque: se puede leer con el hook) */
+  soundOn: boolean;
 
   // Transiente (leer SIEMPRE con getState() en useFrame / RAF; nunca con hooks)
   scrollY: number;
@@ -34,6 +36,8 @@ interface ExperienceState {
   setReducedMotion: (v: boolean) => void;
   setCanvasPaused: (paused: boolean) => void;
   setPreloadProgress: (progress: number) => void;
+  /** DEV-16: llamar SOLO desde un gesto del usuario (los navegadores bloquean el audio sin gesto) */
+  setSoundOn: (on: boolean) => void;
   /** Escritura transiente del progreso de una secuencia; no notifica si el valor no cambió */
   setSequenceProgress: (sequenceId: string, progress: number) => void;
 }
@@ -46,6 +50,7 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   isCanvasPaused: false,
   preloadProgress: 0,
   isPreloaded: false,
+  soundOn: false,
 
   scrollY: 0,
   scrollVelocity: 0,
@@ -70,6 +75,7 @@ export const useExperienceStore = create<ExperienceState>((set, get) => ({
   setReducedMotion: (v) => set({ reducedMotion: v }),
   setCanvasPaused: (paused) => set({ isCanvasPaused: paused }),
   setPreloadProgress: (progress) => set({ preloadProgress: progress, isPreloaded: progress >= 100 }),
+  setSoundOn: (on) => set({ soundOn: on }),
   setSequenceProgress: (sequenceId, progress) => {
     const current = get().sequenceProgress;
     if (current[sequenceId] === progress) return;
