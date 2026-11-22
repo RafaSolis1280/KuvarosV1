@@ -23,8 +23,29 @@
   }
 }
 
-/* Las máscaras de línea recortan (overflow: clip): se agrandan para no cortar descendentes («j») ni tildes */
+/*
+ * Las máscaras de línea recortan (overflow: clip): se agrandan 0.1em arriba y 0.2em abajo para no cortar
+ * descendentes («j») ni tildes, y se compensa con márgenes negativos para que el titular mida lo mismo
+ * dividido que sin dividir (CLS 0).
+ * BUG-02: entre dos máscaras los márgenes negativos COLAPSAN (gana el más negativo, no se suman). Con
+ * margin-block -0.1em / -0.2em en todas, cada salto de línea solo descontaba 0.2em de los 0.3em de padding y
+ * el titular crecía 0.1em por línea al dividirse (y volvía a encoger al terminar la animación). Ahora el
+ * descuento entero (-0.3em) va abajo, la primera línea compensa su padding superior y la última el inferior.
+ * `flow-root` evita que esos márgenes colapsen con los del propio <h1>, que se movería.
+ */
+[data-hero-title] {
+  display: flow-root;
+}
+
 [data-hero-title] .hero-title-line-mask {
   padding-block: 0.1em 0.2em;
-  margin-block: -0.1em -0.2em;
+  margin-block: 0 -0.3em;
+}
+
+[data-hero-title] .hero-title-line-mask:first-child {
+  margin-top: -0.1em;
+}
+
+[data-hero-title] .hero-title-line-mask:last-child {
+  margin-bottom: -0.2em;
 }
