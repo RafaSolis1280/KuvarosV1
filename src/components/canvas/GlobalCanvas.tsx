@@ -5,6 +5,7 @@
 // Aquí se enchufan, cada uno en su tarjeta:
 //   DEV-10 → <BackgroundShaderQuad /> (shader de fondo fluido)
 //   (DEV-11 descartada por DEV-37: el proyecto no usa modelos 3D, solo video)
+//   DEV-14 → <ParticleField /> (polvo, un draw call, gpuPolicy.maxParticles)
 //   DEV-15 → bloom + grano DENTRO del shader de fondo (BackgroundShaderQuad), solo si
 //            gpuPolicy.enablePostProcessing. Sin EffectComposer: el único contenido WebGL es un quad a
 //            pantalla completa, y una pasada aparte costaría render targets y ancho de banda sin ganar nada.
@@ -15,6 +16,7 @@ import { PerformanceMonitor } from "@react-three/drei";
 import { useExperienceStore } from "@/store/useExperienceStore";
 import { CANVAS_CAMERA, PERFORMANCE_GUARD } from "@/config/scene";
 import BackgroundShaderQuad from "./BackgroundShaderQuad";
+import ParticleField from "./ParticleField";
 
 /**
  * Si el contexto WebGL no se puede crear (driver bloqueado, GPU perdida…), la capa visual
@@ -73,6 +75,8 @@ export default function GlobalCanvas() {
 
           {/* DEV-10 · Fondo fluido */}
           <BackgroundShaderQuad />
+          {/* DEV-14 · Partículas (encima del fondo, detrás de las secuencias del DOM) */}
+          <ParticleField />
         </Canvas>
       </CanvasErrorBoundary>
     </div>

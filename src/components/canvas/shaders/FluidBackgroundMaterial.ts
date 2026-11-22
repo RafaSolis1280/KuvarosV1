@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { shaderMaterial } from "@react-three/drei";
 import { extend, type ThreeElement } from "@react-three/fiber";
 import { BRAND_COLORS } from "@/config/brand";
+import { BACKGROUND_MAX_ACCENT } from "@/config/scene";
 
 export const FluidBackgroundMaterial = shaderMaterial(
   {
@@ -38,7 +39,7 @@ export const FluidBackgroundMaterial = shaderMaterial(
 
     // Mezcla máxima de mostaza que puede alcanzar el fondo (veta con el scroll más rápido + brillo del
     // puntero). El contraste del texto (DEV-29) se calculó contra este tope: el acabado no lo supera.
-    const float MAX_ACCENT = 0.08 + 0.35 * 0.25 + 0.18 * 0.35;
+    const float MAX_ACCENT = ${BACKGROUND_MAX_ACCENT.toFixed(6)}; // config/scene.ts (fuente única)
 
     // Hash sin sin() (Dave Hoskins)
     float hash12(vec2 p) {
