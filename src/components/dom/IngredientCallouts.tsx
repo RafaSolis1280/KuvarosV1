@@ -59,32 +59,40 @@ export default function IngredientCallouts({ sequenceId, ingredientes, range, ar
     setTargets(oneHot(ingredientes.length, active));
   });
 
+  // DEV-29: un <h2> (solo para lectores de pantalla) antes de las fichas, que son <h3>: sin él el orden de
+  // encabezados saltaba de h1 a h3 (Lighthouse «heading-order»). Nombra también la lista.
+  const headingId = `${sequenceId}-ingredientes`;
   return (
-    <ol className="relative h-full w-full" aria-label={ariaLabel}>
-      {ingredientes.map((ing, i) => (
-        <li
-          key={ing.id}
-          ref={(el) => {
-            refs.current[i] = el;
-          }}
-          data-active="false"
-          className="absolute inset-x-4 bottom-10 opacity-0 will-change-[opacity,transform] md:inset-x-auto md:bottom-auto md:left-[var(--x)] md:top-[var(--y)] md:w-[min(28vw,360px)]"
-          style={{ "--x": `${ing.ancla.x}%`, "--y": `${ing.ancla.y}%` } as CSSProperties}
-        >
-          <GlassPanel
-            className={cx(
-              "p-5 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.8)]",
-              ing.lado === "derecha" ? "md:border-l-accent md:border-l-2" : "md:border-r-accent md:border-r-2"
-            )}
+    <>
+      <h2 id={headingId} className="sr-only">
+        {ariaLabel}
+      </h2>
+      <ol className="relative h-full w-full" aria-labelledby={headingId}>
+        {ingredientes.map((ing, i) => (
+          <li
+            key={ing.id}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+            data-active="false"
+            className="absolute inset-x-4 bottom-10 opacity-0 will-change-[opacity,transform] md:inset-x-auto md:bottom-auto md:left-[var(--x)] md:top-[var(--y)] md:w-[min(28vw,360px)]"
+            style={{ "--x": `${ing.ancla.x}%`, "--y": `${ing.ancla.y}%` } as CSSProperties}
           >
-            <Eyebrow variant="mono-sm">
-              {String(i + 1).padStart(2, "0")} / {String(ingredientes.length).padStart(2, "0")} · {ing.dato}
-            </Eyebrow>
-            <h3 className="font-display mt-2 text-xl uppercase tracking-tight md:text-2xl">{ing.nombre}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted">{ing.descripcion}</p>
-          </GlassPanel>
-        </li>
-      ))}
-    </ol>
+            <GlassPanel
+              className={cx(
+                "p-5 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.8)]",
+                ing.lado === "derecha" ? "md:border-l-accent md:border-l-2" : "md:border-r-accent md:border-r-2"
+              )}
+            >
+              <Eyebrow variant="mono-sm">
+                {String(i + 1).padStart(2, "0")} / {String(ingredientes.length).padStart(2, "0")} · {ing.dato}
+              </Eyebrow>
+              <h3 className="font-display mt-2 text-xl uppercase tracking-tight md:text-2xl">{ing.nombre}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{ing.descripcion}</p>
+            </GlassPanel>
+          </li>
+        ))}
+      </ol>
+    </>
   );
 }

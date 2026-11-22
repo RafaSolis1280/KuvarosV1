@@ -1,4 +1,6 @@
 // DEV-38 · Panel translúcido (vidrio esmerilado) de las fichas que flotan sobre los videos.
+// DEV-29: opacidad 92 % (antes 75 %). Sobre la bolsa blanca del video el texto muted (11-14 px) bajaba a
+// 3.0:1; con 92 % queda ≥ 4.6:1 aunque detrás haya blanco puro. El desenfoque sigue dejando ver el video.
 import type { ReactNode, Ref } from "react";
 import { cx } from "@/lib/cx";
 
@@ -14,7 +16,7 @@ interface Props {
 
 export default function GlassPanel({ children, radius = "md", className, ref }: Props) {
   return (
-    <div ref={ref} className={cx(RADIUS[radius], "border border-ink/10 bg-surface-deep/75 backdrop-blur-md", className)}>
+    <div ref={ref} className={cx(RADIUS[radius], "border border-ink/10 bg-surface-deep/92 backdrop-blur-md", className)}>
       {children}
     </div>
   );

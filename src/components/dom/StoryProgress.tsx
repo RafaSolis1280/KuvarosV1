@@ -65,9 +65,12 @@ export default function StoryProgress({ sequenceId, chapters }: Props) {
               ref={(el) => {
                 titleRefs.current[i] = el;
               }}
-              className="absolute inset-x-0 text-center font-mono text-[11px] uppercase tracking-[0.3em] text-ink/70 opacity-0 will-change-[opacity,transform]"
+              className="absolute inset-x-0 text-center font-mono text-[11px] uppercase tracking-[0.3em] text-ink opacity-0 will-change-[opacity,transform]"
             >
-              <span className="text-accent">{chapter.numero}</span> · {chapter.titulo}
+              {/* DEV-29: píldora oscura propia; sin ella, sobre el pan o la bolsa blanca el título bajaba a 1.0:1 */}
+              <span className="rounded-full bg-surface-deep/92 px-3 py-1 backdrop-blur-md">
+                <span className="text-accent">{chapter.numero}</span> · {chapter.titulo}
+              </span>
             </p>
           ))}
         </div>
