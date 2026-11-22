@@ -11,7 +11,7 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 22-11-2026 (DEV-34: cabeceras de seguridad y caché; DEV-28: Core Web Vitals y bundle; DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 22-11-2026 (DEV-01: Performance Budget y matriz de dispositivos (propuesta); DEV-34: cabeceras de seguridad y caché; DEV-28: Core Web Vitals y bundle; DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
@@ -40,8 +40,9 @@
 | BUG-01 · Un enlace directo a /#contacto cae en mitad del video | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `fix/bug-01-ancla-directa` (apilada sobre `docs/dev-26-informe-memoria`) | PR → `docs/dev-26-informe-memoria` (o a `main` cuando se fusionen las anteriores) | Criterios 3/3. Falta la revisión de Rafael (toca `SmoothScrollProvider` y `config/motion.ts`) |
 | DEV-27 · Prueba de tiers y fallbacks | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-27-override-tiers` (apilada sobre `fix/bug-01-ancla-directa`) | PR → `fix/bug-01-ancla-directa` (o a `main` cuando se fusionen las anteriores) | Criterios 5/5. Falta la revisión de Rafael (toca `SmoothScrollProvider`, el store y `GlobalCanvas`); repetir en dispositivos reales cuando haya Preview URL |
 | DEV-15 · Post-procesado Bloom + Noise | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-15-postprocesado` (apilada sobre `feat/dev-27-override-tiers`) | PR → `feat/dev-27-override-tiers` (o a `main` cuando se fusionen las anteriores) | Criterios 3/4. ⏳ ≥ 50 FPS en un Android de gama media (Preview URL o dispositivo real). Revisión de Rafael: decide hacerlo en el shader, sin `EffectComposer` ni dependencias nuevas |
-| DEV-28 · Core Web Vitals y bundle | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-28-cwv-bundle` (apilada sobre `feat/dev-15-postprocesado`) | PR → `feat/dev-15-postprocesado` (o a `main` cuando se fusionen las anteriores) | Criterios 3/4. ⏳ Budget de JS de DEV-01 (hoy 292 KB comprimidos de JS inicial; propuesta en `Manuales/qa/DEV-28.md`). Repetir en la Preview URL y en un Android real |
+| DEV-28 · Core Web Vitals y bundle | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-28-cwv-bundle` (apilada sobre `feat/dev-15-postprocesado`) | PR → `feat/dev-15-postprocesado` (o a `main` cuando se fusionen las anteriores) | Criterios 4/4 (el budget de JS de DEV-01 se marcó el 22-11: 246 KB gzip ≤ 250). Falta repetir en la Preview URL y en un Android real; revisión de Rafael |
 | DEV-34 · Dominio, SSL, cabeceras y caché | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-34-cabeceras-seguridad` (apilada sobre `feat/dev-28-cwv-bundle`) | PR → `feat/dev-28-cwv-bundle` (o a `main` cuando se fusionen las anteriores) | Criterios 1/3. ⏳ Dominio + SSL (cliente vía Rafael) y nota de securityheaders.com con la URL pública (Vercel). Revisión de Rafael: toca `next.config.ts` |
+| DEV-01 · Performance Budget y matriz de dispositivos | 🔍 Revisión Interna / QA | Javier (valida DIR) | `docs/dev-01-budget-dispositivos` (apilada sobre `feat/dev-34-cabeceras-seguridad`) | PR → `feat/dev-34-cabeceras-seguridad` (o a `main` cuando se fusionen las anteriores) | Criterios 3/4. ⏳ DIR valida el budget con un comentario. Revisar los valores cuando haya analítica (DIR-01 / DEV-33) |
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -92,6 +93,7 @@
 | 22-11-2026 | DEV-15 | **Bloom suave + grano en el shader de fondo** (macros `POSTFX` y `GRAIN`, sin `EffectComposer` ni dependencias): bloom = la veta con transición ancha y `max()` (no aclara el centro); grano por píxel acotado con `min()` al tope de brillo de DEV-29. Por tier en `BACKGROUND_FX` (T3/T2; T1 sin bloques, con test). Medido con la GPU integrada real: la primera versión con grano a DPR 2 bajaba de ~158 a 64-94 FPS (p95 24 ms), así que el grano queda solo a DPR ≤ 1 (`GRAIN_MAX_DPR`); final 156-160 FPS a DPR 1, 1.5 y 2, igual que sin efecto. Huella del video idéntica antes/después. Informe `Manuales/qa/DEV-15.md`, script `fondo-fx.cjs` | `feat/dev-15-postprocesado` | 🔍 PR pendiente |
 | 22-11-2026 | DEV-28 | **Core Web Vitals y bundle.** Lighthouse móvil ×3: rendimiento 99-100, LCP 0.9 s (el `<h1>` SSR), CLS 0, TBT 80-90 ms. INP de laboratorio (nuevo `inp.cjs`, móvil con CPU ×4 e interacciones reales): 80-88 ms sin formulario y 104-120 ms con el formulario simulado. Bundle con el analizador integrado de Next 16 (`npm run analyze`, sin dependencias) y `bundle-inicial.py`: 292 KB comprimidos de JS inicial (212 framework, 51 GSAP, 16 del sitio); el Canvas WebGL (238 KB) ya era diferido y ahora el cursor personalizado solo se descarga con ratón (`CustomCursorLoader`). Las secciones (1-1.5 KB) no se dividen: lo pesado son los frames, ya por ventana. Informe `Manuales/qa/DEV-28.md` con el HTML de Lighthouse | `feat/dev-28-cwv-bundle` | 🔍 PR pendiente |
 | 22-11-2026 | DEV-34 | **Cabeceras de seguridad y caché** (`src/config/http-headers.ts`, 7 tests, aplicadas en `next.config.ts`): CSP sin nonce para mantener la página estática (solo el propio origen; `unsafe-eval`/`ws:` solo en dev; `upgrade-insecure-requests` solo en Vercel), HSTS 2 años sin preload, nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy y COOP. Caché: `benchmarks` deja de ser `immutable` (se copia de detect-gpu con el mismo nombre en cada install) y un test obliga a clasificar cada carpeta de `/public`. Verificado con `csp.cjs`: 0 violaciones de CSP y 0 errores en producción (SwiftShader, GPU real y reduced motion; recorrido, CTA y formulario con 200) y en `npm run dev`. Informe `Manuales/qa/DEV-34.md` | `feat/dev-34-cabeceras-seguridad` | 🔍 PR pendiente |
+| 22-11-2026 | DEV-01 | **Performance Budget y matriz de QA** (propuesta; sin analítica del cliente rigen los valores del Manual, Fase 0). Fuente única `src/config/budget.ts` con test de peso por video y `npm run budget` (gzip real del JS inicial, sale con error si se pasa). Estado medido: JS inicial 246 KB gzip (≤ 250 móvil, margen 3.6 KB → todo lo nuevo con dynamic import), peso crítico 1.5 / 0.7 MB, total 5.6 / 3.4 MB, videos 1.4+3.9 / 0.9+2.4 MB, LCP 0.9 s, CLS 0, INP 80-120 ms. Matriz de 6 dispositivos concretos. Tabla en la tarjeta 📌 Guía y en §3.7. De paso, corregido el informe de DEV-28 (el analizador sobreestima: 292 → 246 KB gzip reales) y adjuntada la captura del treemap | `docs/dev-01-budget-dispositivos` | 🔍 PR pendiente |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -309,11 +311,14 @@ Cada gate es una tarjeta en la lista **🚦 Gates** con su checklist. **No se em
 
 Cada tarjeta de trabajo lleva una línea de historia (*Como… quiero… para…*) en la descripción y un **checklist de Trello «✔ Criterios de aceptación»** (en los gates, «✔ Criterios de salida»). Cada ítem es una frase completa que dice qué se entrega, cómo se comprueba y, si hace falta, quién lo aprueba. Los ítems ya cumplidos en el código vienen marcados; una tarjeta pasa a «completados» solo con el checklist al 100 % y verificado por otra persona. Este §5 refleja el mismo checklist (`- [x]` cumplido · `- [ ]` pendiente).
 
-Umbrales que usan los criterios (acordados el 20-11-2026; DEV-01 puede ajustarlos con la analítica del cliente):
+Umbrales que usan los criterios (acordados el 20-11-2026; ampliados por DEV-01 el 22-11-2026 con el Performance Budget completo, fuente única en `src/config/budget.ts`; se ajustan con la analítica del cliente):
 
 | Medida | Umbral |
 | :--- | :--- |
-| Peso de cada secuencia | ≤ 8 MB desktop / ≤ 4 MB mobile **por video** |
+| JS inicial (gzip) | ≤ 350 KB desktop / ≤ 250 KB mobile (mismo bundle: manda el de mobile) · `npm run budget` |
+| Peso crítico (hasta el primer impacto) | ≤ 4 MB desktop / ≤ 2 MB mobile |
+| Peso total (con streaming) | ≤ 25 MB desktop / ≤ 12 MB mobile |
+| Peso de cada secuencia | ≤ 8 MB desktop / ≤ 4 MB mobile **por video** (test en `src/config/budget.test.ts`) |
 | FPS | ≥ 55 de media en desktop y ≥ 50 en Android de gama media |
 | Core Web Vitals (Lighthouse móvil) | LCP < 2.5 s, CLS < 0.1, INP < 200 ms; accesibilidad ≥ 95 |
 | Regresión de rendimiento | Lighthouse móvil no baja más de 5 puntos frente a `main` |
@@ -462,9 +467,9 @@ Ref. M Fase 0. Ajustar la tabla según la analítica del cliente.
 
 _Como desarrollo, quiero un Performance Budget y una matriz de dispositivos acordados para medir cada entrega contra números concretos._
 ✔ **Criterios de aceptación** (checklist en Trello):
-- [ ] La tarjeta 📌 Guía tiene una tabla con el límite de: JS inicial, peso crítico, peso total, peso por secuencia (≤ 8 MB desktop / ≤ 4 MB mobile por video), LCP, CLS, INP y FPS.
-- [ ] La matriz de QA nombra 6 dispositivos concretos (modelo y navegador): iPhone reciente, iPhone de 3-4 años, Android gama media, Android gama baja, MacBook y Windows con GPU integrada.
-- [ ] Cada valor está ajustado a la analítica de DIR-01, o se explica por qué se usa el valor del manual si no hay datos.
+- [x] La tarjeta 📌 Guía tiene una tabla con el límite de: JS inicial, peso crítico, peso total, peso por secuencia (≤ 8 MB desktop / ≤ 4 MB mobile por video), LCP, CLS, INP y FPS.
+- [x] La matriz de QA nombra 6 dispositivos concretos (modelo y navegador): iPhone reciente, iPhone de 3-4 años, Android gama media, Android gama baja, MacBook y Windows con GPU integrada.
+- [x] Cada valor está ajustado a la analítica de DIR-01, o se explica por qué se usa el valor del manual si no hay datos.
 - [ ] DIR valida el budget con un comentario en la tarjeta.
 
 **DIR-03 · Registro de licencias** — DIR · `SEO/Negocio` `P1` · 1 h · G1
@@ -1063,7 +1068,7 @@ _Como desarrollo, quiero comprobar cada tier y cada fallback para garantizar que
 _Como visitante en móvil, quiero que el sitio cargue rápido y responda al instante._
 ✔ **Criterios de aceptación** (checklist en Trello):
 - [x] Lighthouse móvil: LCP < 2.5 s, CLS < 0.1 e INP < 200 ms (informe adjunto).
-- [ ] El JS inicial entra en el budget de DEV-01 (captura del bundle analyzer adjunta).
+- [x] El JS inicial entra en el budget de DEV-01 (captura del bundle analyzer adjunta).
 - [x] El Canvas WebGL se carga en diferido (hecho en DEV-07).
 - [x] Las secciones pesadas se cargan con dynamic import.
 

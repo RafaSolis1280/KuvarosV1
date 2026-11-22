@@ -26,6 +26,7 @@ npm run dev              # http://localhost:3000
 | :--- | :--- |
 | `npm run dev` | Servidor de desarrollo (Turbopack) |
 | `npm run build` | Build de producción |
+| `npm run budget` | Tras `npm run build`: JS inicial de `/` en gzip contra el Performance Budget (DEV-01, `src/config/budget.ts`); falla si se pasa |
 | `npm run analyze -- --output` | Analizador de bundle de Next (Turbopack), sin dependencias; resumen con `Manuales/qa/scripts/bundle-inicial.py` (DEV-28) |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |

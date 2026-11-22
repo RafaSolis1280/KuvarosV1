@@ -46,14 +46,25 @@ npx next analyze export --snapshot <nombre> --route / > grafo.jsonl   # en Git B
 python Manuales/qa/scripts/bundle-inicial.py grafo.jsonl
 ```
 
+![Treemap del analizador: lo rayado es lo diferido (three.js y R3F)](./DEV-28/bundle-analyzer.png)
+
 ### JS de la ruta `/`
 
-| | Antes | Ahora |
-| :--- | :-: | :-: |
-| **JS inicial** (comprimido) | 292.7 KB | **292.0 KB** |
-| JS diferido con `dynamic import` (comprimido) | 238.5 KB (Canvas WebGL) | 239.7 KB (Canvas WebGL + cursor) |
+**Medido sobre lo que viaja** (`npm run budget`, DEV-01: gzip nivel 6 de los scripts que pide el HTML):
+**246.4 KB gzip · 214.8 KB brotli** (Vercel sirve brotli). El budget de DEV-01 es ≤ 250 KB gzip en móvil y ≤ 350 KB
+en desktop: ✅ dentro, con un margen de 3.6 KB en móvil. Todo lo nuevo que pese tiene que ir con `dynamic import`.
 
-### Qué hay en el JS inicial (KB comprimidos)
+El analizador da otra cifra, que es su propia estimación de compresión y queda por encima de la real. Sirve para
+comparar módulos entre sí, no para controlar el budget:
+
+| Estimación del analizador | Antes | Ahora |
+| :--- | :-: | :-: |
+| JS inicial | 292.7 KB | 292.0 KB |
+| JS diferido con `dynamic import` | 238.5 KB (Canvas WebGL) | 239.7 KB (Canvas WebGL + cursor) |
+
+`polyfill-nomodule.js` (38 KB) aparece en el treemap, pero solo lo descargan navegadores sin módulos ES; los actuales no lo piden.
+
+### Qué hay en el JS inicial (estimación del analizador, KB)
 
 | Paquete | KB | Comentario |
 | :--- | :-: | :--- |
@@ -80,7 +91,6 @@ python Manuales/qa/scripts/bundle-inicial.py grafo.jsonl
 
 ## Pendiente
 
-- **Budget de JS (criterio 2):** depende de DEV-01, que todavía no lo fijó (necesita DIR-01). Dato para decidirlo: hoy el
-  JS inicial es de 292 KB comprimidos, de los cuales 212 KB son el framework. Una propuesta razonable sería **≤ 300 KB
-  comprimidos de JS inicial** con la regla de que todo lo nuevo de más de 20 KB se cargue con `dynamic import`.
+- El budget de DEV-01 sigue los valores del Manual porque no hay analítica del cliente. Si DIR lo cambia, se vuelve a
+  comprobar con `npm run budget`.
 - Repetir Lighthouse e INP en la Preview URL de Vercel y en un Android real, cuando estén disponibles.

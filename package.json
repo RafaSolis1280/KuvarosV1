@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "analyze": "next analyze",
+    "budget": "node Manuales/qa/scripts/budget-js.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
