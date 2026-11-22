@@ -58,6 +58,10 @@ detect-gpu → tier 0 → sin Canvas). En el build de producción la URL no camb
 
 Las capas de apilamiento (`z-index`) están definidas una sola vez en `src/app/globals.css` como utilidades `stack-canvas`, `stack-content`, `stack-section`, `stack-nav` y `stack-top`: no usar `z-[n]` sueltos. Los tests viven junto a cada módulo (`*.test.ts`).
 
+**Cabeceras HTTP (DEV-34).** Seguridad (CSP, HSTS, etc.) y caché de `/public` en `src/config/http-headers.ts`, aplicadas
+por `next.config.ts`. Si el sitio empieza a cargar algo de otro dominio (analítica, un servicio externo), hay que sumarlo a la
+CSP ahí. Toda carpeta nueva de `/public` debe clasificarse como versionada (`immutable`) o no (se revalida): lo exige un test.
+
 **Variables de entorno (Vercel).** La URL pública (canónica, Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD) se resuelve
 en `src/config/site.ts`: `NEXT_PUBLIC_SITE_URL` (dominio oficial, DEV-34) → `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_URL`
 (las dos últimas las define Vercel solo, así que las Preview URLs ya salen bien) → `http://localhost:3000`.

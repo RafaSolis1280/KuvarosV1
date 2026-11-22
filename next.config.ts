@@ -1,12 +1,20 @@
 import type { NextConfig } from "next";
+import {
+  CACHE_CONTROL,
+  UNVERSIONED_ASSET_DIRS,
+  VERSIONED_ASSET_DIRS,
+  securityHeaders,
+} from "./src/config/http-headers";
 
 /**
  * Ref: Manual v2 Parte II §3 (next.config.ts) y Paso 26 (caché inmutable).
  * Recordatorio: con `immutable`, cada cambio de un asset requiere NOMBRE o CARPETA nuevos
- * (p. ej. `/sequences/hero_explode_v2/`).
+ * (p. ej. `/sequences/hero_explode_v2/`). Qué carpeta va en cada grupo: src/config/http-headers.ts (DEV-34).
  */
-const IMMUTABLE_ASSET_DIRS =
-  "sequences|benchmarks|audio|fonts|fallback|photos";
+const headerEnv = {
+  isDev: process.env.NODE_ENV === "development",
+  isHttpsDeploy: Boolean(process.env.VERCEL),
+};
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -24,9 +32,17 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // DEV-34 · Seguridad en todas las rutas
+      { source: "/:path*", headers: securityHeaders(headerEnv) },
+      // Caché: un año sin revalidar solo para lo versionado por nombre o carpeta
       {
-        source: `/:dir(${IMMUTABLE_ASSET_DIRS})/:path*`,
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+        source: `/:dir(${VERSIONED_ASSET_DIRS.join("|")})/:path*`,
+        headers: [{ key: "Cache-Control", value: CACHE_CONTROL.immutable }],
+      },
+      // Lo que cambia sin cambiar de nombre (benchmarks de detect-gpu): caché corta que se revalida
+      {
+        source: `/:dir(${UNVERSIONED_ASSET_DIRS.join("|")})/:path*`,
+        headers: [{ key: "Cache-Control", value: CACHE_CONTROL.revalidate }],
       },
     ];
   },
