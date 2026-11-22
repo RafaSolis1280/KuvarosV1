@@ -4,6 +4,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { DEFAULT_TIER, GPU_STRICT_POLICIES, tierFromGPU } from "@/config/gpu-policy";
+import { BACKGROUND_FX } from "@/config/scene";
 import { PRODUCT_STORY } from "@/config/sequences";
 import { CONTACT_SECTION_ID } from "@/config/site";
 import { PRODUCTO } from "@/content/producto";
@@ -76,5 +77,21 @@ describe("contenido", () => {
     expect(new Set(ids).size).toBe(ids.length);
     const labels = PRODUCTO.packaging.especificaciones.map((e) => e.etiqueta);
     expect(new Set(labels).size).toBe(labels.length);
+  });
+});
+
+describe("BACKGROUND_FX (DEV-15 · bloom + grano del fondo)", () => {
+  it("existe exactamente para los tiers con enablePostProcessing (en T1 no hay acabado)", () => {
+    for (const policy of Object.values(GPU_STRICT_POLICIES)) {
+      expect(Boolean(BACKGROUND_FX[policy.tier])).toBe(policy.enablePostProcessing);
+    }
+  });
+  it("las intensidades son sutiles: bloom en (0, 1] y grano < 6 % del rango", () => {
+    for (const fx of Object.values(BACKGROUND_FX)) {
+      expect(fx.bloom).toBeGreaterThan(0);
+      expect(fx.bloom).toBeLessThanOrEqual(1);
+      expect(fx.grain).toBeGreaterThan(0);
+      expect(fx.grain).toBeLessThan(0.06);
+    }
   });
 });

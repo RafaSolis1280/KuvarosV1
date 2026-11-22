@@ -5,7 +5,9 @@
 // Aquí se enchufan, cada uno en su tarjeta:
 //   DEV-10 → <BackgroundShaderQuad /> (shader de fondo fluido)
 //   (DEV-11 descartada por DEV-37: el proyecto no usa modelos 3D, solo video)
-//   DEV-15 → <EffectComposer> (Bloom + Noise) solo si gpuPolicy.enablePostProcessing
+//   DEV-15 → bloom + grano DENTRO del shader de fondo (BackgroundShaderQuad), solo si
+//            gpuPolicy.enablePostProcessing. Sin EffectComposer: el único contenido WebGL es un quad a
+//            pantalla completa, y una pasada aparte costaría render targets y ancho de banda sin ganar nada.
 
 import { Component, type ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
