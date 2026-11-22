@@ -5,7 +5,7 @@ import SkipLink from "@/components/layout/SkipLink";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import JsonLd from "@/components/seo/JsonLd";
-import CustomCursor from "@/components/dom/CustomCursor";
+import CustomCursorLoader from "@/components/dom/CustomCursorLoader";
 import { fontVariables } from "./fonts";
 import { createSiteMetadata } from "@/lib/seo";
 import { MAIN_CONTENT_ID, SITE } from "@/config/site";
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <SiteFooter />
-          <CustomCursor />
+          <CustomCursorLoader />
         </SmoothScrollProvider>
       </body>
     </html>

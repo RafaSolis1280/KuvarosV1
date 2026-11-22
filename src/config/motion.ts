@@ -118,6 +118,8 @@ export const HERO_TITLE = {
  * El punto sigue al puntero exacto; el anillo lo alcanza con damp() (inercia independiente de los FPS).
  */
 export const CUSTOM_CURSOR = {
+  /** Dispositivos con ratón o trackpad (los únicos donde se monta, y se descarga, el cursor: DEV-28) */
+  finePointerQuery: "(hover: hover) and (pointer: fine)",
   /** λ de damp() del anillo: más alto = lo alcanza antes */
   ringLambda: 16,
   /** Escala del anillo sobre enlaces y botones */

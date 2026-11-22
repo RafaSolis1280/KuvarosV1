@@ -11,7 +11,7 @@
 ## 0. ESTADO ACTUAL DEL TABLERO (registro vivo)
 
 > **Obligatorio:** cada rama que empieza, avanza o cierra una tarjeta actualiza esta sección **en la misma rama/PR** (ver Guía de gobernanza GitHub §4). Si no está aquí, el equipo no sabe que existe.
-> **Última actualización:** 22-11-2026 (DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
+> **Última actualización:** 22-11-2026 (DEV-28: Core Web Vitals y bundle; DEV-15: bloom + grano del fondo; DEV-27: override de tiers y 5 escenarios; BUG-01: enlace directo a una sección; DEV-26: informe de memoria (5/5); DEV-29: contraste y Lighthouse accesibilidad 100; DEV-24: cursor personalizado; DEV-25: formulario de contacto y footer; DEV-30: SEO técnico; DEV-18: titular cinético; DEV-17: cabecera fija con CTA; verificación de criterios: DEV-09 → Hecho, 9 criterios marcados; DEV-40: historia continua y aparición de las fichas; DEV-39: fluidez de los videos; DEV-38: refactor modular, nueva estructura en §0.5; verificación de `main` `2d442b7` contra los criterios de Trello; PR #17 integrado) · **Sprint:** 1 · **Actualizado por:** DEV (Claude Code, cuenta GitHub `Gomezinho`)
 
 ### 0.1 Tarjetas activas
 
@@ -40,6 +40,7 @@
 | BUG-01 · Un enlace directo a /#contacto cae en mitad del video | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `fix/bug-01-ancla-directa` (apilada sobre `docs/dev-26-informe-memoria`) | PR → `docs/dev-26-informe-memoria` (o a `main` cuando se fusionen las anteriores) | Criterios 3/3. Falta la revisión de Rafael (toca `SmoothScrollProvider` y `config/motion.ts`) |
 | DEV-27 · Prueba de tiers y fallbacks | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-27-override-tiers` (apilada sobre `fix/bug-01-ancla-directa`) | PR → `fix/bug-01-ancla-directa` (o a `main` cuando se fusionen las anteriores) | Criterios 5/5. Falta la revisión de Rafael (toca `SmoothScrollProvider`, el store y `GlobalCanvas`); repetir en dispositivos reales cuando haya Preview URL |
 | DEV-15 · Post-procesado Bloom + Noise | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-15-postprocesado` (apilada sobre `feat/dev-27-override-tiers`) | PR → `feat/dev-27-override-tiers` (o a `main` cuando se fusionen las anteriores) | Criterios 3/4. ⏳ ≥ 50 FPS en un Android de gama media (Preview URL o dispositivo real). Revisión de Rafael: decide hacerlo en el shader, sin `EffectComposer` ni dependencias nuevas |
+| DEV-28 · Core Web Vitals y bundle | 🔍 Revisión Interna / QA | Javier (revisa Rafael) | `feat/dev-28-cwv-bundle` (apilada sobre `feat/dev-15-postprocesado`) | PR → `feat/dev-15-postprocesado` (o a `main` cuando se fusionen las anteriores) | Criterios 3/4. ⏳ Budget de JS de DEV-01 (hoy 292 KB comprimidos de JS inicial; propuesta en `Manuales/qa/DEV-28.md`). Repetir en la Preview URL y en un Android real |
 
 ### 0.2 Bitácora de trabajo realizado
 
@@ -88,6 +89,7 @@
 | 22-11-2026 | BUG-01 | **Enlace directo a una sección** (`/#contacto`): tras cada `ScrollTrigger.refresh()` se vuelve a llevar el scroll a la sección del hash (hasta que el usuario interactúa o pasan 1.5 s desde la carga). Dos causas: el pin de la historia se crea después del salto nativo del navegador, y Lenis recortaba el destino a su alto viejo (faltaba `lenis.resize()`). Destino calculado con el scroll real (`lib/hashTarget.ts`, 5 tests). Probado en Chrome headless con build de producción: `/#contacto` → contacto a 72 px (bajo la cabecera) con Lenis, con reduced motion, con CPU ×4 y en 375 px; `/#inicio` → 0; CTA y logo siguen igual; tras el enlace el usuario se desplaza libremente | `fix/bug-01-ancla-directa` | 🔍 PR pendiente |
 | 22-11-2026 | DEV-27 | **Override de desarrollo** (`lib/dev-overrides.ts`, 4 tests): `?tier=1|2|3` fija la política (`pinGPUTier` en el store; sin PerformanceMonitor) y `?nowebgl` bloquea los contextos WebGL para recorrer el camino real (detect-gpu → tier 0 → sin Canvas). En producción el código se elimina (verificado: `/?tier=3&nowebgl` igual que `/`). Informe `Manuales/qa/DEV-27.md` con 10 capturas y script `tiers.cjs`: dpr 2/1.5/1, variante desktop/mobile y ventana 71/37/17 = 2R+1 según el tier; sin WebGL 0 canvas WebGL, recorrido completo y CTA OK; reduced motion sin Lenis y fondo quieto; 0 errores de consola | `feat/dev-27-override-tiers` | 🔍 PR pendiente |
 | 22-11-2026 | DEV-15 | **Bloom suave + grano en el shader de fondo** (macros `POSTFX` y `GRAIN`, sin `EffectComposer` ni dependencias): bloom = la veta con transición ancha y `max()` (no aclara el centro); grano por píxel acotado con `min()` al tope de brillo de DEV-29. Por tier en `BACKGROUND_FX` (T3/T2; T1 sin bloques, con test). Medido con la GPU integrada real: la primera versión con grano a DPR 2 bajaba de ~158 a 64-94 FPS (p95 24 ms), así que el grano queda solo a DPR ≤ 1 (`GRAIN_MAX_DPR`); final 156-160 FPS a DPR 1, 1.5 y 2, igual que sin efecto. Huella del video idéntica antes/después. Informe `Manuales/qa/DEV-15.md`, script `fondo-fx.cjs` | `feat/dev-15-postprocesado` | 🔍 PR pendiente |
+| 22-11-2026 | DEV-28 | **Core Web Vitals y bundle.** Lighthouse móvil ×3: rendimiento 99-100, LCP 0.9 s (el `<h1>` SSR), CLS 0, TBT 80-90 ms. INP de laboratorio (nuevo `inp.cjs`, móvil con CPU ×4 e interacciones reales): 80-88 ms sin formulario y 104-120 ms con el formulario simulado. Bundle con el analizador integrado de Next 16 (`npm run analyze`, sin dependencias) y `bundle-inicial.py`: 292 KB comprimidos de JS inicial (212 framework, 51 GSAP, 16 del sitio); el Canvas WebGL (238 KB) ya era diferido y ahora el cursor personalizado solo se descarga con ratón (`CustomCursorLoader`). Las secciones (1-1.5 KB) no se dividen: lo pesado son los frames, ya por ventana. Informe `Manuales/qa/DEV-28.md` con el HTML de Lighthouse | `feat/dev-28-cwv-bundle` | 🔍 PR pendiente |
 
 ### 0.3 Bloqueos y dependencias abiertas
 
@@ -1058,10 +1060,10 @@ _Como desarrollo, quiero comprobar cada tier y cada fallback para garantizar que
 
 _Como visitante en móvil, quiero que el sitio cargue rápido y responda al instante._
 ✔ **Criterios de aceptación** (checklist en Trello):
-- [ ] Lighthouse móvil: LCP < 2.5 s, CLS < 0.1 e INP < 200 ms (informe adjunto).
+- [x] Lighthouse móvil: LCP < 2.5 s, CLS < 0.1 e INP < 200 ms (informe adjunto).
 - [ ] El JS inicial entra en el budget de DEV-01 (captura del bundle analyzer adjunta).
 - [x] El Canvas WebGL se carga en diferido (hecho en DEV-07).
-- [ ] Las secciones pesadas se cargan con dynamic import.
+- [x] Las secciones pesadas se cargan con dynamic import.
 
 ---
 

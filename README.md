@@ -26,6 +26,7 @@ npm run dev              # http://localhost:3000
 | :--- | :--- |
 | `npm run dev` | Servidor de desarrollo (Turbopack) |
 | `npm run build` | Build de producción |
+| `npm run analyze -- --output` | Analizador de bundle de Next (Turbopack), sin dependencias; resumen con `Manuales/qa/scripts/bundle-inicial.py` (DEV-28) |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Tests unitarios (Vitest): lógica de secuencias, aparición de fichas, configuración y contenido |

@@ -14,7 +14,6 @@ import { useExperienceStore } from "@/store/useExperienceStore";
 import { CUSTOM_CURSOR } from "@/config/motion";
 import "./CustomCursor.css";
 
-const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 const INTERACTIVE = "a[href], button, [role='button'], summary, label";
 const TEXT_FIELD = "input, textarea, select, [contenteditable='true']";
 
@@ -29,7 +28,7 @@ export default function CustomCursor() {
     const ring = ringRef.current;
     if (!root || !dot || !ring) return;
 
-    const finePointer = window.matchMedia(FINE_POINTER);
+    const finePointer = window.matchMedia(CUSTOM_CURSOR.finePointerQuery);
     let stop: (() => void) | null = null;
 
     const start = () => {
