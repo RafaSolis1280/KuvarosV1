@@ -10,6 +10,18 @@ export const SMOOTH_SCROLL = {
   touchMultiplier: 1.5,
 } as const;
 
+/**
+ * BUG-01 · Enlace directo a una sección (`/#contacto`). El navegador salta al ancla con el layout del
+ * servidor; después ScrollTrigger crea los pins de la historia (≈ 6500 px más de página) y el ancla
+ * queda en mitad del video. Se vuelve a alinear tras cada `ScrollTrigger.refresh()` hasta que el
+ * usuario interactúa o pasan `settleMs` desde la carga completa (fuentes e imágenes ya medidas).
+ */
+export const ANCHOR_ON_LOAD = {
+  settleMs: 1500,
+  /** Cualquiera de estos eventos significa que el usuario ya decidió dónde estar */
+  userEvents: ["wheel", "touchstart", "keydown", "pointerdown"],
+} as const;
+
 /** Constantes λ de `damp()` (Hard Constraint 3): más alto = responde más rápido */
 export const DAMPING = {
   /** Brillo del fondo que sigue al puntero (DEV-10) */
