@@ -19,7 +19,12 @@ export interface FrameCacheOptions<T extends DecodedFrame> {
   /** Frame que se está mostrando ahora (para descartar cargas que llegan tarde) */
   center: () => number;
   /** Descarga y decodifica un frame */
-  load: (url: string) => Promise<T>;
+  /**
+   * Descarga y decodifica un frame. `stillNeeded` dice si el frame sigue dentro de la ventana: el cargador
+   * lo consulta justo antes de decodificar y, si ya no hace falta, no lo decodifica (DEV-26: así no aparece
+   * ni por un instante un bitmap de más sobre los 2R+1, y se ahorra CPU en el scroll rápido).
+   */
+  load: (url: string, stillNeeded: () => boolean) => Promise<T>;
   /** Se llama cuando un frame queda disponible */
   onReady?: (index: number) => void;
 }
@@ -28,11 +33,15 @@ export interface FrameCacheOptions<T extends DecodedFrame> {
  * Cargador por defecto: descarga + createImageBitmap (decodifica fuera del hilo principal).
  * DEV-13: la descarga es compartida con el preloader (lib/sequence/prefetch): un frame nunca viaja dos veces.
  */
-export async function loadImageBitmap(url: string): Promise<ImageBitmap> {
+export async function loadImageBitmap(url: string, stillNeeded: () => boolean = () => true): Promise<ImageBitmap> {
   const blob = await fetchFrame(url, "high");
   if (!blob) throw new Error(`frame no disponible: ${url}`);
+  if (!stillNeeded()) throw new FrameNotNeeded(url);
   return createImageBitmap(blob);
 }
+
+/** El frame se descargó pero la ventana ya se movió: no se decodifica (no es un error) */
+export class FrameNotNeeded extends Error {}
 
 export class FrameCache<T extends DecodedFrame = ImageBitmap> {
   private frames: (T | null)[];
@@ -106,7 +115,7 @@ export class FrameCache<T extends DecodedFrame = ImageBitmap> {
     this.loading[index] = true;
     const gen = this.generation;
     this.opts
-      .load(this.opts.url(index))
+      .load(this.opts.url(index), () => gen === this.generation && Math.abs(index - this.opts.center()) <= this.opts.radius())
       .then((frame) => {
         // Llegó tarde: la caché se vació o el usuario ya está lejos de este frame
         if (gen !== this.generation || Math.abs(index - this.opts.center()) > this.opts.radius()) {

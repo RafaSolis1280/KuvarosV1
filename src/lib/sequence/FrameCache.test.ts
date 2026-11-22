@@ -129,4 +129,26 @@ describe("FrameCache", () => {
     expect(cache.get(0)).toBeNull();
     expect(cache.nearestLoaded(0)).toBe(1);
   });
+
+  it("el cargador sabe si el frame sigue en la ventana antes de decodificarlo (DEV-26: nunca un bitmap de más)", () => {
+    const state = { center: 5 };
+    const asked = new Map<string, () => boolean>();
+    const cache = new FrameCache<FakeFrame>({
+      count: 30,
+      url: (i) => `f${i}`,
+      radius: () => 2,
+      center: () => state.center,
+      load: (url, stillNeeded) => {
+        asked.set(url, stillNeeded);
+        return new Promise<FakeFrame>(() => {}); // la descarga queda en vuelo
+      },
+    });
+    cache.sync(5);
+    expect(asked.get("f7")?.()).toBe(true); // dentro de [3, 7]
+    state.center = 20; // el usuario se fue lejos mientras se descargaba
+    expect(asked.get("f7")?.()).toBe(false); // el cargador no lo decodifica
+    cache.reset(30, (i) => `f${i}`);
+    state.center = 5;
+    expect(asked.get("f5")?.()).toBe(false); // otra generación (caché vaciada): tampoco
+  });
 });
