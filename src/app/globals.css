@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * DEV-08 · Tokens de marca de Kuvaro's (Manual de marca, Página 4 y 5).
+ * Paleta oficial: Negro Profundo #303030 · Beige Claro #DDD1B7 · Amarillo Mostaza #DDA730.
+ * Regla 60-30-10: fondo negro (60 %), texto/neutros beige (30 %), mostaza solo para acentos y CTA (10 %).
+ * Los mismos HEX están en src/config/brand.ts para el shader y los canvas.
+ *
+ * Contraste (WCAG 2.1) sobre surface #303030: ink 8.6:1 · accent 6.2:1 · muted 4.9:1 → AA en texto normal.
+ */
+@theme {
+  /* No llamar "base" a un color: chocaría con la utilidad de tamaño `text-base` (pintaría el texto del color del fondo). */
+  --color-surface: #303030; /* Negro Profundo */
+  --color-surface-deep: #242424; /* derivado: paneles y degradados, más oscuro que el fondo */
+  --color-accent: #dda730; /* Amarillo Mostaza */
+  --color-ink: #ddd1b7; /* Beige Claro */
+  --color-muted: #a69d8a; /* derivado del beige (≈ 70 %) para textos secundarios */
+  --color-on-accent: #303030; /* texto sobre botones mostaza */
+
+  /* Tipografías: las variables las declara next/font en layout.tsx */
+  --font-display: var(--font-kuvaros-display), "Georgia", serif;
+  --font-sans: var(--font-kuvaros-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* DEV-17 · Altura de la cabecera fija: genera `h-nav`, `pt-nav`, `top-nav`… para dejarle sitio al contenido */
+  --spacing-nav: 4.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/*
+ * DEV-38 · Capas de apilamiento (z-index) del sitio, de abajo hacia arriba. Usar estas utilidades
+ * en lugar de z-[n] sueltos, para que el orden se lea y se cambie en un solo lugar.
+ */
+@utility stack-canvas {
+  z-index: 1; /* Canvas WebGL fijo del fondo (Single-Canvas) */
+}
+@utility stack-content {
+  z-index: 10; /* <main> con todo el contenido */
+}
+@utility stack-section {
+  z-index: 15; /* Secciones con fondo propio que tapan el canvas (videos, fotos, conversión) */
+}
+@utility stack-nav {
+  z-index: 50; /* Cabecera fija con el CTA (DEV-17): por encima de las secuencias fijadas */
+}
+@utility stack-top {
+  z-index: 100; /* Elementos que deben quedar por encima de todo (enlace «Saltar al contenido») */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
