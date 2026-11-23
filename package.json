@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "analyze": "next analyze",
+    "budget": "node Manuales/qa/scripts/budget-js.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
     "postinstall": "node scripts/copy-decoders.mjs",
     "frames": "node scripts/video-to-frames.mjs"
   },
@@ -32,7 +35,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "3.2.7"
   },
   "engines": {
     "node": ">=20.9.0"

@@ -1,9 +1,12 @@
 // DEV-10 · Ref: Manual v2 Parte II §8 (Prompt P4). GLSL estándar de three (ShaderMaterial):
 // sin #version ni precision, three los inyecta. Hash sin sin() → estable en GPUs móviles mediump.
+// DEV-15: con la macro POSTFX (solo T2/T3) se suma el bloom suave; con GRAIN (además, solo a DPR ≤ 1)
+// el grano de película. Sin las macros, esos bloques no existen en el programa compilado.
 import * as THREE from "three";
 import { shaderMaterial } from "@react-three/drei";
 import { extend, type ThreeElement } from "@react-three/fiber";
 import { BRAND_COLORS } from "@/config/brand";
+import { BACKGROUND_MAX_ACCENT } from "@/config/scene";
 
 export const FluidBackgroundMaterial = shaderMaterial(
   {
@@ -13,6 +16,8 @@ export const FluidBackgroundMaterial = shaderMaterial(
     uPointer: new THREE.Vector2(0, 0),
     uColorBase: new THREE.Color(BRAND_COLORS.negroProfundo),
     uColorAccent: new THREE.Color(BRAND_COLORS.amarilloMostaza),
+    uBloom: 0,
+    uGrain: 0,
   },
   /* glsl */ `
     varying vec2 vUv;
@@ -29,6 +34,12 @@ export const FluidBackgroundMaterial = shaderMaterial(
     uniform vec2  uPointer;
     uniform vec3  uColorBase;
     uniform vec3  uColorAccent;
+    uniform float uBloom;
+    uniform float uGrain;
+
+    // Mezcla máxima de mostaza que puede alcanzar el fondo (veta con el scroll más rápido + brillo del
+    // puntero). El contraste del texto (DEV-29) se calculó contra este tope: el acabado no lo supera.
+    const float MAX_ACCENT = ${BACKGROUND_MAX_ACCENT.toFixed(6)}; // config/scene.ts (fuente única)
 
     // Hash sin sin() (Dave Hoskins)
     float hash12(vec2 p) {
@@ -51,9 +62,22 @@ export const FluidBackgroundMaterial = shaderMaterial(
       float warp    = clamp(abs(uScrollVelocity) * 0.015, 0.0, 0.35);
       float n       = valueNoise(vUv * 4.5 + vec2(uTime * 0.12, uTime * 0.08 + warp));
       float glow    = smoothstep(0.42, 0.0, dist) * 0.18;
-      float vein    = smoothstep(0.62, 0.68, n + glow) * (0.08 + warp * 0.25);
+      float veinAmp = 0.08 + warp * 0.25;
+      float vein    = smoothstep(0.62, 0.68, n + glow) * veinAmp;
+    #ifdef POSTFX
+      // Bloom: la misma veta con una transición mucho más ancha es su versión desenfocada. Se toma el
+      // máximo (no la suma), así la luz se derrama alrededor sin aclarar el centro de la veta.
+      float halo    = smoothstep(0.42, 0.74, n + glow) * veinAmp * uBloom;
+      vein          = max(vein, halo);
+    #endif
       vec3  color   = mix(uColorBase, uColorAccent, (vein + glow * 0.35) * uIntensity);
-      gl_FragColor  = vec4(color, 1.0);
+    #ifdef GRAIN
+      // Grano de película: ruido por píxel que cambia cada frame (con reduced motion el tiempo está
+      // congelado y queda fijo). Además disimula el banding del degradado oscuro. Nunca supera el tope.
+      float grain   = hash12(gl_FragCoord.xy + floor(fract(uTime * 0.37) * 997.0)) - 0.5;
+      color         = min(color + grain * uGrain, mix(uColorBase, uColorAccent, MAX_ACCENT * uIntensity));
+    #endif
+      gl_FragColor  = vec4(max(color, 0.0), 1.0);
     }
   `
 );

@@ -2,82 +2,86 @@
 
 // DEV-37 · Ficha técnica del packaging sobre su secuencia de video (sin modelo 3D).
 // El panel entra al empezar la secuencia y cada especificación aparece en su tramo del scroll
-// y queda visible. Sin setState de React: suscripción al store transiente y estilos directos
-// en los nodos (Hard Constraint 1). El texto está siempre en el DOM (Hard Constraint 7).
-import { useEffect, useRef } from "react";
+// y queda visible. Sin setState de React (Hard Constraint 1). El texto está siempre en el DOM (Hard Constraint 7).
+// DEV-38: la suscripción y la animación salen de useSequenceProgress y lib/reveal.
+// DEV-40: los tramos salen de los beats de la historia (config/sequences.ts); el scroll decide qué se
+// ve y el fundido es en el tiempo (sin quedar a medias), con las filas en cascada.
+import { useRef } from "react";
+import GlassPanel from "@/components/ui/GlassPanel";
+import Eyebrow from "@/components/ui/Eyebrow";
+import { useDampedValues } from "@/hooks/useDampedValues";
+import { useSequenceProgress } from "@/hooks/useSequenceProgress";
 import { useExperienceStore } from "@/store/useExperienceStore";
-import { clamp } from "@/lib/math";
-import type { Especificacion } from "@/content/producto";
+import { applyReveal, cascadeTargets, splitSlots } from "@/lib/reveal";
+import { cx } from "@/lib/cx";
+import { DAMPING, REVEAL } from "@/config/motion";
+import type { Especificacion, Lado } from "@/content/types";
 
-interface Props {
-  sequenceId: string;
+export interface PackagingSpecsContent {
   eyebrow: string;
   titulo: string;
   descripcion: string;
   especificaciones: readonly Especificacion[];
   nota?: string;
-  /** Tramo (0-1) en el que entra el panel */
-  entrada?: readonly [number, number];
-  /** Tramo (0-1) a lo largo del cual se van sumando las especificaciones */
-  tramoSpecs?: readonly [number, number];
-  /** Lado del panel en desktop: el contrario a donde está el producto en el encuadre del video */
-  lado?: "izquierda" | "derecha";
 }
 
-const ENTRADA_DEFECTO = [0.08, 0.2] as const;
-const TRAMO_SPECS_DEFECTO = [0.25, 0.8] as const;
+interface Props {
+  sequenceId: string;
+  content: PackagingSpecsContent;
+  /** Punto del scroll (0-1) desde el que se ve el panel */
+  entrada: number;
+  /** Punto del scroll (0-1) en el que el panel se va (p. ej. para dejar solo el plano final del logo) */
+  salida?: number;
+  /** Tramo del scroll (0-1) a lo largo del cual se van sumando las especificaciones */
+  tramoSpecs: readonly [number, number];
+  /** Lado del panel en desktop: el contrario a donde está el producto en el encuadre del video */
+  lado?: Lado;
+}
 
-const rampa = (p: number, a: number, b: number) => clamp((p - a) / Math.max(1e-4, b - a), 0, 1);
-
-export default function PackagingSpecs({
-  sequenceId,
-  eyebrow,
-  titulo,
-  descripcion,
-  especificaciones,
-  nota,
-  entrada = ENTRADA_DEFECTO,
-  tramoSpecs = TRAMO_SPECS_DEFECTO,
-  lado = "izquierda",
-}: Props) {
+export default function PackagingSpecs({ sequenceId, content, entrada, salida = Infinity, tramoSpecs, lado = "izquierda" }: Props) {
+  const { eyebrow, titulo, descripcion, especificaciones, nota } = content;
   const panelRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const { panelOffsetPx, rowOffsetPx } = REVEAL.specs;
 
-  useEffect(() => {
-    let last = -1;
-    const n = especificaciones.length;
-    const apply = (p: number) => {
-      if (p === last) return;
-      last = p;
-      const reduced = useExperienceStore.getState().reducedMotion;
-      const panel = panelRef.current;
-      if (panel) {
-        const v = rampa(p, entrada[0], entrada[1]);
-        panel.style.opacity = String(reduced ? (v > 0.5 ? 1 : 0) : v);
-        panel.style.transform = reduced ? "none" : `translate3d(${(1 - v) * (lado === "derecha" ? 24 : -24)}px, 0, 0)`;
-      }
-      const [a, b] = tramoSpecs;
-      const step = (b - a) / Math.max(1, n);
-      rowRefs.current.forEach((row, i) => {
-        if (!row) return;
-        const v = rampa(p, a + i * step, a + i * step + step * 0.8);
-        row.style.opacity = String(reduced ? (v > 0.5 ? 1 : 0) : v);
-        row.style.transform = reduced ? "none" : `translate3d(0, ${(1 - v) * 10}px, 0)`;
+  // Lo que se ve: [panel, fila 1…n], llevados a su objetivo con suavizado en el tiempo. cascadeTargets:
+  // cada fila espera a la anterior (y la primera, al panel), así aparecen una tras otra aunque la rueda
+  // active varias juntas
+  const setTargets = useDampedValues(DAMPING.overlays, ([panelV, ...rowsV]) => {
+    const { reducedMotion } = useExperienceStore.getState();
+    if (panelRef.current) {
+      applyReveal(panelRef.current, panelV, {
+        axis: "x",
+        offsetPx: lado === "derecha" ? panelOffsetPx : -panelOffsetPx,
+        reducedMotion,
       });
-    };
-    apply(useExperienceStore.getState().sequenceProgress[sequenceId] ?? 0);
-    return useExperienceStore.subscribe((s) => apply(s.sequenceProgress[sequenceId] ?? 0));
-  }, [sequenceId, especificaciones, entrada, tramoSpecs, lado]);
+    }
+    rowsV.forEach((v, i) => {
+      const row = rowRefs.current[i];
+      if (row) applyReveal(row, v, { axis: "y", offsetPx: rowOffsetPx, reducedMotion });
+    });
+  }, cascadeTargets);
+
+  useSequenceProgress(sequenceId, (progress) => {
+    // El scroll decide qué se ve; el fundido lo hace el tiempo. Cada especificación aparece al llegar
+    // a su turno y queda visible (la ficha se va completando)
+    const panel = progress >= entrada && progress < salida ? 1 : 0;
+    const rows = splitSlots(tramoSpecs, especificaciones.length).map(([start]) => (progress >= start ? 1 : 0));
+    setTargets([panel, ...rows]);
+  });
 
   return (
-    <div className={`flex h-full w-full items-end px-4 pb-8 md:items-center md:px-16 md:pb-0 ${lado === "derecha" ? "md:justify-end" : ""}`}>
-      <div
+    <div className={cx("flex h-full w-full items-end px-4 pb-8 md:items-center md:px-16 md:py-16", lado === "derecha" && "md:justify-end")}>
+      <GlassPanel
         ref={panelRef}
-        className="w-full max-w-md rounded-3xl md:max-w-sm border border-ink/10 bg-surface-deep/75 p-5 opacity-0 backdrop-blur-md will-change-[opacity,transform] md:p-8"
+        radius="lg"
+        className="w-full max-w-md md:max-w-sm p-5 opacity-0 will-change-[opacity,transform] md:p-8"
       >
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent">{eyebrow}</p>
+        <Eyebrow variant="mono">{eyebrow}</Eyebrow>
         <h2 className="font-display mt-3 text-3xl uppercase leading-[0.95] tracking-tight md:text-5xl">{titulo}</h2>
-        <p className="mt-3 text-xs text-muted md:mt-4 md:text-base">{descripcion}</p>
+        {/* En móvil la ficha va compacta para no tapar el video: la descripción y la nota quedan solo para
+            lectores de pantalla (sr-only); en desktop se ven */}
+        <p className="sr-only md:not-sr-only md:mt-4 md:block md:text-base md:text-muted">{descripcion}</p>
 
         <dl className="mt-4 divide-y md:mt-6 divide-ink/10 border-y border-ink/10">
           {especificaciones.map((spec, i) => (
@@ -93,8 +97,8 @@ export default function PackagingSpecs({
             </div>
           ))}
         </dl>
-        {nota ? <p className="mt-3 text-xs text-muted/70">{nota}</p> : null}
-      </div>
+        {nota ? <p className="sr-only md:not-sr-only md:mt-3 md:block md:text-xs md:text-muted/70">{nota}</p> : null}
+      </GlassPanel>
     </div>
   );
 }

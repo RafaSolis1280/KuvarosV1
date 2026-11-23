@@ -7,10 +7,10 @@ Landing inmersiva **100 % video hiperrealista** (sin modelos 3D) · Next.js 16 �
 
 | # | Sección | Qué pasa | Componente / tarjeta |
 | :-: | :--- | :--- | :--- |
-| 1 | **Hero** | Titular y propuesta de valor sobre un fondo animado sutil. El `<h1>` es el LCP. | `src/app/page.tsx` · DEV-18 |
-| 2 | **Video 1 · La hamburguesa** | La sección se fija (pin) y el scroll controla el video frame a frame: la hamburguesa se separa capa por capa. En ciertos tramos aparece la ficha de cada ingrediente. | `ImageSequenceCanvas` (DEV-09) + `IngredientCallouts` (DEV-19) |
-| 3 | **Video 2 · El packaging** | Al terminar la hamburguesa entra el video del packaging, también controlado por el scroll, y la ficha técnica se va completando especificación por especificación. | `ImageSequenceCanvas` + `PackagingSpecs` (DEV-37) |
-| 4 | **Conversión** | Llamado a la acción (WhatsApp / delivery / tienda). | DEV-25 |
+| 1 | **Hero** | Titular y propuesta de valor sobre un fondo animado sutil. El `<h1>` es el LCP. | `HeroSection` · DEV-18 |
+| 2-3 | **La historia en video · hamburguesa → bolsa** | UNA sola sección fijada (DEV-40): la hamburguesa se separa capa por capa con la ficha de cada ingrediente (una a la vez), se vuelve a armar y entra a la bolsa mientras se completa la ficha del packaging; cierra con la bolsa y el logo solos. Arriba, el capítulo actual; abajo, una barra de progreso. El scroll se reparte por **beats** según lo que pasa en pantalla (`PRODUCT_STORY` en `config/sequences.ts`). | `ProductStorySection` = `SequenceSection` (DEV-09) + `IngredientCallouts` (DEV-19) + `PackagingSpecs` (DEV-37) + `StoryProgress` (DEV-40) |
+| 4 | **Primer bocado** | Fotos reales de la marca. | `ExperienceSection` · DEV-19 / ART-12 |
+| 5 | **Conversión** | Llamado a la acción (hoy Instagram; WhatsApp / delivery cuando DIR-01 lo defina). | `ContactSection` · DEV-25 |
 
 Mientras faltan los archivos, **todo funciona con fallbacks procedurales** (anillos que se separan en lugar de cada video). No hay errores: solo 404 esperados en la consola.
 
@@ -26,9 +26,54 @@ npm run dev              # http://localhost:3000
 | :--- | :--- |
 | `npm run dev` | Servidor de desarrollo (Turbopack) |
 | `npm run build` | Build de producción |
+| `npm run budget` | Tras `npm run build`: JS inicial de `/` en gzip contra el Performance Budget (DEV-01, `src/config/budget.ts`); falla si se pasa |
+| `npm run analyze -- --output` | Analizador de bundle de Next (Turbopack), sin dependencias; resumen con `Manuales/qa/scripts/bundle-inicial.py` (DEV-28) |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Tests unitarios (Vitest): lógica de secuencias, aparición de fichas, configuración y contenido |
 | `npm run frames -- <video> [--out carpeta]` | Convierte un video master en las secuencias WebP desktop/mobile (requiere ffmpeg) |
+
+**Probar cada tier (DEV-27, solo en `npm run dev`):** `/?tier=1`, `/?tier=2` o `/?tier=3` fijan la política de GPU
+(y apagan el PerformanceMonitor para que no la cambie); `/?nowebgl` simula un navegador sin WebGL (camino real:
+detect-gpu → tier 0 → sin Canvas). En el build de producción la URL no cambia nada. Informe y capturas en
+`Manuales/qa/DEV-27.md`; el script `Manuales/qa/scripts/tiers.cjs` repite la prueba.
+
+## 🧱 Arquitectura del código
+
+`src/app/page.tsx` solo **compone secciones**. Cada cosa tiene un lugar único:
+
+| Carpeta | Qué hay | Cuándo tocarla |
+| :--- | :--- | :--- |
+| `src/content/` | `producto.ts`: **todo el texto del producto** (copy, SEO, CTA, textos de accesibilidad) · `sitio.ts`: textos del sitio (navegación, footer, formulario) y datos del negocio para el JSON-LD · `types.ts`: su forma | Cambiar un texto, un enlace o una ficha |
+| `src/config/` | `gpu-policy.ts` (tiers y manifiesto de assets) · `sequences.ts` (`PRODUCT_STORY`: clips y beats de la historia, encuadre) · `motion.ts` (Lenis, suavizado — `DAMPING.overlays` es la duración de los fundidos —, mezcla de frames y entrada de los videos, puntos de aparición) · `scene.ts` (Canvas WebGL) · `site.ts` (URL, idioma, anclas) · `brand.ts` (colores para canvas/shader) | Ajustar comportamiento sin tocar componentes |
+| `src/components/sections/` | Una sección por archivo (Hero, Ingredientes, Packaging, Primer bocado, Contacto) | Cambiar la maqueta de una sección |
+| `src/components/sequence/` | `SequenceSection` (video fijado + bordes + overlays) e `ImageSequenceCanvas` | Agregar un video: entrada en `config/sequences.ts` + una sección con `SequenceSection` |
+| `src/components/ui/` | Piezas reutilizables: `CtaLink`, `Eyebrow`, `GlassPanel` | Estilos compartidos (afectan a todo el sitio) |
+| `src/components/layout/` | `SiteHeader` (cabecera fija con el CTA) + `StickyHeader`, `SiteFooter`, `SkipLink` | Navegación y accesibilidad global |
+| `src/components/seo/` | `JsonLd` (datos estructurados del negocio) | — |
+| `src/components/dom/` | Proveedor de scroll, overlays de las secuencias, `Wordmark`, `HeroTitle` (titular cinético), `ContactForm`, `CustomCursor` | — |
+| `src/components/canvas/` | El único Canvas WebGL y el shader de fondo | — |
+| `src/lib/` | Lógica sin React: `sequence/` (caché de frames con ventana deslizante, dibujo, rutas, `timeline.ts`: beats → frame), `reveal.ts` (qué overlay está activo, exclusión y cascada), `DampedValues.ts` (fundidos en el tiempo), `math.ts`, `gsap.ts` (registra ScrollTrigger, SplitText y CustomEase una vez), `seo.ts` (metadatos, JSON-LD, sitemap y robots), `contact/` (validación compartida navegador/servidor, límite de envíos, envío), `color.ts`, `cx.ts` | — |
+| `src/hooks/` | `useSequenceProgress` (overlays sincronizados con un video, sin re-renders) | — |
+| `src/store/` | Store transiente (Zustand) | — |
+
+Las capas de apilamiento (`z-index`) están definidas una sola vez en `src/app/globals.css` como utilidades `stack-canvas`, `stack-content`, `stack-section`, `stack-nav` y `stack-top`: no usar `z-[n]` sueltos. Los tests viven junto a cada módulo (`*.test.ts`).
+
+**Cabeceras HTTP (DEV-34).** Seguridad (CSP, HSTS, etc.) y caché de `/public` en `src/config/http-headers.ts`, aplicadas
+por `next.config.ts`. Si el sitio empieza a cargar algo de otro dominio (analítica, un servicio externo), hay que sumarlo a la
+CSP ahí. Toda carpeta nueva de `/public` debe clasificarse como versionada (`immutable`) o no (se revalida): lo exige un test.
+
+**Variables de entorno (Vercel).** La URL pública (canónica, Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD) se resuelve
+en `src/config/site.ts`: `NEXT_PUBLIC_SITE_URL` (dominio oficial, DEV-34) → `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_URL`
+(las dos últimas las define Vercel solo, así que las Preview URLs ya salen bien) → `http://localhost:3000`.
+El formulario de contacto (DEV-25) envía por `src/lib/contact/delivery.ts` según `CONTACTO_ENVIO`: sin definir, en desarrollo
+el envío se simula (log del servidor) y en producción **el formulario no se muestra** (queda el CTA a Instagram);
+`CONTACTO_ENVIO=simulado` lo activa en una Preview para probarlo. El servicio real (email o WhatsApp) y su clave los
+define Rafael en Vercel: se agrega un caso en `getContactDelivery` (las claves nunca van al repo).
+
+**CSS.** `next.config.ts` pasa todo `*.css` por el loader de Tailwind, así que los CSS modules **no** funcionan (pierden el
+hash de sus clases): para estilos propios de un componente, usar una hoja global con un selector de atributo
+(ej. `src/components/dom/HeroTitle.css` con `[data-hero-title]`).
 
 ---
 
@@ -68,7 +113,7 @@ npm run dev              # http://localhost:3000
 | B7 | Póster de fallback (equipos de gama baja / sin JavaScript) | `public/fallback/hero_poster.webp` | 1600 px, la hamburguesa armada | ART-12 | P1 |
 | B8 | Imagen para compartir en redes (OG) | `public/og-image.jpg` | 1200 × 630 px, < 300 KB | ART-12 | P1 |
 | B8b | Fotos de marca (lifestyle / producto real) | `public/photos/<nombre>.webp` | 1000 px de ancho, WebP, **sin EXIF/GPS** | ART-12 | P1 |
-| B9 | Sonido ambiente (opcional) | `public/audio/ambient_drone.webm` + `.m4a` | Loop sin cortes, < 400 KB | ART-15 | P2 |
+| B9 | Sonido ambiente (opcional) | `public/audio/ambient_drone.webm` + `.m4a` | Loop sin cortes, < 400 KB. El control de sonido (DEV-16) ya está hecho: al copiar los archivos aparece solo el botón en la cabecera | ART-15 | P2 |
 | B10 | Sonido de hover (opcional) | `public/audio/ui_hover_tick.webm` + `.m4a` | < 80 ms | ART-15 | P2 |
 
 > **No se necesitan** modelos 3D (`.glb`), HDRI ni texturas: el proyecto es solo video (decisión del cliente, DEV-37).
